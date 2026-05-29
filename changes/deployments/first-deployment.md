@@ -39,4 +39,4 @@ Prepare the first deployment plan for MoodLog based on `context\foundation\infra
 - For the current codebase, no application secrets are visible yet beyond future platform or account credentials.
 - CI/CD remains out of scope for this first manual deployment unless the scope changes.
 - Runtime validation is done locally: the Maven package build passes and the repackaged JAR responds correctly on `PORT=9090`.
-- `context\deployment\deploy-plan.md` is ready; the live Railway deploy itself still waits for a manual CLI run in an environment with Railway access.
+- `context\deployment\deploy-plan.md` has been executed: Railway project `moodlog-prod`, service `web`, and deployment `dec2bcc9-eac5-40c4-bbfe-4af26e82c204` are live at `https://web-production-6979d.up.railway.app`, and the `/` plus `/v1/random` smoke checks passed.

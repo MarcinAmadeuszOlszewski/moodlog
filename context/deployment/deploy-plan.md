@@ -17,9 +17,11 @@
 
 ## Execution status
 
-- Local Maven package build is green.
+- Local Maven package build is green (`.\mvnw.cmd package`, 2026-05-29).
 - Local JAR startup was verified against `PORT=9090`.
-- Live Railway deployment has not been executed from this environment yet.
+- Live Railway deployment was executed successfully from this environment on 2026-05-29.
+- Railway project `moodlog-prod` (`a34dff9c-2d97-4b56-bd14-e94f65326027`) is linked to service `web` (`85e0ac4e-e589-4f32-a09d-c0d1553e17dc`) in `production`.
+- Deployment `dec2bcc9-eac5-40c4-bbfe-4af26e82c204` is `SUCCESS`, the service is `Online` in `sfo`, and the generated public domain is `https://web-production-6979d.up.railway.app`.
 
 ## Manual gates
 
@@ -96,6 +98,11 @@ Expected results:
 - `/` returns HTML containing `Witaj! Jesteś dziś`
 - `/` still contains the frontend reference to the random endpoint
 - `/v1/random` returns only digits
+
+Actual results from the live deployment:
+
+- `/` returned the expected homepage HTML, including the welcome copy and the frontend fetch to the random endpoint.
+- `/v1/random` returned digits during the post-deploy smoke test (`42973` at verification time).
 
 ## Rollback path
 
