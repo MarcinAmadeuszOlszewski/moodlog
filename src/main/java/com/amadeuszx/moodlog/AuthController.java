@@ -1,13 +1,16 @@
 package com.amadeuszx.moodlog;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,9 +23,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AuthController {
 
 	private final UserAccountService userAccountService;
+	private final AuthenticationManager authenticationManager;
+	private final SecurityContextHolderStrategy securityContextHolderStrategy;
+	private final SecurityContextRepository securityContextRepository;
+	private final SessionAuthenticationStrategy sessionAuthenticationStrategy;
 
-	public AuthController(UserAccountService userAccountService) {
+	public AuthController(
+		UserAccountService userAccountService,
+		AuthenticationManager authenticationManager,
+		SecurityContextRepository securityContextRepository,
+		SessionAuthenticationStrategy sessionAuthenticationStrategy
+	) {
 		this.userAccountService = userAccountService;
+		this.authenticationManager = authenticationManager;
+		this.securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
+		this.securityContextRepository = securityContextRepository;
+		this.sessionAuthenticationStrategy = sessionAuthenticationStrategy;
 	}
 
 	@ModelAttribute("registrationForm")
@@ -54,7 +70,8 @@ public class AuthController {
 	public String register(
 		@Valid @ModelAttribute("registrationForm") RegistrationForm registrationForm,
 		BindingResult bindingResult,
-		HttpServletRequest request
+		HttpServletRequest request,
+		HttpServletResponse response
 	) {
 		if (bindingResult.hasErrors()) {
 			return "register";
@@ -66,7 +83,7 @@ public class AuthController {
 				registrationForm.getPassword()
 			);
 
-			authenticate(userAccount.getEmail(), request);
+			authenticate(userAccount.getEmail(), registrationForm.getPassword(), request, response);
 
 			return "redirect:/journal";
 		}
@@ -80,18 +97,20 @@ public class AuthController {
 		}
 	}
 
-	private void authenticate(String email, HttpServletRequest request) {
-		final UserDetails userDetails = userAccountService.loadUserByUsername(email);
-		final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-			userDetails,
-			userDetails.getPassword(),
-			userDetails.getAuthorities()
-		);
-		final SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-		final HttpSession session = request.getSession(true);
+	private void authenticate(
+		String email,
+		String rawPassword,
+		HttpServletRequest request,
+		HttpServletResponse response
+	) {
+		final UsernamePasswordAuthenticationToken authenticationRequest =
+			UsernamePasswordAuthenticationToken.unauthenticated(email, rawPassword);
+		final Authentication authentication = authenticationManager.authenticate(authenticationRequest);
+		final SecurityContext securityContext = securityContextHolderStrategy.createEmptyContext();
 
+		sessionAuthenticationStrategy.onAuthentication(authentication, request, response);
 		securityContext.setAuthentication(authentication);
-		SecurityContextHolder.setContext(securityContext);
-		session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+		securityContextHolderStrategy.setContext(securityContext);
+		securityContextRepository.saveContext(securityContext, request, response);
 	}
 }

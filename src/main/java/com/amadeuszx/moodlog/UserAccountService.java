@@ -1,6 +1,10 @@
 package com.amadeuszx.moodlog;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import java.util.HexFormat;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
@@ -8,6 +12,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -39,7 +44,7 @@ public class UserAccountService implements UserDetailsService {
 		final String normalizedEmail = normalizeEmailAddress(email);
 
 		if (userAccountRepository.existsByEmail(normalizedEmail)) {
-			logger.warn("auth.registration.failure email={} reason=DUPLICATE_EMAIL", normalizedEmail);
+			logDuplicateEmailRegistration(normalizedEmail);
 			throw new DuplicateUserAccountException();
 		}
 
@@ -55,11 +60,17 @@ public class UserAccountService implements UserDetailsService {
 			now
 		);
 
-		final UserAccount savedUserAccount = userAccountRepository.save(userAccount);
+		try {
+			final UserAccount savedUserAccount = userAccountRepository.save(userAccount);
 
-		logger.info("auth.registration.success email={}", normalizedEmail);
+			logger.info("auth.registration.success identifier={}", safeEmailIdentifier(normalizedEmail));
 
-		return savedUserAccount;
+			return savedUserAccount;
+		}
+		catch (DataIntegrityViolationException exception) {
+			logDuplicateEmailRegistration(normalizedEmail);
+			throw new DuplicateUserAccountException();
+		}
 	}
 
 	public Optional<UserAccount> findByEmail(String email) {
@@ -87,7 +98,7 @@ public class UserAccountService implements UserDetailsService {
 		}
 
 		try {
-			return normalizeEmailAddress(email);
+			return "email-hash:" + hashEmail(normalizeEmailAddress(email));
 		}
 		catch (IllegalArgumentException exception) {
 			return "invalid-email";
@@ -106,11 +117,27 @@ public class UserAccountService implements UserDetailsService {
 	private void ensurePasswordMeetsPolicy(String rawPassword, String normalizedEmail) {
 		if (!StringUtils.hasText(rawPassword) || rawPassword.length() < passwordMinimumLength) {
 			logger.warn(
-				"auth.registration.failure email={} reason=PASSWORD_TOO_SHORT minLength={}",
-				normalizedEmail,
+				"auth.registration.failure identifier={} reason=PASSWORD_TOO_SHORT minLength={}",
+				safeEmailIdentifier(normalizedEmail),
 				passwordMinimumLength
 			);
 			throw new InvalidPasswordException(passwordMinimumLength);
+		}
+	}
+
+	private void logDuplicateEmailRegistration(String normalizedEmail) {
+		logger.warn("auth.registration.failure identifier={} reason=DUPLICATE_EMAIL", safeEmailIdentifier(normalizedEmail));
+	}
+
+	private static String hashEmail(String normalizedEmail) {
+		try {
+			final MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+			final byte[] hashedBytes = messageDigest.digest(normalizedEmail.getBytes(StandardCharsets.UTF_8));
+
+			return HexFormat.of().formatHex(hashedBytes).substring(0, 12);
+		}
+		catch (NoSuchAlgorithmException exception) {
+			throw new IllegalStateException("SHA-256 algorithm unavailable", exception);
 		}
 	}
 

@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,6 +14,10 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.session.ChangeSessionIdAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
 
@@ -62,7 +68,7 @@ public class SecurityConfiguration {
 		authenticationSuccessHandler.setRequestCache(requestCache);
 
 		return (request, response, authentication) -> {
-			logger.info("auth.login.success email={}", UserAccountService.safeEmailIdentifier(authentication.getName()));
+			logger.info("auth.login.success identifier={}", UserAccountService.safeEmailIdentifier(authentication.getName()));
 			authenticationSuccessHandler.onAuthenticationSuccess(request, response, authentication);
 		};
 	}
@@ -75,7 +81,7 @@ public class SecurityConfiguration {
 			final String safeEmailIdentifier = UserAccountService.safeEmailIdentifier(request.getParameter("email"));
 
 			logger.warn(
-				"auth.login.failure email={} reason={}",
+				"auth.login.failure identifier={} reason={}",
 				safeEmailIdentifier,
 				exception.getClass().getSimpleName()
 			);
@@ -95,5 +101,20 @@ public class SecurityConfiguration {
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+		return authenticationConfiguration.getAuthenticationManager();
+	}
+
+	@Bean
+	public SecurityContextRepository securityContextRepository() {
+		return new HttpSessionSecurityContextRepository();
+	}
+
+	@Bean
+	public SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+		return new ChangeSessionIdAuthenticationStrategy();
 	}
 }

@@ -55,3 +55,24 @@ Task complete
    - The production deployment path must have a documented rollback procedure, and the production database must support backup/restore or point-in-time   recovery.
 
   Net result: the repo is already halfway there in documentation, but the missing work is to formalize these as PRD NFRs, align stale docs   (tech-stack.md), add the first managed Postgres integration, and create .github/workflows/ for test + deploy automation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 1. High — src/main/java/com/amadeuszx/moodlog/AuthController.java:83
+ Registration creates auth by writing SecurityContext into the existing session, without rotating session ID. That leaves signup open to session fixation. Fix: go through Spring Security’s normal auth/session strategy, or rotate via changeSessionId() before storing auth.
+ 2. Medium — src/main/java/com/amadeuszx/moodlog/UserAccountService.java:41
+ Duplicate signup is existsByEmail(...) then save(...). Concurrent requests can pass the check together, then one hits DB uniqueness and becomes a 500, because controller only handles DuplicateUserAccountException. Fix: translate DataIntegrityViolationException into the same duplicate-email validation response.
+ 3. Medium — src/main/java/com/amadeuszx/moodlog/UserAccountService.java:42 and SecurityConfiguration.java
+ Auth logs still write full email addresses, while the plan calls for safe identifiers only. Tests also lock this in. Fix: mask/hash the identifier in logs and update log assertions accordingly.
+

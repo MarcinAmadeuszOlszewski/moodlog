@@ -18,6 +18,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -89,6 +90,25 @@ class AuthenticationFlowTests {
 			.andExpect(status().isOk())
 			.andExpect(view().name("journal"))
 			.andExpect(content().string(containsString("ela@example.com")));
+	}
+
+	@Test
+	@DisplayName("rotates the anonymous session id during registration")
+	void registrationRotatesAnonymousSessionId() throws Exception {
+		val anonymousSession = new MockHttpSession();
+		val anonymousSessionId = anonymousSession.getId();
+		val registrationResult = mockMvc.perform(post("/register")
+				.with(csrf())
+				.session(anonymousSession)
+				.param("email", "ela@example.com")
+				.param("password", "sekret"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/journal"))
+			.andReturn();
+		val authenticatedSession = (MockHttpSession) registrationResult.getRequest().getSession(false);
+
+		assertNotNull(authenticatedSession);
+		assertNotEquals(anonymousSessionId, authenticatedSession.getId());
 	}
 
 	@Test
@@ -250,7 +270,8 @@ class AuthenticationFlowTests {
 			.andExpect(status().is3xxRedirection())
 			.andExpect(redirectedUrl("/journal"));
 
-		assertTrue(output.getOut().contains("auth.registration.success email=ela@example.com"));
+		assertTrue(output.getOut().contains("auth.registration.success identifier=email-hash:"));
+		assertFalse(output.getOut().contains("ela@example.com"));
 		assertFalse(output.getOut().contains("sekret"));
 	}
 
@@ -266,8 +287,9 @@ class AuthenticationFlowTests {
 			.andExpect(status().is3xxRedirection())
 			.andExpect(redirectedUrl("/login?error"));
 
-		assertTrue(output.getOut().contains("auth.login.failure email=ela@example.com"));
+		assertTrue(output.getOut().contains("auth.login.failure identifier=email-hash:"));
 		assertTrue(output.getOut().contains("reason=BadCredentialsException"));
+		assertFalse(output.getOut().contains("ela@example.com"));
 		assertFalse(output.getOut().contains("tajne123"));
 	}
 }
