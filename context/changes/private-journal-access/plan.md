@@ -319,10 +319,10 @@ This change introduces the first persistent schema in the app, so environment-ba
 
 #### Automated
 
-- [x] 4.1 Repository and auth-flow tests cover the negative matrix and persistence invariants agreed during planning
-- [x] 4.2 The full regression suite passes via `.\mvnw.cmd test`
+- [x] 4.1 Repository and auth-flow tests cover the negative matrix and persistence invariants agreed during planning — 88908d9
+- [x] 4.2 The full regression suite passes via `.\mvnw.cmd test` — 88908d9
 
 #### Manual
 
-- [x] 4.3 End-to-end browser smoke testing confirms landing -> register -> journal -> logout -> login -> journal works as planned
-- [x] 4.4 Auth logs are visible for success and failure paths without exposing sensitive credential data
+- [x] 4.3 End-to-end browser smoke testing confirms landing -> register -> journal -> logout -> login -> journal works as planned — 88908d9
+- [x] 4.4 Auth logs are visible for success and failure paths without exposing sensitive credential data — 88908d9
