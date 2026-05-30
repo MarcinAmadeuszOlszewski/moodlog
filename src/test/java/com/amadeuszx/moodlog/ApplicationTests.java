@@ -59,9 +59,18 @@ class ApplicationTests {
 			.andExpect(view().name("index"))
 			.andExpect(content().string(containsString("Witaj! Jesteś dziś")))
 			.andExpect(content().string(containsString("\\/v1\\/random")))
+			.andExpect(content().string(containsString("/favicon.svg")))
 			.andExpect(content().string(containsString("Zaloguj się")))
 			.andExpect(content().string(containsString("załóż konto")))
 			.andExpect(content().string(containsString("gościem!")));
+	}
+
+	@Test
+	@DisplayName("serves the public favicon without routing through the error page")
+	void faviconRequestReturnsPublicAsset() throws Exception {
+		mockMvc.perform(get("/favicon.ico"))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("<svg")));
 	}
 
 	@Test

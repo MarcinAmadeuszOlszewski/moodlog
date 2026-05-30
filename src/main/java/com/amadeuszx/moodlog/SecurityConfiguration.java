@@ -35,7 +35,19 @@ public class SecurityConfiguration {
 	) throws Exception {
 		return http
 			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/", "/index", "/login", "/register", "/error", "/v1/random", "/css/**", "/js/**", "/images/**")
+				.requestMatchers(
+					"/",
+					"/index",
+					"/login",
+					"/register",
+					"/error",
+					"/favicon.ico",
+					"/favicon.svg",
+					"/v1/random",
+					"/css/**",
+					"/js/**",
+					"/images/**"
+				)
 				.permitAll()
 				.anyRequest()
 				.authenticated()

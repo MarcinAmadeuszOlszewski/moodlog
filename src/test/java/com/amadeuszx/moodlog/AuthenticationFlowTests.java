@@ -222,6 +222,36 @@ class AuthenticationFlowTests {
 	}
 
 	@Test
+	@DisplayName("keeps the journal redirect target when the browser requests the favicon before login")
+	void faviconRequestDoesNotOverrideJournalSavedRequest() throws Exception {
+		userAccountService.registerUser("ela@example.com", "sekret");
+
+		val anonymousJournalResult = mockMvc.perform(get("/journal"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/login"))
+			.andReturn();
+		val anonymousSession = (MockHttpSession) anonymousJournalResult.getRequest().getSession(false);
+
+		assertNotNull(anonymousSession);
+
+		mockMvc.perform(get("/favicon.ico").session(anonymousSession))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("<svg")));
+
+		val loginResult = mockMvc.perform(post("/login")
+				.with(csrf())
+				.session(anonymousSession)
+				.param("email", "ela@example.com")
+				.param("password", "sekret"))
+			.andExpect(status().is3xxRedirection())
+			.andReturn();
+		val redirectedUrl = loginResult.getResponse().getRedirectedUrl();
+
+		assertNotNull(redirectedUrl);
+		assertTrue(redirectedUrl.endsWith("/journal"));
+	}
+
+	@Test
 	@DisplayName("redirects logout to the login page with confirmation")
 	void logoutRedirectsToLoginWithConfirmationFlag() throws Exception {
 		mockMvc.perform(post("/logout")
