@@ -1,0 +1,57 @@
+Task complete
+└ Bottom line: .github is currently AI-tooling metadata, not repo automation. context already documents Railway as app host and a manual first deployment,   but the two operational gaps are still open: no external managed database contract and no GitHub Actions CI/CD pipeline. There is also one important   mismatch: context\foundation\tech-stack.md still carries stale starter metadata (deployment_target: fly), while context\foundation\infrastructure.md and   context\deployment\*.md clearly moved the project to Railway.
+
+  ┌──────────────────────┬────────────────────────────────────────────┬──────────────────────────────────────────────────────────────────────────────────┐
+  │ Area                 │ What it contains                           │ What matters                                                                     │
+  ├──────────────────────┼────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
+  │ .github              │ .10x-cli-manifest.json,                    │ Copilot/10x behavior only; no .github/workflows/ exists, so there is no CI/CD    │
+  │                      │ copilot-instructions.md, prompts/, skills/ │ yet                                                                              │
+  ├──────────────────────┼────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
+  │ .github/prompts      │ deployment-planning prompt fragments       │ One prompt explicitly prefers platform-managed autodeploy, so moving to GitHub   │
+  │                      │                                            │ Actions changes that assumption                                                  │
+  ├──────────────────────┼────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
+  │ context\foundation   │ PRD, roadmap, shape notes, tech-stack,     │ PRD lacks DB/CI NFRs; roadmap says data absent and CI/CD absent; infrastructure  │
+  │                      │ infrastructure                             │ recommends Railway + external managed Postgres                                   │
+  ├──────────────────────┼────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
+  │ context\deployment   │ deploy-plan.md, first-deployment.md        │ Both docs describe a manual Railway deploy and explicitly keep database          │
+  │                      │                                            │ provisioning and CI/CD out of scope                                              │
+  ├──────────────────────┼────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
+  │ context\changes      │ bootstrap log + private-journal-access     │ The active auth plan already expects the first persistent schema and             │
+  │                      │ plan                                       │ environment-backed DB config                                                     │
+  ├──────────────────────┼────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────────────────────┤
+  │ context\archive      │ archive README                             │ No archived changes yet                                                          │
+  └──────────────────────┴────────────────────────────────────────────┴──────────────────────────────────────────────────────────────────────────────────┘
+
+  How to add the missing NFRs
+
+   1. Database NFR — choose Neon Postgres
+   - Why Neon: it fits the existing Spring Boot + Railway shape, keeps the database truly external/managed, and later gives you branchable databases if   you add preview environments.
+   - Where to document it: - context\foundation\prd.md → extend ## Non-Functional Requirements
+   - context\foundation\tech-stack.md → replace stale Fly target with Railway and record database: Neon Postgres
+   - context\foundation\infrastructure.md → add DB ownership, TLS, backups/PITR, restore story
+   - context\deployment\deploy-plan.md and first-deployment.md → add DB provisioning + rollback notes
+   - What to implement in the app: - pom.xml → add spring-boot-starter-data-jpa or JDBC, org.postgresql:postgresql, flyway-core
+   - src\main\resources\application.properties → env-backed datasource config
+   - src\main\resources\db\migration\* → first schema migration
+   - Railway env vars → SPRING_DATASOURCE_URL, SPRING_DATASOURCE_USERNAME, SPRING_DATASOURCE_PASSWORD
+   - Important split: production DB secrets should live in Railway, not in GitHub Actions. CI should use an ephemeral Postgres test database, not the   production Neon instance.
+   2. Autodeploy NFR — add GitHub Actions CI/CD to Railway
+   - What is missing now: .github\workflows\ does not exist, and the deployment docs still treat CI/CD as out of scope.
+   - Recommended pipeline: create .github\workflows\pipeline.yml - trigger on pull_request and push to main
+   - test job: checkout, setup Java 21, cache Maven, run ./mvnw -B test
+   - deploy job: needs: test, only on main, concurrency: production, then railway up --ci --service web
+   - GitHub config: - add repo secret RAILWAY_TOKEN for the production Railway project/service
+   - protect main and require the workflow to pass before merge
+   - optional: use GitHub production environment for a manual approval gate; omit required reviewers if you want true zero-touch autodeploy
+   - Railway config: keep runtime secrets there; the workflow only needs the deployment token
+   - Docs to update: unpark GitHub Actions in context\foundation\roadmap.md, remove CI/CD from deployment-doc out-of-scope sections, and update   .github/prompts if you no longer want platform-managed deploys to be the default assumption
+
+  Ready-to-add NFR wording for context\foundation\prd.md:
+
+   - Production data must be stored in an external managed PostgreSQL service; embedded or local file databases are forbidden in production.
+   - All application-to-database traffic must use TLS, and schema changes must be versioned and applied via migrations.
+   - Every merge to main must run the Maven test suite and auto-deploy to Railway only after CI passes.
+   - Production secrets must be stored only in protected GitHub secrets / environments and Railway environment variables, never in the repository.
+   - The production deployment path must have a documented rollback procedure, and the production database must support backup/restore or point-in-time   recovery.
+
+  Net result: the repo is already halfway there in documentation, but the missing work is to formalize these as PRD NFRs, align stale docs   (tech-stack.md), add the first managed Postgres integration, and create .github/workflows/ for test + deploy automation.
