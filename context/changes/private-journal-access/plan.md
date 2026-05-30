@@ -286,12 +286,12 @@ This change introduces the first persistent schema in the app, so environment-ba
 
 #### Automated
 
-- [ ] 1.1 Security, persistence, and MVC dependencies compile and the application test suite passes via `.\mvnw.cmd test`
-- [ ] 1.2 The first user-account schema bootstrap succeeds under test configuration without breaking app startup
+- [x] 1.1 Security, persistence, and MVC dependencies compile and the application test suite passes via `.\mvnw.cmd test`
+- [x] 1.2 The first user-account schema bootstrap succeeds under test configuration without breaking app startup
 
 #### Manual
 
-- [ ] 1.3 Anonymous users can still open `/`, while `/journal` is no longer accessible without auth
+- [x] 1.3 Anonymous users can still open `/`, while `/journal` is no longer accessible without auth
 
 ### Phase 2: Public login and registration flow
 
