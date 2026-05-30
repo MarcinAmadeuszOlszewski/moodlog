@@ -308,21 +308,21 @@ This change introduces the first persistent schema in the app, so environment-ba
 
 #### Automated
 
-- [x] 3.1 MVC tests verify anonymous redirect to login, successful return to `/journal`, and authenticated rendering of the journal shell
+- [x] 3.1 MVC tests verify anonymous redirect to login, successful return to `/journal`, and authenticated rendering of the journal shell — 07df9da
 
 #### Manual
 
-- [x] 3.2 Opening `/journal` directly while logged out returns through login back to the private journal shell
-- [x] 3.3 The empty-state journal presents a clear next step without exposing a broken create-entry flow
+- [x] 3.2 Opening `/journal` directly while logged out returns through login back to the private journal shell — 07df9da
+- [x] 3.3 The empty-state journal presents a clear next step without exposing a broken create-entry flow — 07df9da
 
 ### Phase 4: Auth hardening and verification depth
 
 #### Automated
 
-- [ ] 4.1 Repository and auth-flow tests cover the negative matrix and persistence invariants agreed during planning
-- [ ] 4.2 The full regression suite passes via `.\mvnw.cmd test`
+- [x] 4.1 Repository and auth-flow tests cover the negative matrix and persistence invariants agreed during planning
+- [x] 4.2 The full regression suite passes via `.\mvnw.cmd test`
 
 #### Manual
 
-- [ ] 4.3 End-to-end browser smoke testing confirms landing -> register -> journal -> logout -> login -> journal works as planned
-- [ ] 4.4 Auth logs are visible for success and failure paths without exposing sensitive credential data
+- [x] 4.3 End-to-end browser smoke testing confirms landing -> register -> journal -> logout -> login -> journal works as planned
+- [x] 4.4 Auth logs are visible for success and failure paths without exposing sensitive credential data

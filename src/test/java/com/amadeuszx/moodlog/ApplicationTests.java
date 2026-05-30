@@ -59,6 +59,8 @@ class ApplicationTests {
 			.andExpect(view().name("index"))
 			.andExpect(content().string(containsString("Witaj! Jesteś dziś")))
 			.andExpect(content().string(containsString("\\/v1\\/random")))
+			.andExpect(content().string(containsString("Zaloguj się")))
+			.andExpect(content().string(containsString("załóż konto")))
 			.andExpect(content().string(containsString("gościem!")));
 	}
 

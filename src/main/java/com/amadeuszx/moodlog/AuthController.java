@@ -70,6 +70,10 @@ public class AuthController {
 
 			return "redirect:/journal";
 		}
+		catch (InvalidPasswordException exception) {
+			bindingResult.rejectValue("password", "invalid", exception.getMessage());
+			return "register";
+		}
 		catch (DuplicateUserAccountException exception) {
 			bindingResult.rejectValue("email", "duplicate", "Konto z tym adresem e-mail już istnieje.");
 			return "register";

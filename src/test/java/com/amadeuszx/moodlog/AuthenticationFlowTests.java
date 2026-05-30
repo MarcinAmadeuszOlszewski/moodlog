@@ -1,20 +1,24 @@
 package com.amadeuszx.moodlog;
 
+import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -26,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @SpringBootTest
+@ExtendWith(OutputCaptureExtension.class)
 class AuthenticationFlowTests {
 
 	@Autowired
@@ -68,14 +73,14 @@ class AuthenticationFlowTests {
 	@Test
 	@DisplayName("registers a new user and redirects into the private journal")
 	void successfulRegistrationAuthenticatesAndRedirectsToJournal() throws Exception {
-		final MvcResult registrationResult = mockMvc.perform(post("/register")
+		val registrationResult = mockMvc.perform(post("/register")
 				.with(csrf())
 				.param("email", "ela@example.com")
 				.param("password", "sekret"))
 			.andExpect(status().is3xxRedirection())
 			.andExpect(redirectedUrl("/journal"))
 			.andReturn();
-		final MockHttpSession session = (MockHttpSession) registrationResult.getRequest().getSession(false);
+		val session = (MockHttpSession) registrationResult.getRequest().getSession(false);
 
 		assertNotNull(session);
 		assertEquals(1L, userAccountRepository.count());
@@ -89,15 +94,31 @@ class AuthenticationFlowTests {
 	@Test
 	@DisplayName("rejects duplicate registrations on the public signup form")
 	void duplicateEmailRegistrationShowsValidationMessage() throws Exception {
-		userAccountService.registerUser("ela@example.com", "sekret");
+		userAccountService.registerUser("Ela@Example.com", "sekret");
 
 		mockMvc.perform(post("/register")
 				.with(csrf())
-				.param("email", "ela@example.com")
+				.param("email", "ELA@example.com")
 				.param("password", "sekret"))
 			.andExpect(status().isOk())
 			.andExpect(view().name("register"))
 			.andExpect(content().string(containsString("Konto z tym adresem e-mail już istnieje.")));
+
+		assertEquals(1L, userAccountRepository.count());
+	}
+
+	@Test
+	@DisplayName("rejects too-short passwords on the public signup form")
+	void shortPasswordRegistrationShowsValidationMessage() throws Exception {
+		mockMvc.perform(post("/register")
+				.with(csrf())
+				.param("email", "ela@example.com")
+				.param("password", "12345"))
+			.andExpect(status().isOk())
+			.andExpect(view().name("register"))
+			.andExpect(content().string(containsString("Hasło musi mieć co najmniej 6 znaków.")));
+
+		assertEquals(0L, userAccountRepository.count());
 	}
 
 	@Test
@@ -109,6 +130,21 @@ class AuthenticationFlowTests {
 				.with(csrf())
 				.param("email", "ela@example.com")
 				.param("password", "zle-haslo"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/login?error"));
+
+		mockMvc.perform(get("/login").param("error", ""))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("Nie udało się zalogować. Sprawdź adres e-mail i hasło.")));
+	}
+
+	@Test
+	@DisplayName("keeps login failures generic when the account does not exist")
+	void failedUnknownUserLoginRedirectsWithGenericError() throws Exception {
+		mockMvc.perform(post("/login")
+				.with(csrf())
+				.param("email", "nie-ma@example.com")
+				.param("password", "sekret"))
 			.andExpect(status().is3xxRedirection())
 			.andExpect(redirectedUrl("/login?error"));
 
@@ -135,23 +171,23 @@ class AuthenticationFlowTests {
 	void anonymousJournalRequestReturnsToJournalAfterLogin() throws Exception {
 		userAccountService.registerUser("ela@example.com", "sekret");
 
-		final MvcResult anonymousJournalResult = mockMvc.perform(get("/journal"))
+		val anonymousJournalResult = mockMvc.perform(get("/journal"))
 			.andExpect(status().is3xxRedirection())
 			.andExpect(redirectedUrl("/login"))
 			.andReturn();
-		final MockHttpSession anonymousSession = (MockHttpSession) anonymousJournalResult.getRequest().getSession(false);
+		val anonymousSession = (MockHttpSession) anonymousJournalResult.getRequest().getSession(false);
 
 		assertNotNull(anonymousSession);
 
-		final MvcResult loginResult = mockMvc.perform(post("/login")
+		val loginResult = mockMvc.perform(post("/login")
 				.with(csrf())
 				.session(anonymousSession)
 				.param("email", "ela@example.com")
 				.param("password", "sekret"))
 			.andExpect(status().is3xxRedirection())
 			.andReturn();
-		final String redirectedUrl = loginResult.getResponse().getRedirectedUrl();
-		final MockHttpSession authenticatedSession = (MockHttpSession) loginResult.getRequest().getSession(false);
+		val redirectedUrl = loginResult.getResponse().getRedirectedUrl();
+		val authenticatedSession = (MockHttpSession) loginResult.getRequest().getSession(false);
 
 		assertNotNull(redirectedUrl);
 		assertTrue(redirectedUrl.endsWith("/journal"));
@@ -177,5 +213,61 @@ class AuthenticationFlowTests {
 		mockMvc.perform(get("/login").param("logout", ""))
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString("Wylogowano Cię z MoodLog.")));
+	}
+
+	@Test
+	@DisplayName("clears access to the journal after logout")
+	void logoutClearsJournalAccess() throws Exception {
+		val registrationResult = mockMvc.perform(post("/register")
+				.with(csrf())
+				.param("email", "ela@example.com")
+				.param("password", "sekret"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/journal"))
+			.andReturn();
+		val session = (MockHttpSession) registrationResult.getRequest().getSession(false);
+
+		assertNotNull(session);
+
+		mockMvc.perform(post("/logout")
+				.with(csrf())
+				.session(session))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/login?logout"));
+
+		mockMvc.perform(get("/journal").session(session))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/login"));
+	}
+
+	@Test
+	@DisplayName("logs registration success without exposing the password")
+	void registrationWritesSafeAuthLog(CapturedOutput output) throws Exception {
+		mockMvc.perform(post("/register")
+				.with(csrf())
+				.param("email", "ela@example.com")
+				.param("password", "sekret"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/journal"));
+
+		assertTrue(output.getOut().contains("auth.registration.success email=ela@example.com"));
+		assertFalse(output.getOut().contains("sekret"));
+	}
+
+	@Test
+	@DisplayName("logs login failures without exposing the password")
+	void failedLoginWritesSafeAuthLog(CapturedOutput output) throws Exception {
+		userAccountService.registerUser("ela@example.com", "sekret");
+
+		mockMvc.perform(post("/login")
+				.with(csrf())
+				.param("email", "ELA@example.com")
+				.param("password", "tajne123"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/login?error"));
+
+		assertTrue(output.getOut().contains("auth.login.failure email=ela@example.com"));
+		assertTrue(output.getOut().contains("reason=BadCredentialsException"));
+		assertFalse(output.getOut().contains("tajne123"));
 	}
 }
