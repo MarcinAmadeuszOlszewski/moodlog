@@ -297,23 +297,23 @@ This change introduces the first persistent schema in the app, so environment-ba
 
 #### Automated
 
-- [x] 2.1 MVC tests cover public landing, login page, registration page, successful signup, duplicate-email signup, failed login, and logout redirect behavior
+- [x] 2.1 MVC tests cover public landing, login page, registration page, successful signup, duplicate-email signup, failed login, and logout redirect behavior — e1e04f1
 
 #### Manual
 
-- [x] 2.2 A new user can register and is taken straight to the private journal shell
-- [x] 2.3 An existing user can log in, log out, and see clear Polish feedback on each auth screen
+- [x] 2.2 A new user can register and is taken straight to the private journal shell — e1e04f1
+- [x] 2.3 An existing user can log in, log out, and see clear Polish feedback on each auth screen — e1e04f1
 
 ### Phase 3: Protected journal shell and redirect flow
 
 #### Automated
 
-- [ ] 3.1 MVC tests verify anonymous redirect to login, successful return to `/journal`, and authenticated rendering of the journal shell
+- [x] 3.1 MVC tests verify anonymous redirect to login, successful return to `/journal`, and authenticated rendering of the journal shell
 
 #### Manual
 
-- [ ] 3.2 Opening `/journal` directly while logged out returns through login back to the private journal shell
-- [ ] 3.3 The empty-state journal presents a clear next step without exposing a broken create-entry flow
+- [x] 3.2 Opening `/journal` directly while logged out returns through login back to the private journal shell
+- [x] 3.3 The empty-state journal presents a clear next step without exposing a broken create-entry flow
 
 ### Phase 4: Auth hardening and verification depth
 

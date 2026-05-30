@@ -13,6 +13,8 @@ public class JournalController {
 		final String userEmail = authentication.getName();
 
 		model.addAttribute("userEmail", userEmail);
+		model.addAttribute("firstEntryCallToAction", "Dodaj pierwszy wpis");
+		model.addAttribute("firstEntryHint", "Tworzenie wpisów odblokujemy w kolejnym kroku.");
 
 		return "journal";
 	}

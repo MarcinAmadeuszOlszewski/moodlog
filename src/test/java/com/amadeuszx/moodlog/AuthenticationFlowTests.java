@@ -13,6 +13,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -127,6 +128,41 @@ class AuthenticationFlowTests {
 				.param("password", "sekret"))
 			.andExpect(status().is3xxRedirection())
 			.andExpect(redirectedUrl("/journal"));
+	}
+
+	@Test
+	@DisplayName("returns an anonymous journal request to the journal shell after login")
+	void anonymousJournalRequestReturnsToJournalAfterLogin() throws Exception {
+		userAccountService.registerUser("ela@example.com", "sekret");
+
+		final MvcResult anonymousJournalResult = mockMvc.perform(get("/journal"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/login"))
+			.andReturn();
+		final MockHttpSession anonymousSession = (MockHttpSession) anonymousJournalResult.getRequest().getSession(false);
+
+		assertNotNull(anonymousSession);
+
+		final MvcResult loginResult = mockMvc.perform(post("/login")
+				.with(csrf())
+				.session(anonymousSession)
+				.param("email", "ela@example.com")
+				.param("password", "sekret"))
+			.andExpect(status().is3xxRedirection())
+			.andReturn();
+		final String redirectedUrl = loginResult.getResponse().getRedirectedUrl();
+		final MockHttpSession authenticatedSession = (MockHttpSession) loginResult.getRequest().getSession(false);
+
+		assertNotNull(redirectedUrl);
+		assertTrue(redirectedUrl.endsWith("/journal"));
+		assertNotNull(authenticatedSession);
+
+		mockMvc.perform(get("/journal").session(authenticatedSession))
+			.andExpect(status().isOk())
+			.andExpect(view().name("journal"))
+			.andExpect(content().string(containsString("Dodaj pierwszy wpis (wkrótce)")))
+			.andExpect(content().string(containsString("Tworzenie wpisów odblokujemy w kolejnym kroku.")))
+			.andExpect(content().string(containsString("ela@example.com")));
 	}
 
 	@Test

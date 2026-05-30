@@ -64,5 +64,8 @@ target/
 !**/src/test/**/build/
 ### VS Cod
 
+# Database runtime files
+data/
+
 # GitHub metadata
 .github/
