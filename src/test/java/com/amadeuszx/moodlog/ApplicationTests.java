@@ -32,6 +32,7 @@ class ApplicationTests {
 
 	@BeforeEach
 	void setUp() {
+		userAccountRepository.deleteAll();
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
 			.apply(springSecurity())
 			.build();

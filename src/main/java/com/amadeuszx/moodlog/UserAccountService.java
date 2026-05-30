@@ -26,6 +26,11 @@ public class UserAccountService implements UserDetailsService {
 
 	public UserAccount registerUser(String email, String rawPassword) {
 		final String normalizedEmail = normalizeEmail(email);
+
+		if (userAccountRepository.existsByEmail(normalizedEmail)) {
+			throw new DuplicateUserAccountException();
+		}
+
 		final Instant now = Instant.now();
 		final UserAccount userAccount = new UserAccount(
 			UUID.randomUUID(),

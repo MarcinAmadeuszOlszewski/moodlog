@@ -2,7 +2,6 @@ package com.amadeuszx.moodlog;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,12 +16,17 @@ public class SecurityConfiguration {
 			.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers("/", "/index", "/login", "/register", "/error", "/v1/random", "/css/**", "/js/**", "/images/**")
 				.permitAll()
-				.requestMatchers("/journal", "/journal/**")
-				.authenticated()
 				.anyRequest()
 				.authenticated()
 			)
-			.formLogin(Customizer.withDefaults())
+			.formLogin(formLogin -> formLogin
+				.loginPage("/login")
+				.loginProcessingUrl("/login")
+				.usernameParameter("email")
+				.defaultSuccessUrl("/journal", false)
+				.failureUrl("/login?error")
+				.permitAll()
+			)
 			.logout(logout -> logout
 				.clearAuthentication(true)
 				.invalidateHttpSession(true)

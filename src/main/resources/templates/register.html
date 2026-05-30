@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Załóż konto | MoodLog</title>
+</head>
+<body>
+	<main>
+		<h1>Załóż konto w MoodLog</h1>
+		<p>Wystarczy adres e-mail i hasło, aby zacząć prowadzić prywatny dziennik.</p>
+
+		<form method="post" th:action="@{/register}" th:object="${registrationForm}">
+			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+			<div>
+				<label for="email">Adres e-mail</label>
+				<input id="email" type="email" th:field="*{email}" autocomplete="email" required>
+				<p th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+			</div>
+
+			<div>
+				<label for="password">Hasło</label>
+				<input id="password" name="password" type="password" autocomplete="new-password" required>
+				<p th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+			</div>
+
+			<button type="submit">Załóż konto</button>
+		</form>
+
+		<p>Masz już konto? <a th:href="@{/login}">Zaloguj się</a>.</p>
+		<p><a th:href="@{/}">Wróć na stronę główną</a></p>
+	</main>
+</body>
+</html>

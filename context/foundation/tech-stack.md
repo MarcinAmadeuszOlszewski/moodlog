@@ -5,7 +5,7 @@ project_name: mood-log
 hints:
   language_family: java
   team_size: solo
-  deployment_target: fly
+  deployment_target: railway
   ci_provider: github-actions
   ci_default_flow: auto-deploy-on-merge
   bootstrapper_confidence: verified
@@ -21,4 +21,4 @@ hints:
 
 ## Why this stack
 
-MoodLog is a small, after-hours web app with private user accounts and a four-week MVP, so the safest path is the registry’s verified Java default. Spring Boot gives a typed, convention-based foundation with mature web, data, and security support in one starter, which keeps solo setup work low and avoids assembling core pieces by hand. Fly is the starter’s default deployment target, and GitHub Actions with auto-deploy on merge matches a lightweight solo delivery flow. The PRD forces auth but not payments, realtime, or background jobs, so the standard Spring path stays aligned with the product without adding stack risk.
+MoodLog is a small, after-hours web app with private user accounts and a four-week MVP, so the safest path is the registry’s verified Java default. Spring Boot gives a typed, convention-based foundation with mature web, data, and security support in one starter, which keeps solo setup work low and avoids assembling core pieces by hand. Railway is the confirmed deployment target because it can build and run the Maven app directly without adding Docker on day one, and GitHub Actions remains the planned lightweight CI path if auto-deploy is added later. The PRD forces auth but not payments, realtime, or background jobs, so the standard Spring path stays aligned with the product without adding stack risk.

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Twój dziennik | MoodLog</title>
+</head>
+<body>
+	<main>
+		<h1>Twój prywatny dziennik</h1>
+		<p th:text="'Zalogowano jako ' + ${userEmail} + '.'"></p>
+		<p>To jest bezpieczna przestrzeń na Twoje wpisy. W kolejnym kroku rozbudujemy pełny widok dziennika.</p>
+
+		<form method="post" th:action="@{/logout}">
+			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+			<button type="submit">Wyloguj się</button>
+		</form>
+
+		<p><a th:href="@{/}">Wróć na stronę główną</a></p>
+	</main>
+</body>
+</html>

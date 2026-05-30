@@ -286,23 +286,23 @@ This change introduces the first persistent schema in the app, so environment-ba
 
 #### Automated
 
-- [x] 1.1 Security, persistence, and MVC dependencies compile and the application test suite passes via `.\mvnw.cmd test`
-- [x] 1.2 The first user-account schema bootstrap succeeds under test configuration without breaking app startup
+- [x] 1.1 Security, persistence, and MVC dependencies compile and the application test suite passes via `.\mvnw.cmd test` — fdc3d9c
+- [x] 1.2 The first user-account schema bootstrap succeeds under test configuration without breaking app startup — fdc3d9c
 
 #### Manual
 
-- [x] 1.3 Anonymous users can still open `/`, while `/journal` is no longer accessible without auth
+- [x] 1.3 Anonymous users can still open `/`, while `/journal` is no longer accessible without auth — fdc3d9c
 
 ### Phase 2: Public login and registration flow
 
 #### Automated
 
-- [ ] 2.1 MVC tests cover public landing, login page, registration page, successful signup, duplicate-email signup, failed login, and logout redirect behavior
+- [x] 2.1 MVC tests cover public landing, login page, registration page, successful signup, duplicate-email signup, failed login, and logout redirect behavior
 
 #### Manual
 
-- [ ] 2.2 A new user can register and is taken straight to the private journal shell
-- [ ] 2.3 An existing user can log in, log out, and see clear Polish feedback on each auth screen
+- [x] 2.2 A new user can register and is taken straight to the private journal shell
+- [x] 2.3 An existing user can log in, log out, and see clear Polish feedback on each auth screen
 
 ### Phase 3: Protected journal shell and redirect flow
 

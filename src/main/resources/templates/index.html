@@ -10,6 +10,12 @@
     <p>
         Witaj! Jesteś dziś <span id="guest-number" th:text="'...'">...</span> gościem! Bravo!
     </p>
+    <p>
+        <a th:href="@{/login}">Zaloguj się</a>
+        lub
+        <a th:href="@{/register}">załóż konto</a>,
+        aby przejść do prywatnego dziennika.
+    </p>
 </main>
 
 <script th:inline="javascript">

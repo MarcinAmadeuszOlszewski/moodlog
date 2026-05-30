@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Zaloguj się | MoodLog</title>
+</head>
+<body>
+	<main>
+		<h1>Zaloguj się do MoodLog</h1>
+		<p>Wróć do swojego prywatnego dziennika albo załóż nowe konto.</p>
+
+		<p th:if="${logoutSuccess}">Wylogowano Cię z MoodLog.</p>
+		<p th:if="${loginError}">Nie udało się zalogować. Sprawdź adres e-mail i hasło.</p>
+
+		<form method="post" th:action="@{/login}">
+			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+			<div>
+				<label for="email">Adres e-mail</label>
+				<input id="email" name="email" type="email" autocomplete="email" required>
+			</div>
+
+			<div>
+				<label for="password">Hasło</label>
+				<input id="password" name="password" type="password" autocomplete="current-password" required>
+			</div>
+
+			<button type="submit">Zaloguj się</button>
+		</form>
+
+		<p>Nie masz jeszcze konta? <a th:href="@{/register}">Załóż konto</a>.</p>
+		<p><a th:href="@{/}">Wróć na stronę główną</a></p>
+	</main>
+</body>
+</html>
