@@ -11,6 +11,7 @@ MoodLog is a Java 21 / Spring Boot 4 web app with Thymeleaf views and a small HT
 - In test classes, declare local variables with Lombok `val` instead of explicit types or `var`; follow the pattern `val result = service.process(input);`.
 - Order class-level annotations as Spring annotations first, Lombok annotations second, and other annotations last; keep alphabetical order inside each group.
 - Preserve Polish UI copy and UTF-8 behavior in `@src/main/resources/templates/index.html` and `@src/main/resources/application.properties`. If endpoint text changes, update the MVC test expectations.
+- Whenever possible use Lombok annotations to minimize boilerplate (especially for constructors, getters, and builders, logger declarations)
 
 ## Project structure & commands
 

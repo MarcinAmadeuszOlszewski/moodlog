@@ -1,0 +1,286 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< com.example:mood-log >------------------------
+[INFO] Building MoodLog 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ mood-log ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 7 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ mood-log ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ mood-log ---
+[INFO] Copying 1 resource from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ mood-log ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.5:test (default-test) @ mood-log ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.amadeuszx.moodlog.ApplicationTests
+22:12:24.841 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.amadeuszx.moodlog.ApplicationTests]: ApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+22:12:25.127 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.amadeuszx.moodlog.Application for test class com.amadeuszx.moodlog.ApplicationTests
+22:12:25.248 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.amadeuszx.moodlog.ApplicationTests]: ApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+22:12:25.250 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.amadeuszx.moodlog.Application for test class com.amadeuszx.moodlog.ApplicationTests
+22:12:25.388 [main] INFO org.springframework.boot.devtools.restart.RestartApplicationListener -- Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.6)
+
+2026-05-31T22:12:25.706+02:00  INFO 5136 --- [           main] com.amadeuszx.moodlog.ApplicationTests   : Starting ApplicationTests using Java 26 with PID 5136 (started by m.olszewski in C:\workshop\10xDevV3)
+2026-05-31T22:12:25.707+02:00  INFO 5136 --- [           main] com.amadeuszx.moodlog.ApplicationTests   : No active profile set, falling back to 1 default profile: "default"
+2026-05-31T22:12:26.940+02:00  INFO 5136 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-31T22:12:27.146+02:00  INFO 5136 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 188 ms. Found 2 JPA repository interfaces.
+2026-05-31T22:12:28.369+02:00  INFO 5136 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-31T22:12:28.814+02:00  INFO 5136 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:moodlog-test user=SA
+2026-05-31T22:12:28.814+02:00  INFO 5136 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-31T22:12:28.862+02:00  INFO 5136 --- [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:h2:mem:moodlog-test (H2 2.4)
+2026-05-31T22:12:28.881+02:00  WARN 5136 --- [           main] o.f.c.internal.database.base.Database    : Using H2 2.4.240 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.
+2026-05-31T22:12:28.926+02:00  INFO 5136 --- [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Schema history table "PUBLIC"."flyway_schema_history" does not exist yet
+2026-05-31T22:12:28.926+02:00  INFO 5136 --- [           main] o.f.core.internal.command.DbValidate     : Successfully validated 2 migrations (execution time 00:00.025s)
+2026-05-31T22:12:28.946+02:00  INFO 5136 --- [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "PUBLIC"."flyway_schema_history" ...
+2026-05-31T22:12:29.020+02:00  INFO 5136 --- [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "PUBLIC": << Empty Schema >>
+2026-05-31T22:12:29.037+02:00  INFO 5136 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "1 - create user accounts"
+2026-05-31T22:12:29.065+02:00  INFO 5136 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "2 - create journal entries"
+2026-05-31T22:12:29.081+02:00  INFO 5136 --- [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 2 migrations to schema "PUBLIC", now at version v2 (execution time 00:00.019s)
+2026-05-31T22:12:29.209+02:00  INFO 5136 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-05-31T22:12:29.284+02:00  INFO 5136 --- [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.12.Final
+2026-05-31T22:12:30.068+02:00  INFO 5136 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-31T22:12:30.226+02:00  INFO 5136 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:moodlog-test]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: MOODLOG-TEST/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-31T22:12:31.695+02:00  INFO 5136 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-31T22:12:31.720+02:00  INFO 5136 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-31T22:12:31.871+02:00  INFO 5136 --- [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-31T22:12:32.136+02:00  INFO 5136 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name userAccountService
+2026-05-31T22:12:32.214+02:00  WARN 5136 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-31T22:12:32.555+02:00  INFO 5136 --- [           main] o.s.b.w.a.WelcomePageHandlerMapping      : Adding welcome page template: index
+2026-05-31T22:12:33.755+02:00  INFO 5136 --- [           main] com.amadeuszx.moodlog.ApplicationTests   : Started ApplicationTests in 8.387 seconds (process running for 10.269)
+2026-05-31T22:12:34.907+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:34.907+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:34.907+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-31T22:12:35.386+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:35.393+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:35.394+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2026-05-31T22:12:35.556+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:35.556+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:35.556+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-31T22:12:35.577+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:35.578+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:35.579+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2026-05-31T22:12:36.096+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:36.096+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:36.098+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2026-05-31T22:12:36.121+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:36.122+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:36.124+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2026-05-31T22:12:36.158+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:36.159+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:36.160+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2026-05-31T22:12:36.175+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:36.175+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:36.177+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 11.70 s -- in com.amadeuszx.moodlog.ApplicationTests
+[INFO] Running com.amadeuszx.moodlog.AuthenticationFlowTests
+2026-05-31T22:12:36.243+02:00  INFO 5136 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.amadeuszx.moodlog.AuthenticationFlowTests]: AuthenticationFlowTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-05-31T22:12:36.247+02:00  INFO 5136 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.amadeuszx.moodlog.Application for test class com.amadeuszx.moodlog.AuthenticationFlowTests
+2026-05-31T22:12:36.250+02:00  INFO 5136 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.amadeuszx.moodlog.AuthenticationFlowTests]: AuthenticationFlowTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-05-31T22:12:36.253+02:00  INFO 5136 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.amadeuszx.moodlog.Application for test class com.amadeuszx.moodlog.AuthenticationFlowTests
+2026-05-31T22:12:36.273+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:36.274+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:36.276+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2026-05-31T22:12:36.734+02:00  INFO 5136 --- [           main] c.amadeuszx.moodlog.UserAccountService   : auth.registration.success identifier=email-hash:71701ff2fd84
+2026-05-31T22:12:36.883+02:00  WARN 5136 --- [           main] c.amadeuszx.moodlog.UserAccountService   : auth.registration.failure identifier=email-hash:71701ff2fd84 reason=DUPLICATE_EMAIL
+2026-05-31T22:12:37.024+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:37.024+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:37.025+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2026-05-31T22:12:37.146+02:00  INFO 5136 --- [           main] c.amadeuszx.moodlog.UserAccountService   : auth.registration.success identifier=email-hash:71701ff2fd84
+2026-05-31T22:12:37.411+02:00  INFO 5136 --- [           main] c.a.moodlog.SecurityConfiguration        : auth.login.success identifier=email-hash:71701ff2fd84
+2026-05-31T22:12:37.418+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:37.418+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:37.418+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-31T22:12:37.598+02:00  INFO 5136 --- [           main] c.amadeuszx.moodlog.UserAccountService   : auth.registration.success identifier=email-hash:71701ff2fd84
+2026-05-31T22:12:37.804+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:37.804+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:37.806+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2026-05-31T22:12:37.896+02:00  INFO 5136 --- [           main] c.amadeuszx.moodlog.UserAccountService   : auth.registration.success identifier=email-hash:71701ff2fd84
+2026-05-31T22:12:38.021+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:38.021+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:38.023+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2026-05-31T22:12:38.121+02:00  INFO 5136 --- [           main] c.amadeuszx.moodlog.UserAccountService   : auth.registration.success identifier=email-hash:71701ff2fd84
+2026-05-31T22:12:38.206+02:00  WARN 5136 --- [           main] c.a.moodlog.SecurityConfiguration        : auth.login.failure identifier=email-hash:71701ff2fd84 reason=BadCredentialsException
+2026-05-31T22:12:38.206+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:38.206+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:38.206+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-31T22:12:38.246+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:38.246+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:38.256+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 10 ms
+2026-05-31T22:12:38.264+02:00  WARN 5136 --- [           main] c.amadeuszx.moodlog.UserAccountService   : auth.registration.failure identifier=email-hash:71701ff2fd84 reason=PASSWORD_TOO_SHORT minLength=6
+2026-05-31T22:12:38.290+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:38.290+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:38.292+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2026-05-31T22:12:38.301+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:38.301+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:38.310+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 9 ms
+2026-05-31T22:12:38.397+02:00  INFO 5136 --- [           main] c.amadeuszx.moodlog.UserAccountService   : auth.registration.success identifier=email-hash:71701ff2fd84
+2026-05-31T22:12:38.500+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:38.500+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:38.511+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 11 ms
+2026-05-31T22:12:38.538+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:38.538+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:38.540+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2026-05-31T22:12:38.639+02:00  INFO 5136 --- [           main] c.amadeuszx.moodlog.UserAccountService   : auth.registration.success identifier=email-hash:71701ff2fd84
+2026-05-31T22:12:38.731+02:00  WARN 5136 --- [           main] c.a.moodlog.SecurityConfiguration        : auth.login.failure identifier=email-hash:71701ff2fd84 reason=BadCredentialsException
+2026-05-31T22:12:38.747+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:38.747+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:38.747+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-31T22:12:38.860+02:00  INFO 5136 --- [           main] c.amadeuszx.moodlog.UserAccountService   : auth.registration.success identifier=email-hash:71701ff2fd84
+2026-05-31T22:12:38.989+02:00  INFO 5136 --- [           main] c.a.moodlog.SecurityConfiguration        : auth.login.success identifier=email-hash:71701ff2fd84
+2026-05-31T22:12:38.993+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:38.993+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:38.999+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 6 ms
+2026-05-31T22:12:39.118+02:00  INFO 5136 --- [           main] c.amadeuszx.moodlog.UserAccountService   : auth.registration.success identifier=email-hash:71701ff2fd84
+2026-05-31T22:12:39.177+02:00  INFO 5136 --- [           main] c.a.moodlog.SecurityConfiguration        : auth.login.success identifier=email-hash:71701ff2fd84
+2026-05-31T22:12:39.202+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:39.202+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:39.202+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-31T22:12:39.321+02:00  INFO 5136 --- [           main] c.amadeuszx.moodlog.UserAccountService   : auth.registration.success identifier=email-hash:71701ff2fd84
+2026-05-31T22:12:39.451+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:39.451+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:39.451+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-31T22:12:39.554+02:00  WARN 5136 --- [           main] c.a.moodlog.SecurityConfiguration        : auth.login.failure identifier=email-hash:cdac2501b7a8 reason=BadCredentialsException
+[INFO] Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.322 s -- in com.amadeuszx.moodlog.AuthenticationFlowTests
+[INFO] Running com.amadeuszx.moodlog.JournalEntryRepositoryTests
+2026-05-31T22:12:39.566+02:00  INFO 5136 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.amadeuszx.moodlog.JournalEntryRepositoryTests]: JournalEntryRepositoryTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-05-31T22:12:39.569+02:00  INFO 5136 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.amadeuszx.moodlog.Application for test class com.amadeuszx.moodlog.JournalEntryRepositoryTests
+2026-05-31T22:12:39.570+02:00  INFO 5136 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.amadeuszx.moodlog.JournalEntryRepositoryTests]: JournalEntryRepositoryTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-05-31T22:12:39.572+02:00  INFO 5136 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.amadeuszx.moodlog.Application for test class com.amadeuszx.moodlog.JournalEntryRepositoryTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.148 s -- in com.amadeuszx.moodlog.JournalEntryRepositoryTests
+[INFO] Running com.amadeuszx.moodlog.JournalEntryServiceTests
+2026-05-31T22:12:39.735+02:00  INFO 5136 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.amadeuszx.moodlog.JournalEntryServiceTests]: JournalEntryServiceTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-05-31T22:12:39.747+02:00  INFO 5136 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.amadeuszx.moodlog.Application for test class com.amadeuszx.moodlog.JournalEntryServiceTests
+2026-05-31T22:12:39.749+02:00  INFO 5136 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.amadeuszx.moodlog.JournalEntryServiceTests]: JournalEntryServiceTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-05-31T22:12:39.752+02:00  INFO 5136 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.amadeuszx.moodlog.Application for test class com.amadeuszx.moodlog.JournalEntryServiceTests
+2026-05-31T22:12:39.765+02:00  INFO 5136 --- [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.6)
+
+2026-05-31T22:12:39.844+02:00  INFO 5136 --- [           main] c.a.moodlog.JournalEntryServiceTests     : Starting JournalEntryServiceTests using Java 26 with PID 5136 (started by m.olszewski in C:\workshop\10xDevV3)
+2026-05-31T22:12:39.845+02:00  INFO 5136 --- [           main] c.a.moodlog.JournalEntryServiceTests     : No active profile set, falling back to 1 default profile: "default"
+2026-05-31T22:12:40.302+02:00  INFO 5136 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-31T22:12:40.325+02:00  INFO 5136 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 19 ms. Found 2 JPA repository interfaces.
+2026-05-31T22:12:40.950+02:00  INFO 5136 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-05-31T22:12:40.954+02:00  INFO 5136 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection conn10: url=jdbc:h2:mem:moodlog-test user=SA
+2026-05-31T22:12:40.954+02:00  INFO 5136 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-05-31T22:12:40.956+02:00  INFO 5136 --- [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:h2:mem:moodlog-test (H2 2.4)
+2026-05-31T22:12:40.960+02:00  WARN 5136 --- [           main] o.f.c.internal.database.base.Database    : Using H2 2.4.240 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.
+2026-05-31T22:12:40.986+02:00  INFO 5136 --- [           main] o.f.core.internal.command.DbValidate     : Successfully validated 2 migrations (execution time 00:00.015s)
+2026-05-31T22:12:40.993+02:00  INFO 5136 --- [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "PUBLIC": 2
+2026-05-31T22:12:40.993+02:00  INFO 5136 --- [           main] o.f.core.internal.command.DbMigrate      : Schema "PUBLIC" is up to date. No migration necessary.
+2026-05-31T22:12:41.031+02:00  INFO 5136 --- [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-05-31T22:12:41.083+02:00  INFO 5136 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-31T22:12:41.083+02:00  INFO 5136 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:moodlog-test]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: MOODLOG-TEST/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-31T22:12:41.185+02:00  INFO 5136 --- [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-31T22:12:41.185+02:00  INFO 5136 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-31T22:12:41.237+02:00  INFO 5136 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name userAccountService
+2026-05-31T22:12:41.292+02:00  WARN 5136 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-31T22:12:41.436+02:00  INFO 5136 --- [           main] o.s.b.w.a.WelcomePageHandlerMapping      : Adding welcome page template: index
+2026-05-31T22:12:41.704+02:00  INFO 5136 --- [           main] c.a.moodlog.JournalEntryServiceTests     : Started JournalEntryServiceTests in 1.939 seconds (process running for 18.22)
+2026-05-31T22:12:41.795+02:00  INFO 5136 --- [           main] c.amadeuszx.moodlog.JournalEntryService  : journal.classification.success identifier=email-hash:71701ff2fd84 provider=stub model=stub-v1
+2026-05-31T22:12:41.828+02:00  INFO 5136 --- [           main] c.amadeuszx.moodlog.JournalEntryService  : journal.classification.success identifier=email-hash:71701ff2fd84 provider=openai model=gpt-4o-mini
+2026-05-31T22:12:41.904+02:00  WARN 5136 --- [           main] c.amadeuszx.moodlog.JournalEntryService  : journal.classification.failure identifier=email-hash:71701ff2fd84 provider=unknown model=unknown reason=INVALID_RESPONSE
+2026-05-31T22:12:41.929+02:00  WARN 5136 --- [           main] c.amadeuszx.moodlog.JournalEntryService  : journal.classification.failure identifier=email-hash:71701ff2fd84 provider=unknown model=unknown reason=INVALID_RESPONSE
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.208 s -- in com.amadeuszx.moodlog.JournalEntryServiceTests
+[INFO] Running com.amadeuszx.moodlog.JournalFlowTests
+2026-05-31T22:12:41.944+02:00  INFO 5136 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.amadeuszx.moodlog.JournalFlowTests]: JournalFlowTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-05-31T22:12:41.946+02:00  INFO 5136 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.amadeuszx.moodlog.Application for test class com.amadeuszx.moodlog.JournalFlowTests
+2026-05-31T22:12:41.950+02:00  INFO 5136 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.amadeuszx.moodlog.JournalFlowTests]: JournalFlowTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-05-31T22:12:41.952+02:00  INFO 5136 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.amadeuszx.moodlog.Application for test class com.amadeuszx.moodlog.JournalFlowTests
+2026-05-31T22:12:41.974+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:41.974+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:41.974+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-31T22:12:41.993+02:00  WARN 5136 --- [           main] c.amadeuszx.moodlog.JournalEntryService  : journal.classification.failure identifier=email-hash:71701ff2fd84 provider=openai model=gpt-4o-mini reason=PROVIDER_ERROR
+2026-05-31T22:12:42.078+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:42.078+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:42.081+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 3 ms
+2026-05-31T22:12:42.088+02:00  WARN 5136 --- [           main] c.amadeuszx.moodlog.JournalEntryService  : journal.classification.failure identifier=email-hash:71701ff2fd84 provider=unknown model=unknown reason=INVALID_RESPONSE
+2026-05-31T22:12:42.112+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:42.112+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:42.112+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-31T22:12:42.127+02:00  INFO 5136 --- [           main] c.amadeuszx.moodlog.JournalEntryService  : journal.classification.success identifier=email-hash:71701ff2fd84 provider=stub model=stub-v1
+2026-05-31T22:12:42.181+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:42.181+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:42.181+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-31T22:12:42.233+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:42.233+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:42.233+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-31T22:12:42.284+02:00  INFO 5136 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-31T22:12:42.284+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-31T22:12:42.286+02:00  INFO 5136 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.378 s -- in com.amadeuszx.moodlog.JournalFlowTests
+[INFO] Running com.amadeuszx.moodlog.OpenAiMoodClassifierTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.959 s -- in com.amadeuszx.moodlog.OpenAiMoodClassifierTests
+[INFO] Running com.amadeuszx.moodlog.UserAccountRepositoryTests
+2026-05-31T22:12:43.314+02:00  INFO 5136 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.amadeuszx.moodlog.UserAccountRepositoryTests]: UserAccountRepositoryTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-05-31T22:12:43.335+02:00  INFO 5136 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.amadeuszx.moodlog.Application for test class com.amadeuszx.moodlog.UserAccountRepositoryTests
+2026-05-31T22:12:43.346+02:00  INFO 5136 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.amadeuszx.moodlog.UserAccountRepositoryTests]: UserAccountRepositoryTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-05-31T22:12:43.348+02:00  INFO 5136 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.amadeuszx.moodlog.Application for test class com.amadeuszx.moodlog.UserAccountRepositoryTests
+2026-05-31T22:12:43.433+02:00  WARN 5136 --- [           main] org.hibernate.orm.jdbc.error             : HHH000247: ErrorCode: 23505, SQLState: 23505
+2026-05-31T22:12:43.433+02:00  WARN 5136 --- [           main] org.hibernate.orm.jdbc.error             : Naruszenie ograniczenia Klucza G?≤wnego lub Indeksu Unikalnego: "PUBLIC.UK_USER_ACCOUNTS_EMAIL INDEX PUBLIC.UK_USER_ACCOUNTS_EMAIL_INDEX_C ON PUBLIC.USER_ACCOUNTS(EMAIL NULLS FIRST) VALUES ( /* 29 */ 'ela@example.com' )"
+Unique index or primary key violation: "PUBLIC.UK_USER_ACCOUNTS_EMAIL INDEX PUBLIC.UK_USER_ACCOUNTS_EMAIL_INDEX_C ON PUBLIC.USER_ACCOUNTS(EMAIL NULLS FIRST) VALUES ( /* 29 */ 'ela@example.com' )"; SQL statement:
+insert into user_accounts (active,created_at,email,password_hash,updated_at,id) values (?,?,?,?,?,?) [23505-240]
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.163 s -- in com.amadeuszx.moodlog.UserAccountRepositoryTests
+[INFO] Running com.amadeuszx.moodlog.UserAccountServiceTests
+2026-05-31T22:12:43.810+02:00  WARN 5136 --- [           main] c.amadeuszx.moodlog.UserAccountService   : auth.registration.failure identifier=email-hash:71701ff2fd84 reason=DUPLICATE_EMAIL
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.341 s -- in com.amadeuszx.moodlog.UserAccountServiceTests
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 43, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  28.387 s
+[INFO] Finished at: 2026-05-31T22:12:43+02:00
+[INFO] ------------------------------------------------------------------------
