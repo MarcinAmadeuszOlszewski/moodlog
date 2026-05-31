@@ -28,10 +28,14 @@ class ApplicationTests {
 	@Autowired
 	private UserAccountRepository userAccountRepository;
 
+	@Autowired
+	private JournalEntryRepository journalEntryRepository;
+
 	private MockMvc mockMvc;
 
 	@BeforeEach
 	void setUp() {
+		journalEntryRepository.deleteAll();
 		userAccountRepository.deleteAll();
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
 			.apply(springSecurity())
@@ -77,6 +81,12 @@ class ApplicationTests {
 	@DisplayName("boots the user account schema under test configuration")
 	void userAccountSchemaBootstrapsUnderTestConfiguration() {
 		assertEquals(0L, userAccountRepository.count());
+	}
+
+	@Test
+	@DisplayName("boots the journal entry schema under test configuration")
+	void journalEntrySchemaBootstrapsUnderTestConfiguration() {
+		assertEquals(0L, journalEntryRepository.count());
 	}
 
 	@Test

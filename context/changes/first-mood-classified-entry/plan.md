@@ -357,13 +357,13 @@ This change is additive: existing users remain valid, and the new `journal_entri
 
 #### Automated
 
-- [ ] 1.1 Flyway boots the journal entry schema under the test configuration
-- [ ] 1.2 Repository tests prove newest-first ordering and user scoping
+- [x] 1.1 Flyway boots the journal entry schema under the test configuration
+- [x] 1.2 Repository tests prove newest-first ordering and user scoping
 
 #### Manual
 
-- [ ] 1.3 The application still boots with `/journal` behind authentication after the new migration is added
-- [ ] 1.4 Multiple entries can exist for one account conceptually without requiring any history UI beyond the recent list
+- [x] 1.3 The application still boots with `/journal` behind authentication after the new migration is added
+- [x] 1.4 Multiple entries can exist for one account conceptually without requiring any history UI beyond the recent list
 
 ### Phase 2: Classification seam and application service
 
