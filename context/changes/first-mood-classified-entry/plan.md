@@ -394,10 +394,10 @@ This change is additive: existing users remain valid, and the new `journal_entri
 
 #### Automated
 
-- [x] 4.1 Full regression passes for the application and journal feature set
-- [x] 4.2 Logging and failure-path tests prove that journal text is never emitted to logs
+- [x] 4.1 Full regression passes for the application and journal feature set — 079b817
+- [x] 4.2 Logging and failure-path tests prove that journal text is never emitted to logs — 079b817
 
 #### Manual
 
-- [x] 4.3 Running the app in stub mode allows end-to-end journaling without external credentials
-- [x] 4.4 Running the app with hosted-provider settings shows real classification without exposing raw entry text in logs
+- [x] 4.3 Running the app in stub mode allows end-to-end journaling without external credentials — 079b817
+- [x] 4.4 Running the app with hosted-provider settings shows real classification without exposing raw entry text in logs — 079b817
