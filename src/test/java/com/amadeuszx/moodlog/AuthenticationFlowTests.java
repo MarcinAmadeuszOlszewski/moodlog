@@ -216,8 +216,8 @@ class AuthenticationFlowTests {
 		mockMvc.perform(get("/journal").session(authenticatedSession))
 			.andExpect(status().isOk())
 			.andExpect(view().name("journal"))
-			.andExpect(content().string(containsString("Dodaj pierwszy wpis (wkrótce)")))
-			.andExpect(content().string(containsString("Tworzenie wpisów odblokujemy w kolejnym kroku.")))
+			.andExpect(content().string(containsString("Jak się dziś czujesz?")))
+			.andExpect(content().string(containsString("Nie masz jeszcze zapisanych wpisów.")))
 			.andExpect(content().string(containsString("ela@example.com")));
 	}
 

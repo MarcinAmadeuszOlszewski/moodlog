@@ -3,18 +3,40 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Twój dziennik | MoodLog</title>
+	<title>Prywatny dziennik | MoodLog</title>
 	<link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
 </head>
 <body>
 	<main>
 		<h1>Twój prywatny dziennik</h1>
-		<p th:text="'Zalogowano jako ' + ${userEmail} + '.'"></p>
-		<p>To jest bezpieczna przestrzeń na Twoje wpisy. Zacznij od pierwszego wpisu, gdy ta funkcja będzie gotowa.</p>
-		<section aria-labelledby="journal-empty-state-heading">
-			<h2 id="journal-empty-state-heading">Jeszcze nie masz wpisów</h2>
-			<p th:text="${firstEntryHint}"></p>
-			<button type="button" disabled aria-disabled="true" th:text="${firstEntryCallToAction + ' (wkrótce)'}"></button>
+		<p>Zalogowano jako: <strong th:text="${userEmail}">user@example.com</strong>.</p>
+		<p>Zapisz krótki wpis, a MoodLog przypisze do niego dominujący nastrój.</p>
+
+		<form method="post" th:action="@{/journal}" th:object="${journalEntryForm}">
+			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+			<div>
+				<label for="content">Jak się dziś czujesz?</label>
+				<textarea id="content" th:field="*{content}" rows="8" th:attr="maxlength=${journalMaxContentLength}" required></textarea>
+				<p th:text="${'Maksymalnie ' + journalMaxContentLength + ' znaków.'}">Maksymalnie 2000 znaków.</p>
+				<p th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></p>
+				<p th:if="${classificationError != null}" th:text="${classificationError}"></p>
+			</div>
+
+			<button type="submit">Zapisz wpis</button>
+		</form>
+
+		<section>
+			<h2>Najnowsze wpisy</h2>
+			<p th:if="${#lists.isEmpty(recentEntries)}">Nie masz jeszcze zapisanych wpisów.</p>
+			<p th:if="${#lists.isEmpty(recentEntries)}">Dodaj pierwszy wpis, aby zobaczyć historię nastrojów.</p>
+
+			<ul th:if="${!#lists.isEmpty(recentEntries)}">
+				<li th:each="entry : ${recentEntries}">
+					<p th:text="${entry.excerpt}">Treść wpisu</p>
+					<p th:text="${entry.moodLabel + ' — ' + entry.moodScore + '/100'}">Spokój — 73/100</p>
+				</li>
+			</ul>
 		</section>
 
 		<form method="post" th:action="@{/logout}">

@@ -369,26 +369,26 @@ This change is additive: existing users remain valid, and the new `journal_entri
 
 #### Automated
 
-- [x] 2.1 Service tests cover successful writes, blocking failures, and invalid classification payloads
-- [x] 2.2 The application context boots with stub classifier defaults and no hosted credentials
+- [x] 2.1 Service tests cover successful writes, blocking failures, and invalid classification payloads — 604d6af
+- [x] 2.2 The application context boots with stub classifier defaults and no hosted credentials — 604d6af
 
 #### Manual
 
-- [x] 2.3 The application can boot locally with stub classification enabled and no provider secret configured
-- [x] 2.4 Switching to hosted-provider mode requires only configuration changes, not controller or template edits
+- [x] 2.3 The application can boot locally with stub classification enabled and no provider secret configured — 604d6af
+- [x] 2.4 Switching to hosted-provider mode requires only configuration changes, not controller or template edits — 604d6af
 
 ### Phase 3: Journal write flow and recent-entry UI
 
 #### Automated
 
-- [ ] 3.1 MVC integration tests cover success, validation failure, classification failure, and recent-entry rendering
-- [ ] 3.2 Anonymous journal requests still redirect to login while authenticated requests render the new journal page
+- [x] 3.1 MVC integration tests cover success, validation failure, classification failure, and recent-entry rendering
+- [x] 3.2 Anonymous journal requests still redirect to login while authenticated requests render the new journal page
 
 #### Manual
 
-- [ ] 3.3 A logged-in user can submit several entries and sees them newest-first in the recent list on `/journal`
-- [ ] 3.4 A classification failure returns to the journal page with the draft preserved and no newly inserted entry
-- [ ] 3.5 One signed-in user never sees another user's entries in the UI
+- [x] 3.3 A logged-in user can submit several entries and sees them newest-first in the recent list on `/journal`
+- [x] 3.4 A classification failure returns to the journal page with the draft preserved and no newly inserted entry
+- [x] 3.5 One signed-in user never sees another user's entries in the UI
 
 ### Phase 4: Operational hardening and regression coverage
 
