@@ -13,9 +13,11 @@ import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatModel.ResponseFormat;
 import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.util.StringUtils;
 
 public class OpenAiMoodClassifier implements MoodClassifier {
 
+	private static final String PROVIDER_NAME = "openai";
 	private static final String USER_SAFE_ERROR_MESSAGE = "Nie udało się sklasyfikować wpisu.";
 
 	private final OpenAiChatModel openAiChatModel;
@@ -40,21 +42,28 @@ public class OpenAiMoodClassifier implements MoodClassifier {
 			.build();
 		final Prompt prompt = new Prompt(buildPrompt(entryText), chatOptions);
 		final ChatResponse response = callWithinTimeout(prompt);
-		final String responseText = response.getResult().getOutput().getText();
+		final String responseText = extractResponseText(response);
 
 		try {
 			final OpenAiMoodResponse openAiMoodResponse = outputConverter.convert(responseText);
 
+			if (openAiMoodResponse == null) {
+				throw buildFailureException(MoodClassificationFailureReason.INVALID_RESPONSE);
+			}
+
 			return new MoodClassification(
 				openAiMoodResponse.moodTag(),
 				openAiMoodResponse.moodScore(),
-				"openai",
+				PROVIDER_NAME,
 				defaultModel,
 				Instant.now()
 			);
 		}
-		catch (IllegalArgumentException exception) {
-			throw new MoodClassificationFailedException(USER_SAFE_ERROR_MESSAGE, exception);
+		catch (MoodClassificationFailedException exception) {
+			throw exception;
+		}
+		catch (RuntimeException exception) {
+			throw buildFailureException(MoodClassificationFailureReason.INVALID_RESPONSE, exception);
 		}
 	}
 
@@ -67,17 +76,39 @@ public class OpenAiMoodClassifier implements MoodClassifier {
 		catch (InterruptedException exception) {
 			responseFuture.cancel(true);
 			Thread.currentThread().interrupt();
-			throw new MoodClassificationFailedException(USER_SAFE_ERROR_MESSAGE, exception);
+			throw buildFailureException(MoodClassificationFailureReason.PROVIDER_ERROR, exception);
 		}
 		catch (ExecutionException exception) {
 			responseFuture.cancel(true);
 			final Throwable cause = exception.getCause() == null ? exception : exception.getCause();
-			throw new MoodClassificationFailedException(USER_SAFE_ERROR_MESSAGE, cause);
+			throw buildFailureException(MoodClassificationFailureReason.PROVIDER_ERROR, cause);
 		}
 		catch (TimeoutException exception) {
 			responseFuture.cancel(true);
-			throw new MoodClassificationFailedException(USER_SAFE_ERROR_MESSAGE, exception);
+			throw buildFailureException(MoodClassificationFailureReason.PROVIDER_TIMEOUT, exception);
 		}
+	}
+
+	private MoodClassificationFailedException buildFailureException(MoodClassificationFailureReason reason) {
+		return new MoodClassificationFailedException(USER_SAFE_ERROR_MESSAGE, reason, PROVIDER_NAME, defaultModel);
+	}
+
+	private MoodClassificationFailedException buildFailureException(MoodClassificationFailureReason reason, Throwable cause) {
+		return new MoodClassificationFailedException(USER_SAFE_ERROR_MESSAGE, reason, PROVIDER_NAME, defaultModel, cause);
+	}
+
+	private String extractResponseText(ChatResponse response) {
+		if (response == null || response.getResult() == null || response.getResult().getOutput() == null) {
+			throw buildFailureException(MoodClassificationFailureReason.INVALID_RESPONSE);
+		}
+
+		final String responseText = response.getResult().getOutput().getText();
+
+		if (!StringUtils.hasText(responseText)) {
+			throw buildFailureException(MoodClassificationFailureReason.INVALID_RESPONSE);
+		}
+
+		return responseText;
 	}
 
 	private String buildPrompt(String entryText) {

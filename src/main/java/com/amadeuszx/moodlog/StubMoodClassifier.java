@@ -7,6 +7,10 @@ import org.springframework.util.StringUtils;
 
 public class StubMoodClassifier implements MoodClassifier {
 
+	private static final String MODEL_NAME = "stub-v1";
+	private static final String PROVIDER_NAME = "stub";
+	private static final String USER_SAFE_ERROR_MESSAGE = "Nie udało się sklasyfikować wpisu.";
+
 	@Override
 	public MoodClassification classify(String entryText) {
 		final String normalizedEntryText = normalizeEntryText(entryText);
@@ -16,15 +20,20 @@ public class StubMoodClassifier implements MoodClassifier {
 		return new MoodClassification(
 			moodTag,
 			moodScore,
-			"stub",
-			"stub-v1",
+			PROVIDER_NAME,
+			MODEL_NAME,
 			Instant.now()
 		);
 	}
 
 	private String normalizeEntryText(String entryText) {
 		if (!StringUtils.hasText(entryText)) {
-			throw new MoodClassificationFailedException("Nie udało się sklasyfikować wpisu.");
+			throw new MoodClassificationFailedException(
+				USER_SAFE_ERROR_MESSAGE,
+				MoodClassificationFailureReason.INVALID_INPUT,
+				PROVIDER_NAME,
+				MODEL_NAME
+			);
 		}
 
 		return entryText.toLowerCase(Locale.ROOT);

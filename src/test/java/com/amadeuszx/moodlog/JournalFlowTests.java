@@ -8,8 +8,11 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @SpringBootTest
+@ExtendWith(OutputCaptureExtension.class)
 class JournalFlowTests {
 
 	@Autowired
@@ -138,6 +142,36 @@ class JournalFlowTests {
 			.andExpect(content().string(containsString(entryText)));
 
 		assertEquals(0L, journalEntryRepository.count());
+	}
+
+	@Test
+	@DisplayName("does not expose journal text in logs when classification fails")
+	void classificationFailureDoesNotExposeJournalTextInLogs(CapturedOutput output) throws Exception {
+		val owner = createUserAccount("ela@example.com");
+		val entryText = "To jest prywatny wpis, który nie może trafić do logów.";
+
+		given(moodClassifier.classify(entryText))
+			.willThrow(new MoodClassificationFailedException(
+				"Nie udało się sklasyfikować wpisu.",
+				MoodClassificationFailureReason.PROVIDER_ERROR,
+				"openai",
+				"gpt-4o-mini",
+				new IllegalStateException("provider raw output: " + entryText)
+			));
+
+		mockMvc.perform(post("/journal")
+				.with(user(owner.getEmail()).roles("USER"))
+				.with(csrf())
+				.param("content", entryText))
+			.andExpect(status().isOk())
+			.andExpect(view().name("journal"))
+			.andExpect(content().string(containsString("Nie udało się sklasyfikować wpisu.")));
+
+		assertTrue(output.getOut().contains("journal.classification.failure identifier=email-hash:"));
+		assertTrue(output.getOut().contains("provider=openai"));
+		assertTrue(output.getOut().contains("model=gpt-4o-mini"));
+		assertTrue(output.getOut().contains("reason=PROVIDER_ERROR"));
+		assertFalse(output.getOut().contains(entryText));
 	}
 
 	@Test

@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -30,6 +31,9 @@ class ApplicationTests {
 
 	@Autowired
 	private JournalEntryRepository journalEntryRepository;
+
+	@Autowired
+	private MoodClassifier moodClassifier;
 
 	private MockMvc mockMvc;
 
@@ -87,6 +91,12 @@ class ApplicationTests {
 	@DisplayName("boots the journal entry schema under test configuration")
 	void journalEntrySchemaBootstrapsUnderTestConfiguration() {
 		assertEquals(0L, journalEntryRepository.count());
+	}
+
+	@Test
+	@DisplayName("wires the stub classifier under test configuration")
+	void testConfigurationUsesStubMoodClassifier() {
+		assertTrue(moodClassifier instanceof StubMoodClassifier);
 	}
 
 	@Test

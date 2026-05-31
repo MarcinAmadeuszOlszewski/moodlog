@@ -8,15 +8,21 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
+@ExtendWith(OutputCaptureExtension.class)
 class JournalEntryServiceTests {
 
 	@Autowired
@@ -56,6 +62,24 @@ class JournalEntryServiceTests {
 		assertEquals("stub", savedEntry.getClassifierProvider());
 		assertEquals("stub-v1", savedEntry.getClassifierModel());
 		assertEquals(classifiedAt, savedEntry.getClassifiedAt());
+	}
+
+	@Test
+	@DisplayName("logs classification success without exposing the entry text")
+	void logsClassificationSuccessWithoutExposingTheEntryText(CapturedOutput output) {
+		val owner = createUserAccount("ela@example.com");
+		val entryText = "To jest prywatny wpis o spokojnym spacerze nad rzeką.";
+		val classifiedAt = Instant.parse("2026-05-31T09:30:00Z");
+		val expectedClassification = new MoodClassification(MoodTag.CALM, 74, "openai", "gpt-4o-mini", classifiedAt);
+
+		given(moodClassifier.classify(entryText)).willReturn(expectedClassification);
+
+		journalEntryService.saveEntry(owner.getEmail(), entryText);
+
+		assertTrue(output.getOut().contains("journal.classification.success identifier=email-hash:"));
+		assertTrue(output.getOut().contains("provider=openai"));
+		assertTrue(output.getOut().contains("model=gpt-4o-mini"));
+		assertFalse(output.getOut().contains(entryText));
 	}
 
 	@Test

@@ -381,23 +381,23 @@ This change is additive: existing users remain valid, and the new `journal_entri
 
 #### Automated
 
-- [x] 3.1 MVC integration tests cover success, validation failure, classification failure, and recent-entry rendering
-- [x] 3.2 Anonymous journal requests still redirect to login while authenticated requests render the new journal page
+- [x] 3.1 MVC integration tests cover success, validation failure, classification failure, and recent-entry rendering — 1eb8e28
+- [x] 3.2 Anonymous journal requests still redirect to login while authenticated requests render the new journal page — 1eb8e28
 
 #### Manual
 
-- [x] 3.3 A logged-in user can submit several entries and sees them newest-first in the recent list on `/journal`
-- [x] 3.4 A classification failure returns to the journal page with the draft preserved and no newly inserted entry
-- [x] 3.5 One signed-in user never sees another user's entries in the UI
+- [x] 3.3 A logged-in user can submit several entries and sees them newest-first in the recent list on `/journal` — 1eb8e28
+- [x] 3.4 A classification failure returns to the journal page with the draft preserved and no newly inserted entry — 1eb8e28
+- [x] 3.5 One signed-in user never sees another user's entries in the UI — 1eb8e28
 
 ### Phase 4: Operational hardening and regression coverage
 
 #### Automated
 
-- [ ] 4.1 Full regression passes for the application and journal feature set
-- [ ] 4.2 Logging and failure-path tests prove that journal text is never emitted to logs
+- [x] 4.1 Full regression passes for the application and journal feature set
+- [x] 4.2 Logging and failure-path tests prove that journal text is never emitted to logs
 
 #### Manual
 
-- [ ] 4.3 Running the app in stub mode allows end-to-end journaling without external credentials
-- [ ] 4.4 Running the app with hosted-provider settings shows real classification without exposing raw entry text in logs
+- [x] 4.3 Running the app in stub mode allows end-to-end journaling without external credentials
+- [x] 4.4 Running the app with hosted-provider settings shows real classification without exposing raw entry text in logs
