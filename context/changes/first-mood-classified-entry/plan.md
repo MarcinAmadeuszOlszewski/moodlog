@@ -357,25 +357,25 @@ This change is additive: existing users remain valid, and the new `journal_entri
 
 #### Automated
 
-- [x] 1.1 Flyway boots the journal entry schema under the test configuration
-- [x] 1.2 Repository tests prove newest-first ordering and user scoping
+- [x] 1.1 Flyway boots the journal entry schema under the test configuration — c1a6538
+- [x] 1.2 Repository tests prove newest-first ordering and user scoping — c1a6538
 
 #### Manual
 
-- [x] 1.3 The application still boots with `/journal` behind authentication after the new migration is added
-- [x] 1.4 Multiple entries can exist for one account conceptually without requiring any history UI beyond the recent list
+- [x] 1.3 The application still boots with `/journal` behind authentication after the new migration is added — c1a6538
+- [x] 1.4 Multiple entries can exist for one account conceptually without requiring any history UI beyond the recent list — c1a6538
 
 ### Phase 2: Classification seam and application service
 
 #### Automated
 
-- [ ] 2.1 Service tests cover successful writes, blocking failures, and invalid classification payloads
-- [ ] 2.2 The application context boots with stub classifier defaults and no hosted credentials
+- [x] 2.1 Service tests cover successful writes, blocking failures, and invalid classification payloads
+- [x] 2.2 The application context boots with stub classifier defaults and no hosted credentials
 
 #### Manual
 
-- [ ] 2.3 The application can boot locally with stub classification enabled and no provider secret configured
-- [ ] 2.4 Switching to hosted-provider mode requires only configuration changes, not controller or template edits
+- [x] 2.3 The application can boot locally with stub classification enabled and no provider secret configured
+- [x] 2.4 Switching to hosted-provider mode requires only configuration changes, not controller or template edits
 
 ### Phase 3: Journal write flow and recent-entry UI
 
