@@ -413,10 +413,10 @@ No schema migration is expected for S-03 because the existing `journal_entries` 
 
 #### Automated
 
-- [x] 4.1 Auth and application regression cover saved-request redirects plus public-route stability across all journal surfaces
-- [x] 4.2 Full regression passes with history and trends coverage included
+- [x] 4.1 Auth and application regression cover saved-request redirects plus public-route stability across all journal surfaces — 52c5db2
+- [x] 4.2 Full regression passes with history and trends coverage included — 52c5db2
 
 #### Manual
 
-- [x] 4.3 A user can sign in, write on `/journal`, browse `/journal/history`, and inspect `/journal/trends` without dead-end navigation
-- [x] 4.4 No page exposes another user's data or suggests unsupported drill-down, edit, or correction behavior
+- [x] 4.3 A user can sign in, write on `/journal`, browse `/journal/history`, and inspect `/journal/trends` without dead-end navigation — 52c5db2
+- [x] 4.4 No page exposes another user's data or suggests unsupported drill-down, edit, or correction behavior — 52c5db2
