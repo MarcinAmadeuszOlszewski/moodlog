@@ -11,6 +11,7 @@
 		<h1>Twój prywatny dziennik</h1>
 		<p>Zalogowano jako: <strong th:text="${userEmail}">user@example.com</strong>.</p>
 		<p>Zapisz krótki wpis, a MoodLog przypisze do niego dominujący nastrój.</p>
+		<p>To jedna prywatna przestrzeń do pisania, przeglądania historii i śledzenia trendów nastroju.</p>
 		<nav>
 			<p>
 				<strong>Dziennik</strong>
@@ -38,7 +39,7 @@
 		<section>
 			<h2>Najnowsze 10 wpisów</h2>
 			<p th:if="${#lists.isEmpty(recentEntries)}">Nie masz jeszcze zapisanych wpisów.</p>
-			<p th:if="${#lists.isEmpty(recentEntries)}">Dodaj pierwszy wpis, aby zobaczyć historię nastrojów.</p>
+			<p th:if="${#lists.isEmpty(recentEntries)}">Dodaj pierwszy wpis, aby zobaczyć prywatną historię i trendy nastrojów.</p>
 			<p th:if="${!#lists.isEmpty(recentEntries)}">
 				Pełne archiwum znajdziesz na stronie <a th:href="@{/journal/history}">historii wpisów</a>.
 			</p>

@@ -115,4 +115,12 @@ class ApplicationTests {
 			.andExpect(redirectedUrl("/login"));
 	}
 
+	@Test
+	@DisplayName("redirects anonymous journal trends requests to login")
+	void journalTrendsPageRequiresAuthentication() throws Exception {
+		mockMvc.perform(get("/journal/trends"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/login"));
+	}
+
 }

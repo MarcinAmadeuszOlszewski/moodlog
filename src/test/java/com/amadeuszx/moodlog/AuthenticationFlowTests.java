@@ -252,6 +252,74 @@ class AuthenticationFlowTests {
 	}
 
 	@Test
+	@DisplayName("returns an anonymous journal history request to the history page after login")
+	void anonymousHistoryRequestReturnsToHistoryAfterLogin() throws Exception {
+		userAccountService.registerUser("ela@example.com", "sekret");
+
+		val anonymousHistoryResult = mockMvc.perform(get("/journal/history"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/login"))
+			.andReturn();
+		val anonymousSession = (MockHttpSession) anonymousHistoryResult.getRequest().getSession(false);
+
+		assertNotNull(anonymousSession);
+
+		val loginResult = mockMvc.perform(post("/login")
+				.with(csrf())
+				.session(anonymousSession)
+				.param("email", "ela@example.com")
+				.param("password", "sekret"))
+			.andExpect(status().is3xxRedirection())
+			.andReturn();
+		val redirectedUrl = loginResult.getResponse().getRedirectedUrl();
+		val authenticatedSession = (MockHttpSession) loginResult.getRequest().getSession(false);
+
+		assertNotNull(redirectedUrl);
+		assertTrue(redirectedUrl.endsWith("/journal/history"));
+		assertNotNull(authenticatedSession);
+
+		mockMvc.perform(get("/journal/history").session(authenticatedSession))
+			.andExpect(status().isOk())
+			.andExpect(view().name("journal-history"))
+			.andExpect(content().string(containsString("Historia wpisów")))
+			.andExpect(content().string(containsString("ela@example.com")));
+	}
+
+	@Test
+	@DisplayName("returns an anonymous journal trends request to the trends page after login")
+	void anonymousTrendsRequestReturnsToTrendsAfterLogin() throws Exception {
+		userAccountService.registerUser("ela@example.com", "sekret");
+
+		val anonymousTrendsResult = mockMvc.perform(get("/journal/trends"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/login"))
+			.andReturn();
+		val anonymousSession = (MockHttpSession) anonymousTrendsResult.getRequest().getSession(false);
+
+		assertNotNull(anonymousSession);
+
+		val loginResult = mockMvc.perform(post("/login")
+				.with(csrf())
+				.session(anonymousSession)
+				.param("email", "ela@example.com")
+				.param("password", "sekret"))
+			.andExpect(status().is3xxRedirection())
+			.andReturn();
+		val redirectedUrl = loginResult.getResponse().getRedirectedUrl();
+		val authenticatedSession = (MockHttpSession) loginResult.getRequest().getSession(false);
+
+		assertNotNull(redirectedUrl);
+		assertTrue(redirectedUrl.endsWith("/journal/trends"));
+		assertNotNull(authenticatedSession);
+
+		mockMvc.perform(get("/journal/trends").session(authenticatedSession))
+			.andExpect(status().isOk())
+			.andExpect(view().name("journal-trends"))
+			.andExpect(content().string(containsString("Trendy nastroju")))
+			.andExpect(content().string(containsString("ela@example.com")));
+	}
+
+	@Test
 	@DisplayName("redirects logout to the login page with confirmation")
 	void logoutRedirectsToLoginWithConfirmationFlag() throws Exception {
 		mockMvc.perform(post("/logout")

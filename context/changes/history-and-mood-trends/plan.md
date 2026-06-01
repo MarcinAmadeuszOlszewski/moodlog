@@ -401,22 +401,22 @@ No schema migration is expected for S-03 because the existing `journal_entries` 
 
 #### Automated
 
-- [x] 3.1 Service tests prove trend bucketing, current-week summary math, and gap-aware completed-period datasets
-- [x] 3.2 MVC tests render `/journal/trends` with the expected summary-card and chart-data shape for empty and populated users
+- [x] 3.1 Service tests prove trend bucketing, current-week summary math, and gap-aware completed-period datasets — 050cdbf
+- [x] 3.2 MVC tests render `/journal/trends` with the expected summary-card and chart-data shape for empty and populated users — 050cdbf
 
 #### Manual
 
-- [x] 3.3 `/journal/trends` shows stable 7-day and 30-day charts that do not include today's partial data
-- [x] 3.4 The current-week summary and the weekly chart both feel consistent with Europe/Warsaw calendar expectations and do not invent data for missing days
+- [x] 3.3 `/journal/trends` shows stable 7-day and 30-day charts that do not include today's partial data — 050cdbf
+- [x] 3.4 The current-week summary and the weekly chart both feel consistent with Europe/Warsaw calendar expectations and do not invent data for missing days — 050cdbf
 
 ### Phase 4: Navigation and regression hardening
 
 #### Automated
 
-- [ ] 4.1 Auth and application regression cover saved-request redirects plus public-route stability across all journal surfaces
-- [ ] 4.2 Full regression passes with history and trends coverage included
+- [x] 4.1 Auth and application regression cover saved-request redirects plus public-route stability across all journal surfaces
+- [x] 4.2 Full regression passes with history and trends coverage included
 
 #### Manual
 
-- [ ] 4.3 A user can sign in, write on `/journal`, browse `/journal/history`, and inspect `/journal/trends` without dead-end navigation
-- [ ] 4.4 No page exposes another user's data or suggests unsupported drill-down, edit, or correction behavior
+- [x] 4.3 A user can sign in, write on `/journal`, browse `/journal/history`, and inspect `/journal/trends` without dead-end navigation
+- [x] 4.4 No page exposes another user's data or suggests unsupported drill-down, edit, or correction behavior
