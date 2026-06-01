@@ -11,6 +11,15 @@
 		<h1>Twój prywatny dziennik</h1>
 		<p>Zalogowano jako: <strong th:text="${userEmail}">user@example.com</strong>.</p>
 		<p>Zapisz krótki wpis, a MoodLog przypisze do niego dominujący nastrój.</p>
+		<nav>
+			<p>
+				<strong>Dziennik</strong>
+				•
+				<a th:href="@{/journal/history}">Historia wpisów</a>
+				•
+				<a th:href="@{/journal/trends}">Trendy nastroju</a>
+			</p>
+		</nav>
 
 		<form method="post" th:action="@{/journal}" th:object="${journalEntryForm}">
 			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
@@ -27,9 +36,13 @@
 		</form>
 
 		<section>
-			<h2>Najnowsze wpisy</h2>
+			<h2>Najnowsze 10 wpisów</h2>
 			<p th:if="${#lists.isEmpty(recentEntries)}">Nie masz jeszcze zapisanych wpisów.</p>
 			<p th:if="${#lists.isEmpty(recentEntries)}">Dodaj pierwszy wpis, aby zobaczyć historię nastrojów.</p>
+			<p th:if="${!#lists.isEmpty(recentEntries)}">
+				Pełne archiwum znajdziesz na stronie <a th:href="@{/journal/history}">historii wpisów</a>.
+			</p>
+			<p><a th:href="@{/journal/trends}">Przejdź do ekranu trendów nastroju</a></p>
 
 			<ul th:if="${!#lists.isEmpty(recentEntries)}">
 				<li th:each="entry : ${recentEntries}">

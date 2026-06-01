@@ -4,6 +4,7 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,11 +12,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class JournalController {
-
-	private static final int ENTRY_EXCERPT_LENGTH = 120;
 
 	private final JournalEntryService journalEntryService;
 	private final int journalMaxContentLength;
@@ -66,40 +66,46 @@ public class JournalController {
 		}
 	}
 
+	@GetMapping("/journal/history")
+	public String historyPage(
+		Authentication authentication,
+		@RequestParam(name = "page", defaultValue = "0") int page,
+		Model model
+	) {
+		final String userEmail = authentication.getName();
+		final Page<JournalHistoryItem> historyPage = journalEntryService.getHistoryEntries(userEmail, page);
+
+		populateHistoryModel(userEmail, historyPage, model);
+
+		return "journal-history";
+	}
+
+	@GetMapping("/journal/trends")
+	public String trendsPage(Authentication authentication, Model model) {
+		model.addAttribute("userEmail", authentication.getName());
+
+		return "journal-trends";
+	}
+
 	private void populateJournalModel(String userEmail, Model model) {
-		final List<JournalEntryListItem> recentEntries = journalEntryService.getRecentEntries(userEmail).stream()
-			.map(this::toListItem)
-			.toList();
+		final List<JournalEntryListItem> recentEntries = journalEntryService.getRecentEntryListItems(userEmail);
 
 		model.addAttribute("journalMaxContentLength", journalMaxContentLength);
 		model.addAttribute("recentEntries", recentEntries);
 		model.addAttribute("userEmail", userEmail);
 	}
 
-	private JournalEntryListItem toListItem(JournalEntry journalEntry) {
-		final String excerpt = buildExcerpt(journalEntry.getContent());
-		final String moodLabel = polishMoodLabel(journalEntry.getSystemMoodTag());
+	private void populateHistoryModel(String userEmail, Page<JournalHistoryItem> historyPage, Model model) {
+		final int historyCurrentPage = historyPage.getTotalPages() == 0 ? 1 : historyPage.getNumber() + 1;
+		final int historyTotalPages = Math.max(historyPage.getTotalPages(), 1);
 
-		return new JournalEntryListItem(excerpt, moodLabel, journalEntry.getSystemMoodScore());
-	}
-
-	private String buildExcerpt(String content) {
-		if (content.length() <= ENTRY_EXCERPT_LENGTH) {
-			return content;
-		}
-
-		return content.substring(0, ENTRY_EXCERPT_LENGTH - 3) + "...";
-	}
-
-	private String polishMoodLabel(MoodTag moodTag) {
-		return switch (moodTag) {
-			case JOY -> "Radość";
-			case CALM -> "Spokój";
-			case NEUTRAL -> "Neutralnie";
-			case SADNESS -> "Smutek";
-			case ANXIETY -> "Lęk";
-			case ANGER -> "Złość";
-			case OVERWHELMED -> "Przytłoczenie";
-		};
+		model.addAttribute("historyCurrentPage", historyCurrentPage);
+		model.addAttribute("historyEntries", historyPage.getContent());
+		model.addAttribute("historyHasNext", historyPage.hasNext());
+		model.addAttribute("historyHasPrevious", historyPage.hasPrevious());
+		model.addAttribute("historyNextPage", historyPage.getNumber() + 1);
+		model.addAttribute("historyPreviousPage", Math.max(historyPage.getNumber() - 1, 0));
+		model.addAttribute("historyTotalPages", historyTotalPages);
+		model.addAttribute("userEmail", userEmail);
 	}
 }

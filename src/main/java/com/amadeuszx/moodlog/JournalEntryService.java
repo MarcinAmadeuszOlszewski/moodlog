@@ -99,6 +99,12 @@ public class JournalEntryService {
 		return journalEntryRepository.findByUserAccountIdOrderByCreatedAtDesc(userAccount.getId(), pageRequest);
 	}
 
+	public List<JournalEntryListItem> getRecentEntryListItems(String currentUserEmail) {
+		return getRecentEntries(currentUserEmail).stream()
+			.map(this::toListItem)
+			.toList();
+	}
+
 	public Page<JournalHistoryItem> getHistoryEntries(String currentUserEmail, int pageNumber) {
 		final UserAccount userAccount = resolveUserAccount(currentUserEmail);
 		final int safePageNumber = Math.max(0, pageNumber);
@@ -199,6 +205,16 @@ public class JournalEntryService {
 		return new JournalHistoryItem(
 			displayDate,
 			journalEntry.getCreatedAt().atZone(reportingZoneId).toLocalTime().truncatedTo(ChronoUnit.MINUTES),
+			buildExcerpt(journalEntry.getContent()),
+			polishMoodLabel(effectiveMood.moodTag()),
+			effectiveMood.moodScore()
+		);
+	}
+
+	private JournalEntryListItem toListItem(JournalEntry journalEntry) {
+		final EffectiveMood effectiveMood = resolveEffectiveMood(journalEntry);
+
+		return new JournalEntryListItem(
 			buildExcerpt(journalEntry.getContent()),
 			polishMoodLabel(effectiveMood.moodTag()),
 			effectiveMood.moodScore()

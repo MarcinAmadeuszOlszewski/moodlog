@@ -107,4 +107,12 @@ class ApplicationTests {
 			.andExpect(redirectedUrl("/login"));
 	}
 
+	@Test
+	@DisplayName("redirects anonymous journal history requests to login")
+	void journalHistoryPageRequiresAuthentication() throws Exception {
+		mockMvc.perform(get("/journal/history"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/login"));
+	}
+
 }

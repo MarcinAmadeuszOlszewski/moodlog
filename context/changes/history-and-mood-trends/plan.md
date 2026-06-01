@@ -377,25 +377,25 @@ No schema migration is expected for S-03 because the existing `journal_entries` 
 
 #### Automated
 
-- [x] 1.1 Repository and service tests prove paginated owner history plus bounded date-window reads
-- [x] 1.2 Service tests prove effective-mood precedence and completed-period bucketing in Europe/Warsaw
+- [x] 1.1 Repository and service tests prove paginated owner history plus bounded date-window reads — 000bd00
+- [x] 1.2 Service tests prove effective-mood precedence and completed-period bucketing in Europe/Warsaw — 000bd00
 
 #### Manual
 
-- [ ] 1.3 The journal feature still boots with the existing `/journal` write flow unchanged while the new read-side contracts remain additive
-- [ ] 1.4 The agreed reporting rules are explicit and reviewable: Europe/Warsaw boundaries, completed 7-day and 30-day periods, eight completed weekly buckets, and hundreds-scale bounded reads
+- [x] 1.3 The journal feature still boots with the existing `/journal` write flow unchanged while the new read-side contracts remain additive — 000bd00
+- [x] 1.4 The agreed reporting rules are explicit and reviewable: Europe/Warsaw boundaries, completed 7-day and 30-day periods, eight completed weekly buckets, and hundreds-scale bounded reads — 000bd00
 
 ### Phase 2: Private history browsing
 
 #### Automated
 
-- [ ] 2.1 MVC tests cover `/journal` as the latest-10 recap and `/journal/history` as the paginated private archive
-- [ ] 2.2 History tests prove paging, newest-first ordering, and owner-only visibility in the UI layer
+- [x] 2.1 MVC tests cover `/journal` as the latest-10 recap and `/journal/history` as the paginated private archive
+- [x] 2.2 History tests prove paging, newest-first ordering, and owner-only visibility in the UI layer
 
 #### Manual
 
-- [ ] 2.3 A logged-in user can move from `/journal` to `/journal/history` and browse older entries without seeing another user's data
-- [ ] 2.4 `/journal` still shows only the latest 10 entries even when the user has a longer history available on the archive page
+- [x] 2.3 A logged-in user can move from `/journal` to `/journal/history` and browse older entries without seeing another user's data
+- [x] 2.4 `/journal` still shows only the latest 10 entries even when the user has a longer history available on the archive page
 
 ### Phase 3: Mood trends analytics
 

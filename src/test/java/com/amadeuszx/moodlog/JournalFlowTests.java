@@ -1,6 +1,7 @@
 package com.amadeuszx.moodlog;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -216,6 +217,99 @@ class JournalFlowTests {
 		assertTrue(responseContent.indexOf("Najnowszy wpis Eli.") < responseContent.indexOf("Starszy wpis Eli."));
 	}
 
+	@Test
+	@DisplayName("shows only the latest ten entries on journal page and links to archive surfaces")
+	void journalPageShowsOnlyTheLatestTenEntriesAndLinksToArchiveSurfaces() throws Exception {
+		val owner = createUserAccount("ela@example.com");
+		val ownerEntries = createJournalEntries(
+			owner,
+			"Eli wpis",
+			11,
+			Instant.parse("2026-05-01T08:00:00Z")
+		);
+
+		journalEntryRepository.saveAllAndFlush(ownerEntries);
+
+		val responseContent = mockMvc.perform(get("/journal").with(user(owner.getEmail()).roles("USER")))
+			.andExpect(status().isOk())
+			.andExpect(view().name("journal"))
+			.andExpect(content().string(containsString("/journal/history")))
+			.andExpect(content().string(containsString("/journal/trends")))
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+
+		assertTrue(responseContent.contains("Eli wpis [11]"));
+		assertTrue(responseContent.contains("Eli wpis [02]"));
+		assertFalse(responseContent.contains("Eli wpis [01]"));
+		assertTrue(responseContent.indexOf("Eli wpis [11]") < responseContent.indexOf("Eli wpis [10]"));
+	}
+
+	@Test
+	@DisplayName("shows the history archive newest first with paging and owner-only visibility")
+	void historyArchiveShowsNewestFirstWithPagingAndOwnerOnlyVisibility() throws Exception {
+		val owner = createUserAccount("ela@example.com");
+		val otherOwner = createUserAccount("ola@example.com");
+		val ownerEntries = createJournalEntries(
+			owner,
+			"Eli archiwum",
+			21,
+			Instant.parse("2026-05-01T08:00:00Z")
+		);
+		val allEntries = new ArrayList<>(ownerEntries);
+		allEntries.add(createJournalEntry(
+			otherOwner,
+			"Ola archiwum [01]",
+			MoodTag.CALM,
+			71,
+			Instant.parse("2026-06-01T10:00:00Z")
+		));
+
+		journalEntryRepository.saveAllAndFlush(allEntries);
+
+		val firstPageContent = mockMvc.perform(get("/journal/history")
+				.param("page", "0")
+				.with(user(owner.getEmail()).roles("USER")))
+			.andExpect(status().isOk())
+			.andExpect(view().name("journal-history"))
+			.andExpect(content().string(containsString("/journal/trends")))
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+
+		assertTrue(firstPageContent.contains("Eli archiwum [21]"));
+		assertTrue(firstPageContent.contains("Eli archiwum [02]"));
+		assertFalse(firstPageContent.contains("Eli archiwum [01]"));
+		assertFalse(firstPageContent.contains("Ola archiwum [01]"));
+		assertTrue(firstPageContent.indexOf("Eli archiwum [21]") < firstPageContent.indexOf("Eli archiwum [20]"));
+		assertTrue(firstPageContent.contains("/journal/history?page=1"));
+
+		val secondPageContent = mockMvc.perform(get("/journal/history")
+				.param("page", "1")
+				.with(user(owner.getEmail()).roles("USER")))
+			.andExpect(status().isOk())
+			.andExpect(view().name("journal-history"))
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+
+		assertTrue(secondPageContent.contains("Eli archiwum [01]"));
+		assertFalse(secondPageContent.contains("Eli archiwum [02]"));
+		assertFalse(secondPageContent.contains("Ola archiwum [01]"));
+		assertTrue(secondPageContent.contains("/journal/history?page=0"));
+	}
+
+	@Test
+	@DisplayName("shows an empty history state when the user has no saved entries")
+	void emptyHistoryStateShowsHelpfulCopy() throws Exception {
+		val owner = createUserAccount("ela@example.com");
+
+		mockMvc.perform(get("/journal/history").with(user(owner.getEmail()).roles("USER")))
+			.andExpect(status().isOk())
+			.andExpect(view().name("journal-history"))
+			.andExpect(content().string(containsString("Nie masz jeszcze zapisanych wpisów do przeglądania.")));
+	}
+
 	private UserAccount createUserAccount(String email) {
 		val createdAt = Instant.now();
 		val userAccount = new UserAccount(
@@ -251,5 +345,22 @@ class JournalFlowTests {
 			createdAt,
 			createdAt
 		);
+	}
+
+	private List<JournalEntry> createJournalEntries(
+		UserAccount owner,
+		String contentPrefix,
+		int count,
+		Instant firstCreatedAt
+	) {
+		val entries = new ArrayList<JournalEntry>();
+
+		for (int index = 1; index <= count; index++) {
+			val entryLabel = String.format("%s [%02d]", contentPrefix, index);
+			val createdAt = firstCreatedAt.plusSeconds(index * 60L);
+			entries.add(createJournalEntry(owner, entryLabel, MoodTag.CALM, 60 + index, createdAt));
+		}
+
+		return entries;
 	}
 }
