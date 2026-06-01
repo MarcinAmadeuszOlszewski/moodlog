@@ -389,25 +389,25 @@ No schema migration is expected for S-03 because the existing `journal_entries` 
 
 #### Automated
 
-- [x] 2.1 MVC tests cover `/journal` as the latest-10 recap and `/journal/history` as the paginated private archive
-- [x] 2.2 History tests prove paging, newest-first ordering, and owner-only visibility in the UI layer
+- [x] 2.1 MVC tests cover `/journal` as the latest-10 recap and `/journal/history` as the paginated private archive — e7bd4c5
+- [x] 2.2 History tests prove paging, newest-first ordering, and owner-only visibility in the UI layer — e7bd4c5
 
 #### Manual
 
-- [x] 2.3 A logged-in user can move from `/journal` to `/journal/history` and browse older entries without seeing another user's data
-- [x] 2.4 `/journal` still shows only the latest 10 entries even when the user has a longer history available on the archive page
+- [x] 2.3 A logged-in user can move from `/journal` to `/journal/history` and browse older entries without seeing another user's data — e7bd4c5
+- [x] 2.4 `/journal` still shows only the latest 10 entries even when the user has a longer history available on the archive page — e7bd4c5
 
 ### Phase 3: Mood trends analytics
 
 #### Automated
 
-- [ ] 3.1 Service tests prove trend bucketing, current-week summary math, and gap-aware completed-period datasets
-- [ ] 3.2 MVC tests render `/journal/trends` with the expected summary-card and chart-data shape for empty and populated users
+- [x] 3.1 Service tests prove trend bucketing, current-week summary math, and gap-aware completed-period datasets
+- [x] 3.2 MVC tests render `/journal/trends` with the expected summary-card and chart-data shape for empty and populated users
 
 #### Manual
 
-- [ ] 3.3 `/journal/trends` shows stable 7-day and 30-day charts that do not include today's partial data
-- [ ] 3.4 The current-week summary and the weekly chart both feel consistent with Europe/Warsaw calendar expectations and do not invent data for missing days
+- [x] 3.3 `/journal/trends` shows stable 7-day and 30-day charts that do not include today's partial data
+- [x] 3.4 The current-week summary and the weekly chart both feel consistent with Europe/Warsaw calendar expectations and do not invent data for missing days
 
 ### Phase 4: Navigation and regression hardening
 

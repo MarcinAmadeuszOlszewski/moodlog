@@ -82,7 +82,10 @@ public class JournalController {
 
 	@GetMapping("/journal/trends")
 	public String trendsPage(Authentication authentication, Model model) {
-		model.addAttribute("userEmail", authentication.getName());
+		final String userEmail = authentication.getName();
+
+		model.addAttribute("trendView", journalEntryService.getTrendView(userEmail));
+		model.addAttribute("userEmail", userEmail);
 
 		return "journal-trends";
 	}
