@@ -50,7 +50,6 @@ public class JournalController {
 	) {
 		final String userEmail = authentication.getName();
 
-		validateContentLength(journalEntryForm, bindingResult);
 		if (bindingResult.hasErrors()) {
 			populateJournalModel(userEmail, model);
 			return "journal";
@@ -75,18 +74,6 @@ public class JournalController {
 		model.addAttribute("journalMaxContentLength", journalMaxContentLength);
 		model.addAttribute("recentEntries", recentEntries);
 		model.addAttribute("userEmail", userEmail);
-	}
-
-	private void validateContentLength(JournalEntryForm journalEntryForm, BindingResult bindingResult) {
-		final String content = journalEntryForm.getContent();
-
-		if (content != null && content.length() > journalMaxContentLength) {
-			bindingResult.rejectValue(
-				"content",
-				"journalEntryForm.content.tooLong",
-				"Wpis może mieć maksymalnie " + journalMaxContentLength + " znaków."
-			);
-		}
 	}
 
 	private JournalEntryListItem toListItem(JournalEntry journalEntry) {

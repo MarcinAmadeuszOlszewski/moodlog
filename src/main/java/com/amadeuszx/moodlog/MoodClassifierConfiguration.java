@@ -1,6 +1,5 @@
 package com.amadeuszx.moodlog;
 
-import java.time.Duration;
 import java.util.Locale;
 
 import org.springframework.ai.openai.OpenAiChatModel;
@@ -17,7 +16,6 @@ public class MoodClassifierConfiguration {
 		@Value("${moodlog.ai.enabled:false}") boolean aiEnabled,
 		@Value("${moodlog.ai.provider:stub}") String provider,
 		@Value("${moodlog.ai.default-model:gpt-4o-mini}") String defaultModel,
-		@Value("${moodlog.ai.timeout:5s}") Duration timeout,
 		@Value("${spring.ai.openai.api-key:disabled}") String openAiApiKey,
 		ObjectProvider<OpenAiChatModel> openAiChatModelProvider
 	) {
@@ -39,7 +37,7 @@ public class MoodClassifierConfiguration {
 				);
 			}
 
-			return new OpenAiMoodClassifier(openAiChatModel, defaultModel, timeout);
+			return new OpenAiMoodClassifier(openAiChatModel, defaultModel);
 		}
 
 		return new StubMoodClassifier();

@@ -1,10 +1,8 @@
 package com.amadeuszx.moodlog;
 
-import jakarta.validation.constraints.NotBlank;
-
 public class JournalEntryForm {
 
-	@NotBlank(message = "Wpis nie może być pusty.")
+	@JournalEntryContent
 	private String content;
 
 	public String getContent() {

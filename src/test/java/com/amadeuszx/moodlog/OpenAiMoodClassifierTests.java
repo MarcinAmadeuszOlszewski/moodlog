@@ -1,7 +1,8 @@
 package com.amadeuszx.moodlog;
 
-import java.time.Duration;
+import java.io.InterruptedIOException;
 
+import com.openai.errors.OpenAIIoException;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ class OpenAiMoodClassifierTests {
 	@DisplayName("maps missing provider responses to an invalid response reason")
 	void missingProviderResponseBecomesInvalidResponse() {
 		when(openAiChatModel.call(any(Prompt.class))).thenReturn(null);
-		val openAiMoodClassifier = new OpenAiMoodClassifier(openAiChatModel, "gpt-4o-mini", Duration.ofSeconds(1));
+		val openAiMoodClassifier = new OpenAiMoodClassifier(openAiChatModel, "gpt-4o-mini");
 
 		val exception = assertThrows(
 			MoodClassificationFailedException.class,
@@ -42,7 +43,7 @@ class OpenAiMoodClassifierTests {
 	@DisplayName("maps provider call failures to a provider error reason")
 	void providerCallFailureBecomesProviderError() {
 		when(openAiChatModel.call(any(Prompt.class))).thenThrow(new IllegalStateException("provider raw payload"));
-		val openAiMoodClassifier = new OpenAiMoodClassifier(openAiChatModel, "gpt-4o-mini", Duration.ofSeconds(1));
+		val openAiMoodClassifier = new OpenAiMoodClassifier(openAiChatModel, "gpt-4o-mini");
 
 		val exception = assertThrows(
 			MoodClassificationFailedException.class,
@@ -55,13 +56,12 @@ class OpenAiMoodClassifierTests {
 	}
 
 	@Test
-	@DisplayName("maps slow provider calls to a timeout reason")
+	@DisplayName("maps sdk timeout failures to a timeout reason")
 	void slowProviderCallBecomesProviderTimeout() {
-		when(openAiChatModel.call(any(Prompt.class))).thenAnswer(invocation -> {
-			Thread.sleep(100);
-			return null;
-		});
-		val openAiMoodClassifier = new OpenAiMoodClassifier(openAiChatModel, "gpt-4o-mini", Duration.ofMillis(10));
+		when(openAiChatModel.call(any(Prompt.class))).thenThrow(
+			new OpenAIIoException("Request failed", new InterruptedIOException("timeout"))
+		);
+		val openAiMoodClassifier = new OpenAiMoodClassifier(openAiChatModel, "gpt-4o-mini");
 
 		val exception = assertThrows(
 			MoodClassificationFailedException.class,

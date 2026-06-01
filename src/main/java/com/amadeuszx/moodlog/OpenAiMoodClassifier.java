@@ -1,12 +1,11 @@
 package com.amadeuszx.moodlog;
 
-import java.time.Duration;
 import java.time.Instant;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.io.InterruptedIOException;
+import java.net.http.HttpTimeoutException;
+import java.util.Locale;
 
+import com.openai.errors.OpenAIIoException;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.converter.BeanOutputConverter;
@@ -22,12 +21,10 @@ public class OpenAiMoodClassifier implements MoodClassifier {
 
 	private final OpenAiChatModel openAiChatModel;
 	private final String defaultModel;
-	private final Duration timeout;
 
-	public OpenAiMoodClassifier(OpenAiChatModel openAiChatModel, String defaultModel, Duration timeout) {
+	public OpenAiMoodClassifier(OpenAiChatModel openAiChatModel, String defaultModel) {
 		this.openAiChatModel = openAiChatModel;
 		this.defaultModel = defaultModel;
-		this.timeout = timeout;
 	}
 
 	@Override
@@ -41,7 +38,7 @@ public class OpenAiMoodClassifier implements MoodClassifier {
 				.build())
 			.build();
 		final Prompt prompt = new Prompt(buildPrompt(entryText), chatOptions);
-		final ChatResponse response = callWithinTimeout(prompt);
+		final ChatResponse response = callProvider(prompt);
 		final String responseText = extractResponseText(response);
 
 		try {
@@ -67,25 +64,18 @@ public class OpenAiMoodClassifier implements MoodClassifier {
 		}
 	}
 
-	private ChatResponse callWithinTimeout(Prompt prompt) {
-		final CompletableFuture<ChatResponse> responseFuture = CompletableFuture.supplyAsync(() -> openAiChatModel.call(prompt));
-
+	private ChatResponse callProvider(Prompt prompt) {
 		try {
-			return responseFuture.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
+			return openAiChatModel.call(prompt);
 		}
-		catch (InterruptedException exception) {
-			responseFuture.cancel(true);
-			Thread.currentThread().interrupt();
+		catch (OpenAIIoException exception) {
+			if (isTimeoutFailure(exception)) {
+				throw buildFailureException(MoodClassificationFailureReason.PROVIDER_TIMEOUT, exception);
+			}
 			throw buildFailureException(MoodClassificationFailureReason.PROVIDER_ERROR, exception);
 		}
-		catch (ExecutionException exception) {
-			responseFuture.cancel(true);
-			final Throwable cause = exception.getCause() == null ? exception : exception.getCause();
-			throw buildFailureException(MoodClassificationFailureReason.PROVIDER_ERROR, cause);
-		}
-		catch (TimeoutException exception) {
-			responseFuture.cancel(true);
-			throw buildFailureException(MoodClassificationFailureReason.PROVIDER_TIMEOUT, exception);
+		catch (RuntimeException exception) {
+			throw buildFailureException(MoodClassificationFailureReason.PROVIDER_ERROR, exception);
 		}
 	}
 
@@ -95,6 +85,30 @@ public class OpenAiMoodClassifier implements MoodClassifier {
 
 	private MoodClassificationFailedException buildFailureException(MoodClassificationFailureReason reason, Throwable cause) {
 		return new MoodClassificationFailedException(USER_SAFE_ERROR_MESSAGE, reason, PROVIDER_NAME, defaultModel, cause);
+	}
+
+	private boolean isTimeoutFailure(Throwable throwable) {
+		Throwable currentThrowable = throwable;
+
+		while (currentThrowable != null) {
+			if (currentThrowable instanceof InterruptedIOException || currentThrowable instanceof HttpTimeoutException) {
+				return true;
+			}
+
+			final String message = currentThrowable.getMessage();
+
+			if (message != null) {
+				final String normalizedMessage = message.toLowerCase(Locale.ROOT);
+
+				if (normalizedMessage.contains("timeout") || normalizedMessage.contains("timed out")) {
+					return true;
+				}
+			}
+
+			currentThrowable = currentThrowable.getCause();
+		}
+
+		return false;
 	}
 
 	private String extractResponseText(ChatResponse response) {
