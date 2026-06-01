@@ -1,6 +1,10 @@
 package com.amadeuszx.moodlog;
 
+import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,12 +15,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
@@ -148,6 +156,132 @@ class JournalEntryServiceTests {
 		assertEquals(oldestEntry.getId(), recentEntries.get(1).getId());
 	}
 
+	@Test
+	@DisplayName("returns history entries with Europe Warsaw timestamps and effective moods")
+	void returnsHistoryEntriesWithEuropeWarsawTimestampsAndEffectiveMoods() {
+		val owner = createUserAccount("ela@example.com");
+		val overriddenEntry = createJournalEntry(
+			owner,
+			"Po wieczornym spacerze wróciło dużo radości.",
+			MoodTag.SADNESS,
+			28,
+			MoodTag.JOY,
+			90,
+			Instant.parse("2026-05-31T21:35:40Z")
+		);
+
+		journalEntryRepository.saveAndFlush(overriddenEntry);
+
+		val historyPage = journalEntryService.getHistoryEntries(owner.getEmail(), 0);
+		val historyItem = historyPage.getContent().getFirst();
+
+		assertEquals(1L, historyPage.getTotalElements());
+		assertEquals(LocalDate.of(2026, 5, 31), historyItem.displayDate());
+		assertEquals(LocalTime.of(23, 35), historyItem.displayTime());
+		assertEquals("Radość", historyItem.moodLabel());
+		assertEquals(90, historyItem.moodScore());
+	}
+
+	@Test
+	@DisplayName("keeps completed daily periods separate from current week data in Europe Warsaw")
+	void keepsCompletedDailyPeriodsSeparateFromCurrentWeekDataInEuropeWarsaw() {
+		val owner = createUserAccount("ela@example.com");
+		val completedDayEntry = createJournalEntry(
+			owner,
+			"Jeszcze końcówka niedzieli w spokoju.",
+			MoodTag.CALM,
+			80,
+			Instant.parse("2026-05-31T21:59:00Z")
+		);
+		val currentWeekEntry = createJournalEntry(
+			owner,
+			"Nowy tydzień zaczął się z energią.",
+			MoodTag.JOY,
+			90,
+			Instant.parse("2026-05-31T22:05:00Z")
+		);
+
+		journalEntryRepository.saveAllAndFlush(List.of(completedDayEntry, currentWeekEntry));
+
+		val trendView = journalEntryService.getTrendView(owner.getEmail());
+
+		assertEquals(1, trendView.currentWeekSummary().entriesCount());
+		assertEquals(1, trendView.currentWeekSummary().daysWithEntries());
+		assertEquals("Radość", trendView.currentWeekSummary().dominantMoodLabel());
+		assertEquals(90, trendView.currentWeekSummary().averageMoodScore());
+		assertEquals(7, trendView.completedSevenDayTrend().points().size());
+		assertEquals(LocalDate.of(2026, 5, 25), trendView.completedSevenDayTrend().points().getFirst().date());
+		assertEquals(LocalDate.of(2026, 5, 31), trendView.completedSevenDayTrend().points().getLast().date());
+		assertEquals(80, trendView.completedSevenDayTrend().points().getLast().averageMoodScore());
+	}
+
+	@Test
+	@DisplayName("builds completed thirty day and weekly trends from effective moods")
+	void buildsCompletedThirtyDayAndWeeklyTrendsFromEffectiveMoods() {
+		val owner = createUserAccount("ela@example.com");
+		val outsideThirtyDayEntry = createJournalEntry(
+			owner,
+			"To jest jeszcze poza pełnym oknem trzydziestodniowym.",
+			MoodTag.JOY,
+			99,
+			Instant.parse("2026-05-01T10:00:00Z")
+		);
+		val firstThirtyDayEntry = createJournalEntry(
+			owner,
+			"To powinno wejść do pełnego okna trzydziestu dni.",
+			MoodTag.NEUTRAL,
+			30,
+			Instant.parse("2026-05-01T22:30:00Z")
+		);
+		val overriddenWeeklyEntry = createJournalEntry(
+			owner,
+			"Pod koniec tygodnia override zmienił ocenę wpisu.",
+			MoodTag.SADNESS,
+			20,
+			MoodTag.CALM,
+			70,
+			Instant.parse("2026-05-29T12:00:00Z")
+		);
+
+		journalEntryRepository.saveAllAndFlush(List.of(outsideThirtyDayEntry, firstThirtyDayEntry, overriddenWeeklyEntry));
+
+		val trendView = journalEntryService.getTrendView(owner.getEmail());
+
+		assertEquals(LocalDate.of(2026, 5, 2), trendView.completedThirtyDayTrend().points().getFirst().date());
+		assertEquals(30, trendView.completedThirtyDayTrend().points().getFirst().averageMoodScore());
+		assertEquals(8, trendView.completedWeeklyTrend().points().size());
+		assertEquals(LocalDate.of(2026, 4, 6), trendView.completedWeeklyTrend().points().getFirst().weekStartDate());
+		assertEquals(LocalDate.of(2026, 5, 25), trendView.completedWeeklyTrend().points().getLast().weekStartDate());
+		assertEquals(70, trendView.completedWeeklyTrend().points().getLast().averageMoodScore());
+	}
+
+	@Test
+	@DisplayName("keeps sparse trends gap aware instead of filling missing days or weeks")
+	void keepsSparseTrendsGapAwareInsteadOfFillingMissingDaysOrWeeks() {
+		val owner = createUserAccount("ela@example.com");
+		val sparseEntry = createJournalEntry(
+			owner,
+			"Tylko jeden wpis w całym obserwowanym tygodniu.",
+			MoodTag.CALM,
+			65,
+			Instant.parse("2026-05-27T07:00:00Z")
+		);
+
+		journalEntryRepository.saveAndFlush(sparseEntry);
+
+		val trendView = journalEntryService.getTrendView(owner.getEmail());
+
+		assertTrue(trendView.currentWeekSummary().empty());
+		assertFalse(trendView.completedSevenDayTrend().empty());
+		assertTrue(trendView.completedSevenDayTrend().sparse());
+		assertNull(trendView.completedSevenDayTrend().points().getFirst().averageMoodScore());
+		assertEquals(65, trendView.completedSevenDayTrend().points().get(2).averageMoodScore());
+		assertTrue(trendView.completedThirtyDayTrend().sparse());
+		assertTrue(trendView.completedWeeklyTrend().sparse());
+		assertNull(trendView.completedWeeklyTrend().points().getFirst().averageMoodScore());
+		assertEquals(65, trendView.completedWeeklyTrend().points().getLast().averageMoodScore());
+	}
+
 	private UserAccount createUserAccount(String email) {
 		val createdAt = Instant.now();
 		val userAccount = new UserAccount(
@@ -169,19 +303,41 @@ class JournalEntryServiceTests {
 		int moodScore,
 		Instant createdAt
 	) {
+		return createJournalEntry(owner, content, moodTag, moodScore, null, null, createdAt);
+	}
+
+	private JournalEntry createJournalEntry(
+		UserAccount owner,
+		String content,
+		MoodTag moodTag,
+		int moodScore,
+		MoodTag overrideMoodTag,
+		Integer overrideMoodScore,
+		Instant createdAt
+	) {
 		return new JournalEntry(
 			UUID.randomUUID(),
 			owner,
 			content,
 			moodTag,
 			moodScore,
-			null,
-			null,
+			overrideMoodTag,
+			overrideMoodScore,
 			"stub",
 			"stub-v1",
 			createdAt.plusSeconds(5),
 			createdAt,
 			createdAt
 		);
+	}
+
+	@TestConfiguration(proxyBeanMethods = false)
+	static class FixedClockConfiguration {
+
+		@Bean
+		@Primary
+		Clock fixedClock() {
+			return Clock.fixed(Instant.parse("2026-06-01T10:00:00Z"), ZoneOffset.UTC);
+		}
 	}
 }

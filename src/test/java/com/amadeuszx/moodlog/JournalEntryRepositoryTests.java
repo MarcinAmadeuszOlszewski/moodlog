@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -117,6 +118,133 @@ class JournalEntryRepositoryTests {
 		assertEquals(firstOwnerEntry.getId(), firstOwnerEntries.getFirst().getId());
 		assertEquals(1, secondOwnerEntries.size());
 		assertEquals(secondOwnerEntry.getId(), secondOwnerEntries.getFirst().getId());
+	}
+
+	@Test
+	@DisplayName("returns paged history newest first for one user")
+	void pagedHistoryReturnsNewestFirstForOneUser() {
+		val owner = createUserAccount("ela@example.com");
+		val oldestEntry = createJournalEntry(
+			owner,
+			"To był trudny poranek.",
+			MoodTag.SADNESS,
+			39,
+			Instant.parse("2026-05-29T08:00:00Z")
+		);
+		val middleEntry = createJournalEntry(
+			owner,
+			"Po rozmowie zrobiło się lżej.",
+			MoodTag.CALM,
+			67,
+			Instant.parse("2026-05-30T12:00:00Z")
+		);
+		val newestEntry = createJournalEntry(
+			owner,
+			"Wieczorem wróciła radość.",
+			MoodTag.JOY,
+			84,
+			Instant.parse("2026-05-31T18:00:00Z")
+		);
+
+		journalEntryRepository.saveAllAndFlush(List.of(oldestEntry, middleEntry, newestEntry));
+
+		val historyPage = journalEntryRepository.findAllByUserAccountIdOrderByCreatedAtDesc(
+			owner.getId(),
+			PageRequest.of(0, 2)
+		);
+
+		assertEquals(3L, historyPage.getTotalElements());
+		assertEquals(2, historyPage.getContent().size());
+		assertEquals(newestEntry.getId(), historyPage.getContent().get(0).getId());
+		assertEquals(middleEntry.getId(), historyPage.getContent().get(1).getId());
+	}
+
+	@Test
+	@DisplayName("keeps paged history scoped to the owning account")
+	void pagedHistoryStaysScopedToTheOwningAccount() {
+		val firstOwner = createUserAccount("ela@example.com");
+		val secondOwner = createUserAccount("ola@example.com");
+		val firstOwnerEntry = createJournalEntry(
+			firstOwner,
+			"To jest archiwalny wpis Eli.",
+			MoodTag.CALM,
+			70,
+			Instant.parse("2026-05-31T09:00:00Z")
+		);
+		val secondOwnerEntry = createJournalEntry(
+			secondOwner,
+			"To jest archiwalny wpis Oli.",
+			MoodTag.ANXIETY,
+			61,
+			Instant.parse("2026-05-31T11:00:00Z")
+		);
+
+		journalEntryRepository.saveAllAndFlush(List.of(firstOwnerEntry, secondOwnerEntry));
+
+		val firstOwnerHistory = journalEntryRepository.findAllByUserAccountIdOrderByCreatedAtDesc(
+			firstOwner.getId(),
+			PageRequest.of(0, 20)
+		);
+
+		assertEquals(1L, firstOwnerHistory.getTotalElements());
+		assertEquals(firstOwnerEntry.getId(), firstOwnerHistory.getContent().getFirst().getId());
+	}
+
+	@Test
+	@DisplayName("reads bounded trend windows in ascending order for one owner")
+	void boundedTrendWindowReadsStayScopedAndAscending() {
+		val owner = createUserAccount("ela@example.com");
+		val otherOwner = createUserAccount("ola@example.com");
+		val beforeWindowEntry = createJournalEntry(
+			owner,
+			"Jeszcze przed wybranym oknem.",
+			MoodTag.SADNESS,
+			35,
+			Instant.parse("2026-05-31T07:59:59Z")
+		);
+		val startBoundaryEntry = createJournalEntry(
+			owner,
+			"To powinno wejść od granicy startu.",
+			MoodTag.NEUTRAL,
+			52,
+			Instant.parse("2026-05-31T08:00:00Z")
+		);
+		val inWindowEntry = createJournalEntry(
+			owner,
+			"To jest wpis ze środka okna.",
+			MoodTag.CALM,
+			71,
+			Instant.parse("2026-05-31T12:00:00Z")
+		);
+		val endBoundaryEntry = createJournalEntry(
+			owner,
+			"To już wypada poza granicę końca.",
+			MoodTag.JOY,
+			88,
+			Instant.parse("2026-05-31T18:00:00Z")
+		);
+		val foreignEntry = createJournalEntry(
+			otherOwner,
+			"To jest wpis innego użytkownika w środku okna.",
+			MoodTag.ANGER,
+			63,
+			Instant.parse("2026-05-31T10:00:00Z")
+		);
+
+		journalEntryRepository.saveAllAndFlush(
+			List.of(beforeWindowEntry, startBoundaryEntry, inWindowEntry, endBoundaryEntry, foreignEntry)
+		);
+
+		val windowEntries = journalEntryRepository
+			.findAllByUserAccountIdAndCreatedAtGreaterThanEqualAndCreatedAtLessThanOrderByCreatedAtAsc(
+				owner.getId(),
+				Instant.parse("2026-05-31T08:00:00Z"),
+				Instant.parse("2026-05-31T18:00:00Z")
+			);
+
+		assertEquals(2, windowEntries.size());
+		assertEquals(startBoundaryEntry.getId(), windowEntries.get(0).getId());
+		assertEquals(inWindowEntry.getId(), windowEntries.get(1).getId());
 	}
 
 	private UserAccount createUserAccount(String email) {

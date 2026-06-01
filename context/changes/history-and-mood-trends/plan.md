@@ -377,8 +377,8 @@ No schema migration is expected for S-03 because the existing `journal_entries` 
 
 #### Automated
 
-- [ ] 1.1 Repository and service tests prove paginated owner history plus bounded date-window reads
-- [ ] 1.2 Service tests prove effective-mood precedence and completed-period bucketing in Europe/Warsaw
+- [x] 1.1 Repository and service tests prove paginated owner history plus bounded date-window reads
+- [x] 1.2 Service tests prove effective-mood precedence and completed-period bucketing in Europe/Warsaw
 
 #### Manual
 
