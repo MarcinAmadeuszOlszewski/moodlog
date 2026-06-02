@@ -1,7 +1,7 @@
 ---
 change_id: history-and-mood-trends
 title: Private history and 7/30-day mood trends
-status: implemented
+status: impl_reviewed
 created: 2026-06-01
 updated: 2026-06-01
 archived_at: null

@@ -10,7 +10,9 @@
 	<main>
 		<h1>Historia wpisów</h1>
 		<p>Zalogowano jako: <strong th:text="${userEmail}">user@example.com</strong>.</p>
-		<p>To archiwum pokazuje wpisy od najnowszego do najstarszego, po 20 pozycji na stronę.</p>
+		<p th:text="${'To archiwum pokazuje wpisy od najnowszego do najstarszego, po ' + historyPageSize + ' pozycji na stronę.'}">
+			To archiwum pokazuje wpisy od najnowszego do najstarszego, po 20 pozycji na stronę.
+		</p>
 		<p>To nadal prywatna część twojego dziennika — wpisy są widoczne tylko po zalogowaniu.</p>
 		<nav>
 			<p>

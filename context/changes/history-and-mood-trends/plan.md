@@ -107,6 +107,14 @@ Add the shared contracts, queries, and configuration needed to support private h
 
 **Contract**: Add methods for paginated history and trend-view assembly, implement an internal effective-mood rule that prefers override values when present, and keep all owner resolution inside the service rather than scattering it across controllers.
 
+#### 4a. Injectable time source
+
+**File**: `src/main/java/com/amadeuszx/moodlog/Application.java`
+
+**Intent**: Provide a single injectable UTC clock for reporting calculations and deterministic tests.
+
+**Contract**: Expose a `Clock` bean that journal/reporting code can use for time-based windows without hard-coding `Instant.now()` at every call site.
+
 #### 5. Read-side verification
 
 **File**: `src/test/java/com/amadeuszx/moodlog/JournalEntryRepositoryTests.java`

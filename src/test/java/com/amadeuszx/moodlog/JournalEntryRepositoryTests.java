@@ -236,15 +236,19 @@ class JournalEntryRepositoryTests {
 		);
 
 		val windowEntries = journalEntryRepository
-			.findAllByUserAccountIdAndCreatedAtGreaterThanEqualAndCreatedAtLessThanOrderByCreatedAtAsc(
+			.findTrendEntriesByUserAccountIdAndCreatedAtGreaterThanEqualAndCreatedAtLessThanOrderByCreatedAtAsc(
 				owner.getId(),
 				Instant.parse("2026-05-31T08:00:00Z"),
 				Instant.parse("2026-05-31T18:00:00Z")
 			);
 
 		assertEquals(2, windowEntries.size());
-		assertEquals(startBoundaryEntry.getId(), windowEntries.get(0).getId());
-		assertEquals(inWindowEntry.getId(), windowEntries.get(1).getId());
+		assertEquals(startBoundaryEntry.getCreatedAt(), windowEntries.get(0).getCreatedAt());
+		assertEquals(MoodTag.NEUTRAL, windowEntries.get(0).getSystemMoodTag());
+		assertEquals(52, windowEntries.get(0).getSystemMoodScore());
+		assertEquals(inWindowEntry.getCreatedAt(), windowEntries.get(1).getCreatedAt());
+		assertEquals(MoodTag.CALM, windowEntries.get(1).getSystemMoodTag());
+		assertEquals(71, windowEntries.get(1).getSystemMoodScore());
 	}
 
 	private UserAccount createUserAccount(String email) {

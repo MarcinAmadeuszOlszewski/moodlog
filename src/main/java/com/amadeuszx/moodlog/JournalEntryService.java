@@ -130,7 +130,7 @@ public class JournalEntryService {
 		final Instant windowStartInclusive = firstReportingDate.atStartOfDay(reportingZoneId).toInstant();
 		final Instant windowEndExclusive = now.plusNanos(1);
 		final List<ReportedJournalEntry> reportedEntries = journalEntryRepository
-			.findAllByUserAccountIdAndCreatedAtGreaterThanEqualAndCreatedAtLessThanOrderByCreatedAtAsc(
+			.findTrendEntriesByUserAccountIdAndCreatedAtGreaterThanEqualAndCreatedAtLessThanOrderByCreatedAtAsc(
 				userAccount.getId(),
 				windowStartInclusive,
 				windowEndExclusive
@@ -349,9 +349,9 @@ public class JournalEntryService {
 		return (int) Math.round(averageMoodScore);
 	}
 
-	private ReportedJournalEntry toReportedEntry(JournalEntry journalEntry) {
-		final EffectiveMood effectiveMood = resolveEffectiveMood(journalEntry);
-		final LocalDate reportingDate = journalEntry.getCreatedAt().atZone(reportingZoneId).toLocalDate();
+	private ReportedJournalEntry toReportedEntry(JournalEntryRepository.JournalTrendEntryProjection journalTrendEntry) {
+		final EffectiveMood effectiveMood = resolveEffectiveMood(journalTrendEntry);
+		final LocalDate reportingDate = journalTrendEntry.getCreatedAt().atZone(reportingZoneId).toLocalDate();
 
 		return new ReportedJournalEntry(
 			reportingDate,
@@ -367,6 +367,14 @@ public class JournalEntryService {
 		}
 
 		return new EffectiveMood(journalEntry.getSystemMoodTag(), journalEntry.getSystemMoodScore());
+	}
+
+	private EffectiveMood resolveEffectiveMood(JournalEntryRepository.JournalTrendEntryProjection journalTrendEntry) {
+		if (journalTrendEntry.getOverrideMoodTag() != null && journalTrendEntry.getOverrideMoodScore() != null) {
+			return new EffectiveMood(journalTrendEntry.getOverrideMoodTag(), journalTrendEntry.getOverrideMoodScore());
+		}
+
+		return new EffectiveMood(journalTrendEntry.getSystemMoodTag(), journalTrendEntry.getSystemMoodScore());
 	}
 
 	private LocalDate earliestReportingDate(LocalDate firstDate, LocalDate secondDate, LocalDate thirdDate) {

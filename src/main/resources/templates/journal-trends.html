@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Trendy nastroju | MoodLog</title>
 	<link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
-	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" defer></script>
+	<script th:src="@{/js/chart.umd.min.js}" defer></script>
 	<script th:src="@{/js/journal-trends.js}" defer></script>
 </head>
 <body>
@@ -69,7 +69,7 @@
 		</section>
 
 		<section>
-			<h2>Osiem ostatnich pełnych tygodni</h2>
+			<h2 th:text="${weeklyTrendSpan + ' ostatnich pełnych tygodni'}">Osiem ostatnich pełnych tygodni</h2>
 			<p th:if="${trendView.completedWeeklyTrend.empty}">Brak pełnych danych z ostatnich ośmiu tygodni.</p>
 			<p th:if="${trendView.completedWeeklyTrend.sparse and !trendView.completedWeeklyTrend.empty}">
 				Brak wpisów w niektórych tygodniach — wykres nie dopowiada brakujących danych.

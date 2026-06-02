@@ -19,13 +19,22 @@ public class JournalController {
 
 	private final JournalEntryService journalEntryService;
 	private final int journalMaxContentLength;
+	private final int recentEntriesLimit;
+	private final int historyPageSize;
+	private final int weeklyTrendSpan;
 
 	public JournalController(
 		JournalEntryService journalEntryService,
-		@Value("${moodlog.journal.max-content-length:2000}") int journalMaxContentLength
+		@Value("${moodlog.journal.max-content-length:2000}") int journalMaxContentLength,
+		@Value("${moodlog.journal.recent-list-limit:10}") int recentEntriesLimit,
+		@Value("${moodlog.journal.history-page-size:20}") int historyPageSize,
+		@Value("${moodlog.journal.weekly-trend-span:8}") int weeklyTrendSpan
 	) {
 		this.journalEntryService = journalEntryService;
 		this.journalMaxContentLength = journalMaxContentLength;
+		this.recentEntriesLimit = recentEntriesLimit;
+		this.historyPageSize = historyPageSize;
+		this.weeklyTrendSpan = weeklyTrendSpan;
 	}
 
 	@GetMapping("/journal")
@@ -73,7 +82,11 @@ public class JournalController {
 		Model model
 	) {
 		final String userEmail = authentication.getName();
-		final Page<JournalHistoryItem> historyPage = journalEntryService.getHistoryEntries(userEmail, page);
+		Page<JournalHistoryItem> historyPage = journalEntryService.getHistoryEntries(userEmail, page);
+
+		if (historyPage.isEmpty() && historyPage.getTotalPages() > 0 && page >= historyPage.getTotalPages()) {
+			historyPage = journalEntryService.getHistoryEntries(userEmail, historyPage.getTotalPages() - 1);
+		}
 
 		populateHistoryModel(userEmail, historyPage, model);
 
@@ -86,6 +99,7 @@ public class JournalController {
 
 		model.addAttribute("trendView", journalEntryService.getTrendView(userEmail));
 		model.addAttribute("userEmail", userEmail);
+		model.addAttribute("weeklyTrendSpan", weeklyTrendSpan);
 
 		return "journal-trends";
 	}
@@ -94,6 +108,7 @@ public class JournalController {
 		final List<JournalEntryListItem> recentEntries = journalEntryService.getRecentEntryListItems(userEmail);
 
 		model.addAttribute("journalMaxContentLength", journalMaxContentLength);
+		model.addAttribute("recentEntriesLimit", recentEntriesLimit);
 		model.addAttribute("recentEntries", recentEntries);
 		model.addAttribute("userEmail", userEmail);
 	}
@@ -108,6 +123,7 @@ public class JournalController {
 		model.addAttribute("historyHasPrevious", historyPage.hasPrevious());
 		model.addAttribute("historyNextPage", historyPage.getNumber() + 1);
 		model.addAttribute("historyPreviousPage", Math.max(historyPage.getNumber() - 1, 0));
+		model.addAttribute("historyPageSize", historyPageSize);
 		model.addAttribute("historyTotalPages", historyTotalPages);
 		model.addAttribute("userEmail", userEmail);
 	}

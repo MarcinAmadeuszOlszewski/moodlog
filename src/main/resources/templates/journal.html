@@ -37,7 +37,7 @@
 		</form>
 
 		<section>
-			<h2>Najnowsze 10 wpisów</h2>
+			<h2 th:text="${'Najnowsze ' + recentEntriesLimit + ' wpisów'}">Najnowsze 10 wpisów</h2>
 			<p th:if="${#lists.isEmpty(recentEntries)}">Nie masz jeszcze zapisanych wpisów.</p>
 			<p th:if="${#lists.isEmpty(recentEntries)}">Dodaj pierwszy wpis, aby zobaczyć prywatną historię i trendy nastrojów.</p>
 			<p th:if="${!#lists.isEmpty(recentEntries)}">

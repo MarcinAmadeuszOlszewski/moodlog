@@ -310,6 +310,34 @@ class JournalFlowTests {
 			.andExpect(content().string(containsString("Nie masz jeszcze zapisanych wpisów do przeglądania.")));
 	}
 
+	@Test
+	@DisplayName("falls back to the last history page when the requested page is out of range")
+	void outOfRangeHistoryPageFallsBackToTheLastAvailablePage() throws Exception {
+		val owner = createUserAccount("ela@example.com");
+		val ownerEntries = createJournalEntries(
+			owner,
+			"Eli archiwum",
+			21,
+			Instant.parse("2026-05-01T08:00:00Z")
+		);
+
+		journalEntryRepository.saveAllAndFlush(ownerEntries);
+
+		val responseContent = mockMvc.perform(get("/journal/history")
+				.param("page", "999")
+				.with(user(owner.getEmail()).roles("USER")))
+			.andExpect(status().isOk())
+			.andExpect(view().name("journal-history"))
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+
+		assertTrue(responseContent.contains("Eli archiwum [01]"));
+		assertFalse(responseContent.contains("Eli archiwum [02]"));
+		assertTrue(responseContent.contains("Strona 2 z 2"));
+		assertFalse(responseContent.contains("Strona 1000 z 2"));
+	}
+
 	private UserAccount createUserAccount(String email) {
 		val createdAt = Instant.now();
 		val userAccount = new UserAccount(
