@@ -1,5 +1,9 @@
 package com.amadeuszx.moodlog;
 
+import com.amadeuszx.moodlog.classification.MoodClassifier;
+import com.amadeuszx.moodlog.classification.StubMoodClassifier;
+import com.amadeuszx.moodlog.journal.JournalEntryRepository;
+import com.amadeuszx.moodlog.user.UserAccountRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

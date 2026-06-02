@@ -1,0 +1,153 @@
+package com.amadeuszx.moodlog.user;
+
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
+import java.util.HexFormat;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.UUID;
+
+import com.amadeuszx.moodlog.user.register.DuplicateUserAccountException;
+import com.amadeuszx.moodlog.user.register.InvalidPasswordException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+@Service
+public class UserAccountService implements UserDetailsService {
+
+	private static final Logger logger = LoggerFactory.getLogger(UserAccountService.class);
+
+	private final UserAccountRepository userAccountRepository;
+	private final PasswordEncoder passwordEncoder;
+	private final int passwordMinimumLength;
+
+	public UserAccountService(
+		UserAccountRepository userAccountRepository,
+		PasswordEncoder passwordEncoder,
+		@Value("${moodlog.auth.password.min-length}") int passwordMinimumLength
+	) {
+		this.userAccountRepository = userAccountRepository;
+		this.passwordEncoder = passwordEncoder;
+		this.passwordMinimumLength = passwordMinimumLength;
+	}
+
+	public UserAccount registerUser(String email, String rawPassword) {
+		final String normalizedEmail = normalizeEmailAddress(email);
+
+		if (userAccountRepository.existsByEmail(normalizedEmail)) {
+			logDuplicateEmailRegistration(normalizedEmail);
+			throw new DuplicateUserAccountException();
+		}
+
+		ensurePasswordMeetsPolicy(rawPassword, normalizedEmail);
+
+		final Instant now = Instant.now();
+		final UserAccount userAccount = new UserAccount(
+			UUID.randomUUID(),
+			normalizedEmail,
+			passwordEncoder.encode(rawPassword),
+			true,
+			now,
+			now
+		);
+
+		try {
+			final UserAccount savedUserAccount = userAccountRepository.save(userAccount);
+
+			logger.info("auth.registration.success identifier={}", safeEmailIdentifier(normalizedEmail));
+
+			return savedUserAccount;
+		}
+		catch (DataIntegrityViolationException exception) {
+			logDuplicateEmailRegistration(normalizedEmail);
+			throw new DuplicateUserAccountException();
+		}
+	}
+
+	public Optional<UserAccount> findByEmail(String email) {
+		final String normalizedEmail = normalizeEmailAddress(email);
+
+		return userAccountRepository.findByEmail(normalizedEmail);
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		final String normalizedEmail = normalizeUsernameForAuthentication(username);
+		final UserAccount userAccount = userAccountRepository.findByEmail(normalizedEmail)
+			.orElseThrow(() -> new UsernameNotFoundException("Authentication failed"));
+
+		return User.withUsername(userAccount.getEmail())
+			.password(userAccount.getPasswordHash())
+			.roles("USER")
+			.disabled(!userAccount.isActive())
+			.build();
+	}
+
+	public static String safeEmailIdentifier(String email) {
+		if (!StringUtils.hasText(email)) {
+			return "missing-email";
+		}
+
+		try {
+			return "email-hash:" + hashEmail(normalizeEmailAddress(email));
+		}
+		catch (IllegalArgumentException exception) {
+			return "invalid-email";
+		}
+	}
+
+	private static String normalizeUsernameForAuthentication(String username) {
+		try {
+			return normalizeEmailAddress(username);
+		}
+		catch (IllegalArgumentException exception) {
+			throw new UsernameNotFoundException("Authentication failed");
+		}
+	}
+
+	private void ensurePasswordMeetsPolicy(String rawPassword, String normalizedEmail) {
+		if (!StringUtils.hasText(rawPassword) || rawPassword.length() < passwordMinimumLength) {
+			logger.warn(
+				"auth.registration.failure identifier={} reason=PASSWORD_TOO_SHORT minLength={}",
+				safeEmailIdentifier(normalizedEmail),
+				passwordMinimumLength
+			);
+			throw new InvalidPasswordException(passwordMinimumLength);
+		}
+	}
+
+	private void logDuplicateEmailRegistration(String normalizedEmail) {
+		logger.warn("auth.registration.failure identifier={} reason=DUPLICATE_EMAIL", safeEmailIdentifier(normalizedEmail));
+	}
+
+	private static String hashEmail(String normalizedEmail) {
+		try {
+			final MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+			final byte[] hashedBytes = messageDigest.digest(normalizedEmail.getBytes(StandardCharsets.UTF_8));
+
+			return HexFormat.of().formatHex(hashedBytes).substring(0, 12);
+		}
+		catch (NoSuchAlgorithmException exception) {
+			throw new IllegalStateException("SHA-256 algorithm unavailable", exception);
+		}
+	}
+
+	static String normalizeEmailAddress(String email) {
+		if (!StringUtils.hasText(email)) {
+			throw new IllegalArgumentException("Email must not be blank");
+		}
+
+		return email.trim().toLowerCase(Locale.ROOT);
+	}
+}
