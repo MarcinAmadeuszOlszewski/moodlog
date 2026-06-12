@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class JournalEntryService {
@@ -70,6 +71,7 @@ public class JournalEntryService {
 		this.weeklyTrendSpan = Math.max(1, weeklyTrendSpan);
 	}
 
+	@Transactional
 	public JournalEntry saveEntry(String currentUserEmail, String content) {
 		final UserAccount userAccount = resolveUserAccount(currentUserEmail);
 		final String safeUserIdentifier = UserAccountService.safeEmailIdentifier(userAccount.getEmail());

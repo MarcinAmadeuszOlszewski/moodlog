@@ -6,6 +6,7 @@ import java.net.http.HttpTimeoutException;
 import java.util.Locale;
 
 import com.openai.errors.OpenAIIoException;
+import com.amadeuszx.moodlog.journal.JournalEntry;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.converter.BeanOutputConverter;
@@ -29,6 +30,10 @@ public class OpenAiMoodClassifier implements MoodClassifier {
 
 	@Override
 	public MoodClassification classify(String entryText) {
+		final String sanitizedText = (entryText != null && entryText.length() > JournalEntry.MAX_CONTENT_LENGTH)
+			? entryText.substring(0, JournalEntry.MAX_CONTENT_LENGTH)
+			: entryText;
+
 		final BeanOutputConverter<OpenAiMoodResponse> outputConverter = new BeanOutputConverter<>(OpenAiMoodResponse.class);
 		final OpenAiChatOptions chatOptions = OpenAiChatOptions.builder()
 			.model(defaultModel)
@@ -37,7 +42,7 @@ public class OpenAiMoodClassifier implements MoodClassifier {
 				.jsonSchema(outputConverter.getJsonSchema())
 				.build())
 			.build();
-		final Prompt prompt = new Prompt(buildPrompt(entryText), chatOptions);
+		final Prompt prompt = new Prompt(buildPrompt(sanitizedText), chatOptions);
 		final ChatResponse response = callProvider(prompt);
 		final String responseText = extractResponseText(response);
 
@@ -138,7 +143,9 @@ public class OpenAiMoodClassifier implements MoodClassifier {
 			Focus on the dominant emotional tone of the entry instead of every minor feeling.
 
 			Journal entry:
+			<entry>
 			%s
+			</entry>
 			""".formatted(entryText);
 	}
 
