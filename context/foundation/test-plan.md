@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan-spring --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-12 (Phase 1 change opened)
+> Last updated: 2026-06-12 (Phase 1 researched)
 
 ---
 
@@ -71,7 +71,7 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
-| 1 | AI boundary hardening | Prove entry durability on AI failure and verify classifier response contract | #1, #2 | unit + integration | change opened | testing-ai-boundary-hardening |
+| 1 | AI boundary hardening | Prove entry durability on AI failure and verify classifier response contract | #1, #2 | unit + integration | planned | testing-ai-boundary-hardening |
 | 2 | Trends time-zone accuracy | Prove mood trend calculations are correct across Europe/Warsaw midnight boundaries | #3 | integration (service + MockMvc) | not started | — |
 | 3 | Ownership + security enforcement | Ensure S-04 edit/delete/override verifies per-resource ownership; prevent security config regressions | #4, #5 | integration (MockMvc + spring-security-test) | not started | — |
 | 4 | Migration safety gate | Verify Flyway migrations apply cleanly against real PostgreSQL via Testcontainers | #6 | integration (Testcontainers) | not started | — |
