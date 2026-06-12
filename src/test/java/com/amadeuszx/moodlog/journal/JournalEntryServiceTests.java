@@ -97,33 +97,33 @@ class JournalEntryServiceTests {
 	}
 
 	@Test
-	@DisplayName("blocks persistence when the classifier fails")
-	void blocksPersistenceWhenTheClassifierFails() {
+	@DisplayName("saves entry with unknown mood when classifier fails")
+	void savesEntryWithUnknownMoodWhenClassifierFails() {
 		val owner = createUserAccount("ela@example.com");
 
 		given(moodClassifier.classify("Nie mogę się uspokoić."))
 			.willThrow(new MoodClassificationFailedException("Nie udało się sklasyfikować wpisu."));
 
-		assertThrows(
-			MoodClassificationFailedException.class,
-			() -> journalEntryService.saveEntry(owner.getEmail(), "Nie mogę się uspokoić.")
-		);
-		assertEquals(0L, journalEntryRepository.count());
+		val savedEntry = journalEntryService.saveEntry(owner.getEmail(), "Nie mogę się uspokoić.");
+
+		assertEquals(1L, journalEntryRepository.count());
+		assertEquals(MoodTag.UNKNOWN, savedEntry.getSystemMoodTag());
+		assertNull(savedEntry.getSystemMoodScore());
 	}
 
 	@Test
-	@DisplayName("rejects invalid classification payloads before persistence")
-	void rejectsInvalidClassificationPayloadsBeforePersistence() {
+	@DisplayName("saves entry with unknown mood when classification payload is invalid")
+	void savesEntryWithUnknownMoodWhenClassificationPayloadIsInvalid() {
 		val owner = createUserAccount("ela@example.com");
 
 		given(moodClassifier.classify("Czuję chaos."))
 			.willThrow(new IllegalArgumentException("Mood score must be between 0 and 100."));
 
-		assertThrows(
-			MoodClassificationFailedException.class,
-			() -> journalEntryService.saveEntry(owner.getEmail(), "Czuję chaos.")
-		);
-		assertEquals(0L, journalEntryRepository.count());
+		val savedEntry = journalEntryService.saveEntry(owner.getEmail(), "Czuję chaos.");
+
+		assertEquals(1L, journalEntryRepository.count());
+		assertEquals(MoodTag.UNKNOWN, savedEntry.getSystemMoodTag());
+		assertNull(savedEntry.getSystemMoodScore());
 	}
 
 	@Test

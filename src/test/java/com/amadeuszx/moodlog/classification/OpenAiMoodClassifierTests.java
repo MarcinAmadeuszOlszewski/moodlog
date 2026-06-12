@@ -8,7 +8,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.OpenAiChatModel;
 
@@ -71,5 +73,69 @@ class OpenAiMoodClassifierTests {
 		assertEquals(MoodClassificationFailureReason.PROVIDER_TIMEOUT, exception.getReason());
 		assertEquals("openai", exception.getProvider());
 		assertEquals("gpt-4o-mini", exception.getModel());
+	}
+
+	@Test
+	@DisplayName("maps non-null response with null result to an invalid response reason")
+	void mapsNonNullResponseWithNullResultToAnInvalidResponseReason() {
+		val response = Mockito.mock(ChatResponse.class);
+		when(response.getResult()).thenReturn(null);
+		when(openAiChatModel.call(any(Prompt.class))).thenReturn(response);
+		val openAiMoodClassifier = new OpenAiMoodClassifier(openAiChatModel, "gpt-4o-mini");
+
+		val exception = assertThrows(
+			MoodClassificationFailedException.class,
+			() -> openAiMoodClassifier.classify("Po spacerze czuję spokój.")
+		);
+
+		assertEquals(MoodClassificationFailureReason.INVALID_RESPONSE, exception.getReason());
+	}
+
+	@Test
+	@DisplayName("maps blank provider response text to an invalid response reason")
+	void mapsBlankProviderResponseTextToAnInvalidResponseReason() {
+		val response = Mockito.mock(ChatResponse.class, Mockito.RETURNS_DEEP_STUBS);
+		when(response.getResult().getOutput().getText()).thenReturn("");
+		when(openAiChatModel.call(any(Prompt.class))).thenReturn(response);
+		val openAiMoodClassifier = new OpenAiMoodClassifier(openAiChatModel, "gpt-4o-mini");
+
+		val exception = assertThrows(
+			MoodClassificationFailedException.class,
+			() -> openAiMoodClassifier.classify("Po spacerze czuję spokój.")
+		);
+
+		assertEquals(MoodClassificationFailureReason.INVALID_RESPONSE, exception.getReason());
+	}
+
+	@Test
+	@DisplayName("maps out-of-range mood score to an invalid response reason")
+	void mapsOutOfRangeMoodScoreToAnInvalidResponseReason() {
+		val response = Mockito.mock(ChatResponse.class, Mockito.RETURNS_DEEP_STUBS);
+		when(response.getResult().getOutput().getText()).thenReturn("{\"moodTag\":\"CALM\",\"moodScore\":150}");
+		when(openAiChatModel.call(any(Prompt.class))).thenReturn(response);
+		val openAiMoodClassifier = new OpenAiMoodClassifier(openAiChatModel, "gpt-4o-mini");
+
+		val exception = assertThrows(
+			MoodClassificationFailedException.class,
+			() -> openAiMoodClassifier.classify("Po spacerze czuję spokój.")
+		);
+
+		assertEquals(MoodClassificationFailureReason.INVALID_RESPONSE, exception.getReason());
+	}
+
+	@Test
+	@DisplayName("maps missing mood score field to an invalid response reason")
+	void mapsMissingMoodScoreFieldToAnInvalidResponseReason() {
+		val response = Mockito.mock(ChatResponse.class, Mockito.RETURNS_DEEP_STUBS);
+		when(response.getResult().getOutput().getText()).thenReturn("{\"moodTag\":\"CALM\"}");
+		when(openAiChatModel.call(any(Prompt.class))).thenReturn(response);
+		val openAiMoodClassifier = new OpenAiMoodClassifier(openAiChatModel, "gpt-4o-mini");
+
+		val exception = assertThrows(
+			MoodClassificationFailedException.class,
+			() -> openAiMoodClassifier.classify("Po spacerze czuję spokój.")
+		);
+
+		assertEquals(MoodClassificationFailureReason.INVALID_RESPONSE, exception.getReason());
 	}
 }

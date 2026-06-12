@@ -335,22 +335,22 @@ V3 migration is additive (relaxes constraints, does not change data). Existing r
 
 #### Automated
 
-- [x] 2.1 Context loads and `ApplicationTests` passes
-- [x] 2.2 `OpenAiMoodClassifierTests` passes (all 3 existing tests)
-- [x] 2.3 `blocksPersistenceWhenTheClassifierFails` and `classificationFailurePreservesTheSubmittedText` fail (expected signal that fallback fires)
+- [x] 2.1 Context loads and `ApplicationTests` passes — fafbbdc
+- [x] 2.2 `OpenAiMoodClassifierTests` passes (all 3 existing tests) — fafbbdc
+- [x] 2.3 `blocksPersistenceWhenTheClassifierFails` and `classificationFailurePreservesTheSubmittedText` fail (expected signal that fallback fires) — fafbbdc
 
 #### Manual
 
-- [x] 2.4 Classification failure on local app redirects to `/journal`; entry visible with "Nieznane" and no score; log shows both failure and fallback-save lines without user text
+- [x] 2.4 Classification failure on local app redirects to `/journal`; entry visible with "Nieznane" and no score; log shows both failure and fallback-save lines without user text — fafbbdc
 
 ### Phase 3: Test updates and new tests
 
 #### Automated
 
-- [ ] 3.1 `.\mvnw.cmd test` passes with zero failures (all renamed, updated, and new tests green)
-- [ ] 3.2 All four new `OpenAiMoodClassifierTests` pass
-- [ ] 3.3 New fallback end-to-end flow test passes
+- [x] 3.1 `.\mvnw.cmd test` passes with zero failures (all renamed, updated, and new tests green)
+- [x] 3.2 All four new `OpenAiMoodClassifierTests` pass
+- [x] 3.3 New fallback end-to-end flow test passes
 
 #### Manual
 
-- [ ] 3.4 Full manual smoke: stub path shows "Nieznane" with no score; real AI path shows mood label with score; log is clean of user text on both paths
+- [x] 3.4 Full manual smoke: stub path shows "Nieznane" with no score; real AI path shows mood label with score; log is clean of user text on both paths

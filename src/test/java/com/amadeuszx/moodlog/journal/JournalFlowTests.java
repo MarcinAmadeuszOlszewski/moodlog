@@ -132,8 +132,8 @@ class JournalFlowTests {
 	}
 
 	@Test
-	@DisplayName("preserves the submitted text when classification blocks the save")
-	void classificationFailurePreservesTheSubmittedText() throws Exception {
+	@DisplayName("saves entry with unknown mood and redirects when classification fails")
+	void savesEntryWithUnknownMoodAndRedirectsWhenClassificationFails() throws Exception {
 		val owner = createUserAccount("ela@example.com");
 		val entryText = "Mam dziś za dużo myśli na raz.";
 
@@ -144,12 +144,10 @@ class JournalFlowTests {
 				.with(user(owner.getEmail()).roles("USER"))
 				.with(csrf())
 				.param("content", entryText))
-			.andExpect(status().isOk())
-			.andExpect(view().name("journal"))
-			.andExpect(content().string(containsString("Nie udało się sklasyfikować wpisu.")))
-			.andExpect(content().string(containsString(entryText)));
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/journal"));
 
-		assertEquals(0L, journalEntryRepository.count());
+		assertEquals(1L, journalEntryRepository.count());
 	}
 
 	@Test
@@ -171,15 +169,42 @@ class JournalFlowTests {
 				.with(user(owner.getEmail()).roles("USER"))
 				.with(csrf())
 				.param("content", entryText))
-			.andExpect(status().isOk())
-			.andExpect(view().name("journal"))
-			.andExpect(content().string(containsString("Nie udało się sklasyfikować wpisu.")));
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/journal"));
 
 		assertTrue(output.getOut().contains("journal.classification.failure identifier=email-hash:"));
 		assertTrue(output.getOut().contains("provider=openai"));
 		assertTrue(output.getOut().contains("model=gpt-4o-mini"));
 		assertTrue(output.getOut().contains("reason=PROVIDER_ERROR"));
 		assertFalse(output.getOut().contains(entryText));
+	}
+
+	@Test
+	@DisplayName("shows unknown mood entry in recent list after classification failure")
+	void showsUnknownMoodEntryInRecentListAfterClassificationFailure() throws Exception {
+		val owner = createUserAccount("ela@example.com");
+		val entryText = "Po prostu czuję chaos dzisiaj.";
+
+		given(moodClassifier.classify(entryText))
+			.willThrow(new MoodClassificationFailedException("Nie udało się sklasyfikować wpisu."));
+
+		mockMvc.perform(post("/journal")
+				.with(user(owner.getEmail()).roles("USER"))
+				.with(csrf())
+				.param("content", entryText))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/journal"));
+
+		val responseContent = mockMvc.perform(get("/journal").with(user(owner.getEmail()).roles("USER")))
+			.andExpect(status().isOk())
+			.andExpect(view().name("journal"))
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+
+		assertTrue(responseContent.contains("Po prostu czuję chaos dzisiaj."));
+		assertTrue(responseContent.contains("Nieznane"));
+		assertFalse(responseContent.contains("/100"));
 	}
 
 	@Test
