@@ -48,6 +48,10 @@ public class OpenAiMoodClassifier implements MoodClassifier {
 				throw buildFailureException(MoodClassificationFailureReason.INVALID_RESPONSE);
 			}
 
+			if (openAiMoodResponse.moodScore() == null) {
+				throw buildFailureException(MoodClassificationFailureReason.INVALID_RESPONSE);
+			}
+
 			return new MoodClassification(
 				openAiMoodResponse.moodTag(),
 				openAiMoodResponse.moodScore(),
@@ -138,6 +142,6 @@ public class OpenAiMoodClassifier implements MoodClassifier {
 			""".formatted(entryText);
 	}
 
-	private record OpenAiMoodResponse(MoodTag moodTag, int moodScore) {
+	private record OpenAiMoodResponse(MoodTag moodTag, Integer moodScore) {
 	}
 }

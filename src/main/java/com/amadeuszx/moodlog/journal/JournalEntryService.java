@@ -73,7 +73,13 @@ public class JournalEntryService {
 	public JournalEntry saveEntry(String currentUserEmail, String content) {
 		final UserAccount userAccount = resolveUserAccount(currentUserEmail);
 		final String safeUserIdentifier = UserAccountService.safeEmailIdentifier(userAccount.getEmail());
-		final MoodClassification moodClassification = classifyContent(content, safeUserIdentifier);
+		MoodClassification moodClassification;
+		try {
+			moodClassification = classifyContent(content, safeUserIdentifier);
+		}
+		catch (MoodClassificationFailedException exception) {
+			return saveEntryWithUnknownMood(userAccount, content, safeUserIdentifier, exception);
+		}
 		final Instant now = Instant.now(clock);
 		final JournalEntry journalEntry = new JournalEntry(
 			UUID.randomUUID(),
@@ -97,6 +103,42 @@ public class JournalEntryService {
 			safeUserIdentifier,
 			moodClassification.provider(),
 			moodClassification.model()
+		);
+
+		return savedJournalEntry;
+	}
+
+	private JournalEntry saveEntryWithUnknownMood(
+		UserAccount userAccount,
+		String content,
+		String safeUserIdentifier,
+		MoodClassificationFailedException exception
+	) {
+		final Instant now = Instant.now(clock);
+		final String provider = exception.getProvider();
+		final String model = exception.getModel();
+		final JournalEntry journalEntry = new JournalEntry(
+			UUID.randomUUID(),
+			userAccount,
+			content,
+			MoodTag.UNKNOWN,
+			null,
+			null,
+			null,
+			provider,
+			model,
+			now,
+			now,
+			now
+		);
+
+		final JournalEntry savedJournalEntry = journalEntryRepository.save(journalEntry);
+
+		logger.warn(
+			"journal.entry.saved.with.unknown.mood identifier={} provider={} model={}",
+			safeUserIdentifier,
+			provider,
+			model
 		);
 
 		return savedJournalEntry;
