@@ -35,8 +35,8 @@ public class JournalEntry {
 	@Column(name = "system_mood_tag", nullable = false, length = 32)
 	private MoodTag systemMoodTag;
 
-	@Column(name = "system_mood_score", nullable = false)
-	private int systemMoodScore;
+	@Column(name = "system_mood_score")
+	private Integer systemMoodScore;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "override_mood_tag", length = 32)
@@ -68,7 +68,7 @@ public class JournalEntry {
 		UserAccount userAccount,
 		String content,
 		MoodTag systemMoodTag,
-		int systemMoodScore,
+		Integer systemMoodScore,
 		MoodTag overrideMoodTag,
 		Integer overrideMoodScore,
 		String classifierProvider,
@@ -107,7 +107,7 @@ public class JournalEntry {
 		return systemMoodTag;
 	}
 
-	public int getSystemMoodScore() {
+	public Integer getSystemMoodScore() {
 		return systemMoodScore;
 	}
 

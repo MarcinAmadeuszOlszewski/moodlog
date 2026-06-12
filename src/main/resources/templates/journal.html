@@ -48,7 +48,7 @@
 			<ul th:if="${!#lists.isEmpty(recentEntries)}">
 				<li th:each="entry : ${recentEntries}">
 					<p th:text="${entry.excerpt}">Treść wpisu</p>
-					<p th:text="${entry.moodLabel + ' — ' + entry.moodScore + '/100'}">Spokój — 73/100</p>
+					<p th:text="${entry.moodScore != null ? entry.moodLabel + ' — ' + entry.moodScore + '/100' : entry.moodLabel}">Spokój — 73/100</p>
 				</li>
 			</ul>
 		</section>

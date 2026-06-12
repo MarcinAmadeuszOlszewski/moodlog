@@ -8,5 +8,6 @@ public enum MoodTag {
 	SADNESS,
 	ANXIETY,
 	ANGER,
-	OVERWHELMED
+	OVERWHELMED,
+	UNKNOWN
 }

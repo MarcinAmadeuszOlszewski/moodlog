@@ -8,6 +8,6 @@ public record JournalHistoryItem(
 	LocalTime displayTime,
 	String excerpt,
 	String moodLabel,
-	int moodScore
+	Integer moodScore
 ) {
 }

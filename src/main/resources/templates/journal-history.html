@@ -34,7 +34,7 @@
 				<li th:each="entry : ${historyEntries}">
 					<p th:text="${#temporals.format(entry.displayDate, 'dd.MM.yyyy') + ' • ' + #temporals.format(entry.displayTime, 'HH:mm')}">31.05.2026 • 23:35</p>
 					<p th:text="${entry.excerpt}">Treść wpisu</p>
-					<p th:text="${entry.moodLabel + ' — ' + entry.moodScore + '/100'}">Spokój — 73/100</p>
+					<p th:text="${entry.moodScore != null ? entry.moodLabel + ' — ' + entry.moodScore + '/100' : entry.moodLabel}">Spokój — 73/100</p>
 				</li>
 			</ol>
 

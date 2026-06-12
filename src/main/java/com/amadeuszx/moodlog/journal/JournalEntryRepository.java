@@ -17,7 +17,7 @@ public interface JournalEntryRepository extends JpaRepository<JournalEntry, UUID
 
 		MoodTag getSystemMoodTag();
 
-		int getSystemMoodScore();
+		Integer getSystemMoodScore();
 
 		MoodTag getOverrideMoodTag();
 

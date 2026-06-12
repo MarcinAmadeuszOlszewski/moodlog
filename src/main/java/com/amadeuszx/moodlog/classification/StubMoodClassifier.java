@@ -71,6 +71,7 @@ public class StubMoodClassifier implements MoodClassifier {
 			case ANXIETY -> 67;
 			case ANGER -> 79;
 			case OVERWHELMED -> 88;
+			case UNKNOWN -> 0;
 		};
 	}
 

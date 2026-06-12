@@ -324,12 +324,12 @@ V3 migration is additive (relaxes constraints, does not change data). Existing r
 
 #### Automated
 
-- [ ] 1.1 `.\mvnw.cmd test` passes with all existing tests green and V3 migration applied
-- [ ] 1.2 Hibernate schema validation succeeds (no validate-mode errors on startup)
+- [x] 1.1 `.\mvnw.cmd test` passes with all existing tests green and V3 migration applied
+- [x] 1.2 Hibernate schema validation succeeds (no validate-mode errors on startup)
 
 #### Manual
 
-- [ ] 1.3 App starts locally without schema validation errors; happy-path entry POST shows mood label with score
+- [x] 1.3 App starts locally without schema validation errors; happy-path entry POST shows mood label with score
 
 ### Phase 2: Service fallback + OpenAiMoodClassifier tightening
 

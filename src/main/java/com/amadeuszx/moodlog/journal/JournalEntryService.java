@@ -147,6 +147,7 @@ public class JournalEntryService {
 			)
 			.stream()
 			.map(this::toReportedEntry)
+			.filter(Objects::nonNull)
 			.toList();
 		final JournalTrendView.CurrentWeekSummary currentWeekSummary = buildCurrentWeekSummary(
 			reportedEntries,
@@ -361,6 +362,9 @@ public class JournalEntryService {
 
 	private ReportedJournalEntry toReportedEntry(JournalEntryRepository.JournalTrendEntryProjection journalTrendEntry) {
 		final EffectiveMood effectiveMood = resolveEffectiveMood(journalTrendEntry);
+		if (effectiveMood.moodScore() == null) {
+			return null;
+		}
 		final LocalDate reportingDate = journalTrendEntry.getCreatedAt().atZone(reportingZoneId).toLocalDate();
 
 		return new ReportedJournalEntry(
@@ -410,6 +414,7 @@ public class JournalEntryService {
 			case ANXIETY -> "Lęk";
 			case ANGER -> "Złość";
 			case OVERWHELMED -> "Przytłoczenie";
+			case UNKNOWN -> "Nieznane";
 		};
 	}
 
@@ -433,7 +438,7 @@ public class JournalEntryService {
 		);
 	}
 
-	private record EffectiveMood(MoodTag moodTag, int moodScore) {
+	private record EffectiveMood(MoodTag moodTag, Integer moodScore) {
 	}
 
 	private record ReportedJournalEntry(
