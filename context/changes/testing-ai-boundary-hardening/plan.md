@@ -347,10 +347,10 @@ V3 migration is additive (relaxes constraints, does not change data). Existing r
 
 #### Automated
 
-- [x] 3.1 `.\mvnw.cmd test` passes with zero failures (all renamed, updated, and new tests green)
-- [x] 3.2 All four new `OpenAiMoodClassifierTests` pass
-- [x] 3.3 New fallback end-to-end flow test passes
+- [x] 3.1 `.\mvnw.cmd test` passes with zero failures (all renamed, updated, and new tests green) — e6382e7
+- [x] 3.2 All four new `OpenAiMoodClassifierTests` pass — e6382e7
+- [x] 3.3 New fallback end-to-end flow test passes — e6382e7
 
 #### Manual
 
-- [x] 3.4 Full manual smoke: stub path shows "Nieznane" with no score; real AI path shows mood label with score; log is clean of user text on both paths
+- [x] 3.4 Full manual smoke: stub path shows "Nieznane" with no score; real AI path shows mood label with score; log is clean of user text on both paths — e6382e7
