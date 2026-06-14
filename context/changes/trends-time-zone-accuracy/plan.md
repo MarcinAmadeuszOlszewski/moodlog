@@ -326,7 +326,7 @@ V4 migration is additive (`ADD COLUMN ... NOT NULL DEFAULT 'Europe/Warsaw'`) and
 
 #### Manual
 
-- [x] 1.4 No regressions in existing user account behaviour
+- [x] 1.4 No regressions in existing user account behaviour — 6a32800
 
 ### Phase 2: Signup Form Capture
 
@@ -337,9 +337,9 @@ V4 migration is additive (`ADD COLUMN ... NOT NULL DEFAULT 'Europe/Warsaw'`) and
 
 #### Manual
 
-- [ ] 2.3 Registering in a browser stores the correct timezone
-- [ ] 2.4 Signup with JavaScript disabled completes and stores `Europe/Warsaw`
-- [ ] 2.5 No regressions in registration error paths (duplicate email, invalid password)
+- [x] 2.3 Registering in a browser stores the correct timezone
+- [x] 2.4 Signup with JavaScript disabled completes and stores `Europe/Warsaw`
+- [x] 2.5 No regressions in registration error paths (duplicate email, invalid password)
 
 ### Phase 3: Service Zone Wiring
 
