@@ -1,10 +1,10 @@
 ---
 change_id: testing-ai-boundary-hardening
 title: Phase 1 test rollout — AI classifier boundary and entry durability
-status: implemented
+status: archived
 created: 2026-06-12
-updated: 2026-06-12
-archived_at: null
+updated: 2026-06-14
+archived_at: 2026-06-14T21:37:14Z
 ---
 
 ## Notes
