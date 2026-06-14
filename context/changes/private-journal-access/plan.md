@@ -325,4 +325,4 @@ This change introduces the first persistent schema in the app, so environment-ba
 #### Manual
 
 - [x] 4.3 End-to-end browser smoke testing confirms landing -> register -> journal -> logout -> login -> journal works as planned — 88908d9
-- [ ] 4.4 Auth logs are visible for success and failure paths without exposing sensitive credential data
+- [x] 4.4 Auth logs are visible for success and failure paths without exposing sensitive credential data
