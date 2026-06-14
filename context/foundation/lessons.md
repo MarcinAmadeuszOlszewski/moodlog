@@ -12,9 +12,21 @@ entity classes use hand-written boilerplate. When a new entity is added (or an
 existing one extended), it's unclear whether to follow the AGENTS.md rule or
 the actual entity-tier precedent — this ambiguity led to a finding in review.
 
-**Rule**: [fill in — e.g. "Entity classes in this project follow a no-Lombok
-convention; use hand-written constructors and getters. Update AGENTS.md if the
-team decides to standardize."]
+**Rule**: Use Lombok on `@Entity` classes with this minimal pattern:
+- `@Getter` — replaces hand-written getters
+- `@NoArgsConstructor(access = AccessLevel.PROTECTED)` — satisfies JPA/Hibernate
+  requirement for a no-args constructor without exposing it publicly
+- Explicit domain constructor only for fields required by business logic
+- Avoid `@AllArgsConstructor` on entities — it exposes id and persistence-managed
+  fields, making the model easy to misuse
 
-**Applies to**: [fill in — e.g. "All @Entity classes under
-com.amadeuszx.moodlog"]
+```java
+@Entity
+@Table(name = "user_accounts")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class UserAccount {
+}
+```
+
+**Applies to**: All `@Entity` classes under `com.amadeuszx.moodlog`
