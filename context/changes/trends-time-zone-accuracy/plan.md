@@ -350,7 +350,7 @@ V4 migration is additive (`ADD COLUMN ... NOT NULL DEFAULT 'Europe/Warsaw'`) and
 
 #### Manual
 
-- [x] 3.3 History and trend pages render correct dates for a Warsaw user
+- [x] 3.3 History and trend pages render correct dates for a Warsaw user — ef21ba5
 
 ### Phase 4: Tests
 
@@ -361,4 +361,4 @@ V4 migration is additive (`ADD COLUMN ... NOT NULL DEFAULT 'Europe/Warsaw'`) and
 
 #### Manual
 
-- [ ] 4.3 New DST and per-user timezone tests are readable and match existing test style
+- [x] 4.3 New DST and per-user timezone tests are readable and match existing test style
