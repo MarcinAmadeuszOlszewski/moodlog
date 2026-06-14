@@ -1,10 +1,10 @@
 ---
 change_id: trends-time-zone-accuracy
 title: Trends time zone accuracy
-status: impl_reviewed
+status: archived
 created: 2026-06-12
 updated: 2026-06-14
-archived_at: null
+archived_at: 2026-06-14T16:12:43Z
 ---
 
 ## Notes
