@@ -361,4 +361,4 @@ V4 migration is additive (`ADD COLUMN ... NOT NULL DEFAULT 'Europe/Warsaw'`) and
 
 #### Manual
 
-- [x] 4.3 New DST and per-user timezone tests are readable and match existing test style
+- [x] 4.3 New DST and per-user timezone tests are readable and match existing test style — 16b6a4e
