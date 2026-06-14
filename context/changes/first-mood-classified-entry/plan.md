@@ -400,4 +400,4 @@ This change is additive: existing users remain valid, and the new `journal_entri
 #### Manual
 
 - [x] 4.3 Running the app in stub mode allows end-to-end journaling without external credentials — 079b817
-- [ ] 4.4 Running the app with hosted-provider settings shows real classification without exposing raw entry text in logs
+- [x] 4.4 Running the app with hosted-provider settings shows real classification without exposing raw entry text in logs
