@@ -3,7 +3,7 @@ project: "MoodLog"
 version: 1
 status: draft
 created: 2026-05-29
-updated: 2026-05-29
+updated: 2026-06-14
 prd_version: 1
 main_goal: low-complexity
 top_blocker: none
@@ -29,7 +29,7 @@ MoodLog is for adults who journal and want a low-friction way to turn free-text 
 
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
-| S-01 | private-journal-access | register, sign in, sign out, and reach a private journal shell | — | FR-001 | ready |
+| S-01 | private-journal-access | register, sign in, sign out, and reach a private journal shell | — | FR-001 | done |
 | S-02 | first-mood-classified-entry | save a free-text entry and see an automatic mood result in the private journal | S-01 | US-01, FR-002, FR-003, FR-005 | proposed |
 | S-03 | history-and-mood-trends | review private entry history plus 7-day, 30-day, and weekly mood trends | S-02 | US-01, FR-003, FR-007 | proposed |
 | S-04 | entry-ownership-and-mood-correction | edit or delete owned entries and correct an assigned mood tag | S-03 | FR-004, FR-006 | proposed |
@@ -62,7 +62,7 @@ No explicit foundations on first generation. With a present backend, a partial U
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Sequenced first because every later capability assumes a private user boundary; the main risk is overbuilding auth beyond the single-role MVP.
-- **Status:** ready
+- **Status:** done
 
 ### S-02: First mood-classified entry
 
@@ -127,4 +127,4 @@ No explicit foundations on first generation. With a present backend, a partial U
 
 ## Done
 
-(Empty on first generation. `/10x-archive` appends entries here.)
+- **S-01: User can register, sign in, sign out, and reach a private journal shell.** — Archived 2026-06-14 → `context/archive/2026-05-29-private-journal-access/`. Lesson: —.

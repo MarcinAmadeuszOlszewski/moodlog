@@ -1,10 +1,10 @@
 ---
 change_id: private-journal-access
 title: Private journal access
-status: impl_reviewed
+status: archived
 created: 2026-05-29
 updated: 2026-06-14
-archived_at: null
+archived_at: 2026-06-14T12:41:00Z
 ---
 
 ## Notes
