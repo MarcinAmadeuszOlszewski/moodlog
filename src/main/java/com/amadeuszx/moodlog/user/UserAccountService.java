@@ -13,8 +13,7 @@ import java.util.UUID;
 
 import com.amadeuszx.moodlog.user.register.DuplicateUserAccountException;
 import com.amadeuszx.moodlog.user.register.InvalidPasswordException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.User;
@@ -26,9 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Service
+@Slf4j
 public class UserAccountService implements UserDetailsService {
 
-	private static final Logger logger = LoggerFactory.getLogger(UserAccountService.class);
 	static final String DEFAULT_TIMEZONE = "Europe/Warsaw";
 
 	private final UserAccountRepository userAccountRepository;
@@ -71,10 +70,11 @@ public class UserAccountService implements UserDetailsService {
 		try {
 			final UserAccount savedUserAccount = userAccountRepository.save(userAccount);
 
-			logger.info("auth.registration.success identifier={}", safeEmailIdentifier(normalizedEmail));
+			log.info("auth.registration.success identifier={}", safeEmailIdentifier(normalizedEmail));
 
 			return savedUserAccount;
 		}
+		// Handles concurrent-registration race: both requests passed existsByEmail, but DB unique constraint fires on the second insert.
 		catch (DataIntegrityViolationException exception) {
 			logDuplicateEmailRegistration(normalizedEmail);
 			throw new DuplicateUserAccountException();
@@ -106,7 +106,8 @@ public class UserAccountService implements UserDetailsService {
 		}
 
 		try {
-			return "email-hash:" + hashEmail(normalizeEmailAddress(email));
+			final String truncated = email.length() > 500 ? email.substring(0, 500) : email;
+			return "email-hash:" + hashEmail(normalizeEmailAddress(truncated));
 		}
 		catch (IllegalArgumentException exception) {
 			return "invalid-email";
@@ -124,7 +125,7 @@ public class UserAccountService implements UserDetailsService {
 
 	private void ensurePasswordMeetsPolicy(String rawPassword, String normalizedEmail) {
 		if (!StringUtils.hasText(rawPassword) || rawPassword.length() < passwordMinimumLength) {
-			logger.warn(
+			log.warn(
 				"auth.registration.failure identifier={} reason=PASSWORD_TOO_SHORT minLength={}",
 				safeEmailIdentifier(normalizedEmail),
 				passwordMinimumLength
@@ -134,7 +135,7 @@ public class UserAccountService implements UserDetailsService {
 	}
 
 	private void logDuplicateEmailRegistration(String normalizedEmail) {
-		logger.warn("auth.registration.failure identifier={} reason=DUPLICATE_EMAIL", safeEmailIdentifier(normalizedEmail));
+		log.warn("auth.registration.failure identifier={} reason=DUPLICATE_EMAIL", safeEmailIdentifier(normalizedEmail));
 	}
 
 	private static String hashEmail(String normalizedEmail) {
@@ -167,7 +168,7 @@ public class UserAccountService implements UserDetailsService {
 			return timezone;
 		}
 		catch (DateTimeException exception) {
-			logger.warn(
+			log.warn(
 				"auth.registration.timezone.invalid identifier={} timezone={}",
 				safeEmailIdentifier(normalizedEmail),
 				timezone.substring(0, Math.min(timezone.length(), 64))

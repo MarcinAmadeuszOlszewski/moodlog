@@ -1,7 +1,6 @@
 package com.amadeuszx.moodlog.user;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,15 +15,16 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.session.ChangeSessionIdAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
 
 @Configuration
+@Slf4j
 public class SecurityConfiguration {
-
-	private static final Logger logger = LoggerFactory.getLogger(SecurityConfiguration.class);
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(
@@ -80,7 +80,7 @@ public class SecurityConfiguration {
 		authenticationSuccessHandler.setRequestCache(requestCache);
 
 		return (request, response, authentication) -> {
-			logger.info("auth.login.success identifier={}", UserAccountService.safeEmailIdentifier(authentication.getName()));
+			log.info("auth.login.success identifier={}", UserAccountService.safeEmailIdentifier(authentication.getName()));
 			authenticationSuccessHandler.onAuthenticationSuccess(request, response, authentication);
 		};
 	}
@@ -92,7 +92,7 @@ public class SecurityConfiguration {
 		return (request, response, exception) -> {
 			final String safeEmailIdentifier = UserAccountService.safeEmailIdentifier(request.getParameter("email"));
 
-			logger.warn(
+			log.warn(
 				"auth.login.failure identifier={} reason={}",
 				safeEmailIdentifier,
 				exception.getClass().getSimpleName()
@@ -128,5 +128,10 @@ public class SecurityConfiguration {
 	@Bean
 	public SessionAuthenticationStrategy sessionAuthenticationStrategy() {
 		return new ChangeSessionIdAuthenticationStrategy();
+	}
+
+	@Bean
+	public SecurityContextHolderStrategy securityContextHolderStrategy() {
+		return SecurityContextHolder.getContextHolderStrategy();
 	}
 }

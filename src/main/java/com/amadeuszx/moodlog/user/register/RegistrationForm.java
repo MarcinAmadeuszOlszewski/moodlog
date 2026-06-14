@@ -2,7 +2,9 @@ package com.amadeuszx.moodlog.user.register;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
+@Data
 public class RegistrationForm {
 
 	@NotBlank(message = "Podaj adres e-mail.")
@@ -13,28 +15,4 @@ public class RegistrationForm {
 	private String password;
 
 	private String timezone;
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getTimezone() {
-		return timezone;
-	}
-
-	public void setTimezone(String timezone) {
-		this.timezone = timezone;
-	}
 }

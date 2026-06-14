@@ -22,6 +22,7 @@
 
 			<div>
 				<label for="password">Hasło</label>
+				<!-- th:field intentionally omitted: prevents Thymeleaf from echoing the raw password into the HTML value attribute on validation errors -->
 				<input id="password" name="password" type="password" autocomplete="new-password" required>
 				<p th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
 			</div>

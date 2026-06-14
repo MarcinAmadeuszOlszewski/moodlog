@@ -10,7 +10,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.context.SecurityContextRepository;
@@ -34,12 +33,13 @@ public class AuthController {
 	public AuthController(
 		UserAccountService userAccountService,
 		AuthenticationManager authenticationManager,
+		SecurityContextHolderStrategy securityContextHolderStrategy,
 		SecurityContextRepository securityContextRepository,
 		SessionAuthenticationStrategy sessionAuthenticationStrategy
 	) {
 		this.userAccountService = userAccountService;
 		this.authenticationManager = authenticationManager;
-		this.securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
+		this.securityContextHolderStrategy = securityContextHolderStrategy;
 		this.securityContextRepository = securityContextRepository;
 		this.sessionAuthenticationStrategy = sessionAuthenticationStrategy;
 	}
