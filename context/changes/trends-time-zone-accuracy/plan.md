@@ -356,8 +356,8 @@ V4 migration is additive (`ADD COLUMN ... NOT NULL DEFAULT 'Europe/Warsaw'`) and
 
 #### Automated
 
-- [x] 4.1 `./mvnw test` passes — all four new test cases pass alongside the existing suite
-- [x] 4.2 No test compilation errors after `createUserAccount()` helper update
+- [x] 4.1 `./mvnw test` passes — all four new test cases pass alongside the existing suite — 51078db
+- [x] 4.2 No test compilation errors after `createUserAccount()` helper update — 51078db
 
 #### Manual
 

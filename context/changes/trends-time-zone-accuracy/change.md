@@ -1,7 +1,7 @@
 ---
 change_id: trends-time-zone-accuracy
 title: Trends time zone accuracy
-status: implementing
+status: implemented
 created: 2026-06-12
 updated: 2026-06-14
 archived_at: null
