@@ -30,7 +30,7 @@ MoodLog is for adults who journal and want a low-friction way to turn free-text 
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
 | S-01 | private-journal-access | register, sign in, sign out, and reach a private journal shell | — | FR-001 | done |
-| S-02 | first-mood-classified-entry | save a free-text entry and see an automatic mood result in the private journal | S-01 | US-01, FR-002, FR-003, FR-005 | proposed |
+| S-02 | first-mood-classified-entry | save a free-text entry and see an automatic mood result in the private journal | S-01 | US-01, FR-002, FR-003, FR-005 | done |
 | S-03 | history-and-mood-trends | review private entry history plus 7-day, 30-day, and weekly mood trends | S-02 | US-01, FR-003, FR-007 | proposed |
 | S-04 | entry-ownership-and-mood-correction | edit or delete owned entries and correct an assigned mood tag | S-03 | FR-004, FR-006 | proposed |
 
@@ -74,7 +74,7 @@ No explicit foundations on first generation. With a present backend, a partial U
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Sequenced second because this is the first full proof of value; the main risk is spreading work across progress, fallback, and AI wiring before the save-and-result loop works end to end.
-- **Status:** proposed
+- **Status:** done
 
 ### S-03: History and mood trends
 
@@ -128,3 +128,4 @@ No explicit foundations on first generation. With a present backend, a partial U
 ## Done
 
 - **S-01: User can register, sign in, sign out, and reach a private journal shell.** — Archived 2026-06-14 → `context/archive/2026-05-29-private-journal-access/`. Lesson: —.
+- **S-02: User can save a free-text entry and see an automatic mood result in the private journal.** — Archived 2026-06-14 → `context/archive/2026-05-30-first-mood-classified-entry/`. Lesson: —.
