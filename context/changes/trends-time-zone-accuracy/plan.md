@@ -320,9 +320,9 @@ V4 migration is additive (`ADD COLUMN ... NOT NULL DEFAULT 'Europe/Warsaw'`) and
 
 #### Automated
 
-- [x] 1.1 `./mvnw test` passes with updated `UserAccount` constructor (test helper stubbed to `"Europe/Warsaw"`)
-- [x] 1.2 Flyway V4 migration applies cleanly under H2 test profile
-- [x] 1.3 `UserAccount` entity compiles with new `timezone` field and constructor
+- [x] 1.1 `./mvnw test` passes with updated `UserAccount` constructor (test helper stubbed to `"Europe/Warsaw"`) — 6a32800
+- [x] 1.2 Flyway V4 migration applies cleanly under H2 test profile — 6a32800
+- [x] 1.3 `UserAccount` entity compiles with new `timezone` field and constructor — 6a32800
 
 #### Manual
 
@@ -332,8 +332,8 @@ V4 migration is additive (`ADD COLUMN ... NOT NULL DEFAULT 'Europe/Warsaw'`) and
 
 #### Automated
 
-- [x] 2.1 `./mvnw test` passes
-- [x] 2.2 POST `/register` with valid timezone creates account with that timezone stored
+- [x] 2.1 `./mvnw test` passes — 36c2c95
+- [x] 2.2 POST `/register` with valid timezone creates account with that timezone stored — 36c2c95
 
 #### Manual
 
@@ -345,8 +345,8 @@ V4 migration is additive (`ADD COLUMN ... NOT NULL DEFAULT 'Europe/Warsaw'`) and
 
 #### Automated
 
-- [x] 3.1 `./mvnw test` passes — all existing timezone-sensitive service tests continue to pass
-- [x] 3.2 `JournalEntryService` bean wires cleanly with no `@Value` injection for `reporting-zone-id`
+- [x] 3.1 `./mvnw test` passes — all existing timezone-sensitive service tests continue to pass — ef21ba5
+- [x] 3.2 `JournalEntryService` bean wires cleanly with no `@Value` injection for `reporting-zone-id` — ef21ba5
 
 #### Manual
 
