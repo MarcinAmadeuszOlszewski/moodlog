@@ -326,7 +326,7 @@ V4 migration is additive (`ADD COLUMN ... NOT NULL DEFAULT 'Europe/Warsaw'`) and
 
 #### Manual
 
-- [ ] 1.4 No regressions in existing user account behaviour
+- [x] 1.4 No regressions in existing user account behaviour
 
 ### Phase 2: Signup Form Capture
 
