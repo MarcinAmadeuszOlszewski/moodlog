@@ -377,6 +377,12 @@ No schema migration is expected for S-03 because the existing `journal_entries` 
 - Current journal template: `src/main/resources/templates/journal.html:15-40`
 - Auth boundary and saved-request behavior: `src/main/java/com/amadeuszx/moodlog/SecurityConfiguration.java:37-80`
 
+## Addenda
+
+**Package restructuring (implemented during this slice)**: All classes were reorganized from the flat `com.amadeuszx.moodlog` package into feature sub-packages (`journal`, `journal.history`, `journal.trend`, `user`) as part of this implementation. This was not in the original plan but was done as part of S-03 to improve organization. Plan file paths referencing the flat package should be read as the equivalent sub-package path.
+
+**Extra DTO: JournalEntryListItem**: A `JournalEntryListItem(excerpt, moodLabel, moodScore)` record was added alongside `JournalHistoryItem` to differentiate the recent-10 list items (no timestamps needed) from the full history rows (with display timestamps). Not in the original plan; added during implementation as a clean separation of concerns.
+
 ## Progress
 
 > Convention: `- [ ]` pending, `- [x]` done. Append ` — <commit sha>` when a step lands. Do not rename step titles. See `references/progress-format.md`.

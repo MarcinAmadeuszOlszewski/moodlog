@@ -30,9 +30,9 @@ public interface JournalEntryRepository extends JpaRepository<JournalEntry, UUID
 
 	Page<JournalEntry> findAllByUserAccountIdOrderByCreatedAtDesc(UUID userAccountId, Pageable pageable);
 
-	List<JournalTrendEntryProjection> findTrendEntriesByUserAccountIdAndCreatedAtGreaterThanEqualAndCreatedAtLessThanOrderByCreatedAtAsc(
+	List<JournalTrendEntryProjection> findTrendEntriesByUserAccountIdAndCreatedAtGreaterThanEqualAndCreatedAtLessThanEqualOrderByCreatedAtAsc(
 		UUID userAccountId,
 		Instant createdAtFromInclusive,
-		Instant createdAtToExclusive
+		Instant createdAtToInclusive
 	);
 }

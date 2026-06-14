@@ -26,7 +26,7 @@
 		<section>
 			<h2>Podsumowanie bieżącego tygodnia</h2>
 			<p th:if="${trendView.empty}">Zapisz kilka wpisów, aby zobaczyć trendy nastroju.</p>
-			<div>
+			<div th:if="${!trendView.currentWeekSummary.empty}">
 				<article>
 					<h3>Liczba wpisów</h3>
 					<p th:text="${trendView.currentWeekSummary.entriesCount}">0</p>
@@ -37,11 +37,11 @@
 				</article>
 				<article>
 					<h3>Dominujący nastrój</h3>
-					<p th:text="${trendView.currentWeekSummary.empty ? 'Brak danych' : trendView.currentWeekSummary.dominantMoodLabel}">Brak danych</p>
+					<p th:text="${trendView.currentWeekSummary.dominantMoodLabel}">Brak danych</p>
 				</article>
 				<article>
 					<h3>Średni wynik</h3>
-					<p th:text="${trendView.currentWeekSummary.empty ? 'Brak danych' : trendView.currentWeekSummary.averageMoodScore + '/100'}">Brak danych</p>
+					<p th:text="${trendView.currentWeekSummary.averageMoodScore + '/100'}">Brak danych</p>
 				</article>
 			</div>
 		</section>
@@ -69,7 +69,7 @@
 		</section>
 
 		<section>
-			<h2 th:text="${weeklyTrendSpan + ' ostatnich pełnych tygodni'}">Osiem ostatnich pełnych tygodni</h2>
+			<h2 th:text="${trendView.weeklyTrendSpan + ' ostatnich pełnych tygodni'}">Osiem ostatnich pełnych tygodni</h2>
 			<p th:if="${trendView.completedWeeklyTrend.empty}">Brak pełnych danych z ostatnich ośmiu tygodni.</p>
 			<p th:if="${trendView.completedWeeklyTrend.sparse and !trendView.completedWeeklyTrend.empty}">
 				Brak wpisów w niektórych tygodniach — wykres nie dopowiada brakujących danych.

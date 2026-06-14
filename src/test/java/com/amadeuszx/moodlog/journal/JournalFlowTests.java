@@ -355,8 +355,14 @@ class JournalFlowTests {
 
 		journalEntryRepository.saveAllAndFlush(ownerEntries);
 
-		val responseContent = mockMvc.perform(get("/journal/history")
+		mockMvc.perform(get("/journal/history")
 				.param("page", "999")
+				.with(user(owner.getEmail()).roles("USER")))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/journal/history?page=1"));
+
+		val responseContent = mockMvc.perform(get("/journal/history")
+				.param("page", "1")
 				.with(user(owner.getEmail()).roles("USER")))
 			.andExpect(status().isOk())
 			.andExpect(view().name("journal-history"))
@@ -367,7 +373,6 @@ class JournalFlowTests {
 		assertTrue(responseContent.contains("Eli archiwum [01]"));
 		assertFalse(responseContent.contains("Eli archiwum [02]"));
 		assertTrue(responseContent.contains("Strona 2 z 2"));
-		assertFalse(responseContent.contains("Strona 1000 z 2"));
 	}
 
 	private UserAccount createUserAccount(String email) {

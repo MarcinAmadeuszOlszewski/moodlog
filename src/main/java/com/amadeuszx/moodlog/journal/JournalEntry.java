@@ -14,9 +14,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "journal_entries")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class JournalEntry {
 
 	public static final int MAX_CONTENT_LENGTH = 2000;
@@ -60,9 +65,6 @@ public class JournalEntry {
 	@Column(name = "updated_at", nullable = false)
 	private Instant updatedAt;
 
-	protected JournalEntry() {
-	}
-
 	public JournalEntry(
 		UUID id,
 		UserAccount userAccount,
@@ -89,53 +91,5 @@ public class JournalEntry {
 		this.classifiedAt = classifiedAt;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
-	}
-
-	public UUID getId() {
-		return id;
-	}
-
-	public UserAccount getUserAccount() {
-		return userAccount;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public MoodTag getSystemMoodTag() {
-		return systemMoodTag;
-	}
-
-	public Integer getSystemMoodScore() {
-		return systemMoodScore;
-	}
-
-	public MoodTag getOverrideMoodTag() {
-		return overrideMoodTag;
-	}
-
-	public Integer getOverrideMoodScore() {
-		return overrideMoodScore;
-	}
-
-	public String getClassifierProvider() {
-		return classifierProvider;
-	}
-
-	public String getClassifierModel() {
-		return classifierModel;
-	}
-
-	public Instant getClassifiedAt() {
-		return classifiedAt;
-	}
-
-	public Instant getCreatedAt() {
-		return createdAt;
-	}
-
-	public Instant getUpdatedAt() {
-		return updatedAt;
 	}
 }

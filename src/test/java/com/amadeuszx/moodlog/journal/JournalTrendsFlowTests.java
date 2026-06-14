@@ -1,8 +1,6 @@
 package com.amadeuszx.moodlog.journal;
 
-import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,9 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -32,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @SpringBootTest
+@Import(FixedClockTestConfiguration.class)
 class JournalTrendsFlowTests {
 
 	private MockMvc mockMvc;
@@ -166,13 +163,4 @@ class JournalTrendsFlowTests {
 		);
 	}
 
-	@TestConfiguration(proxyBeanMethods = false)
-	static class FixedClockConfiguration {
-
-		@Bean
-		@Primary
-		Clock fixedClock() {
-			return Clock.fixed(Instant.parse("2026-06-01T10:00:00Z"), ZoneOffset.UTC);
-		}
-	}
 }

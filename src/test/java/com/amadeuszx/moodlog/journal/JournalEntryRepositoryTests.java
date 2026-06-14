@@ -239,10 +239,10 @@ class JournalEntryRepositoryTests {
 		);
 
 		val windowEntries = journalEntryRepository
-			.findTrendEntriesByUserAccountIdAndCreatedAtGreaterThanEqualAndCreatedAtLessThanOrderByCreatedAtAsc(
+			.findTrendEntriesByUserAccountIdAndCreatedAtGreaterThanEqualAndCreatedAtLessThanEqualOrderByCreatedAtAsc(
 				owner.getId(),
 				Instant.parse("2026-05-31T08:00:00Z"),
-				Instant.parse("2026-05-31T18:00:00Z")
+				Instant.parse("2026-05-31T17:59:59Z")
 			);
 
 		assertEquals(2, windowEntries.size());

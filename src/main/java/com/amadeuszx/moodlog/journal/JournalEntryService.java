@@ -182,12 +182,11 @@ public class JournalEntryService {
 			currentWeekStart
 		);
 		final Instant windowStartInclusive = firstReportingDate.atStartOfDay(userZone).toInstant();
-		final Instant windowEndInstant = now.plusNanos(1); // +1ns: makes the < predicate inclusive of entries at the current instant
 		final List<ReportedJournalEntry> reportedEntries = journalEntryRepository
-			.findTrendEntriesByUserAccountIdAndCreatedAtGreaterThanEqualAndCreatedAtLessThanOrderByCreatedAtAsc(
+			.findTrendEntriesByUserAccountIdAndCreatedAtGreaterThanEqualAndCreatedAtLessThanEqualOrderByCreatedAtAsc(
 				userAccount.getId(),
 				windowStartInclusive,
-				windowEndInstant
+				now
 			)
 			.stream()
 			.map(entry -> toReportedEntry(entry, userZone))
@@ -222,7 +221,8 @@ public class JournalEntryService {
 			completedSevenDayTrend,
 			completedThirtyDayTrend,
 			completedWeeklyTrend,
-			empty
+			empty,
+			weeklyTrendSpan
 		);
 	}
 

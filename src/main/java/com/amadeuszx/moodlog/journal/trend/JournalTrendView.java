@@ -8,7 +8,8 @@ public record JournalTrendView(
 	DailyTrendSeries completedSevenDayTrend,
 	DailyTrendSeries completedThirtyDayTrend,
 	WeeklyTrendSeries completedWeeklyTrend,
-	boolean empty
+	boolean empty,
+	int weeklyTrendSpan
 ) {
 
 	public record CurrentWeekSummary(

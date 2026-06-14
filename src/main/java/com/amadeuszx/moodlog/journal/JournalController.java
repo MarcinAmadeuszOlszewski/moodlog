@@ -24,20 +24,17 @@ public class JournalController {
 	private final int journalMaxContentLength;
 	private final int recentEntriesLimit;
 	private final int historyPageSize;
-	private final int weeklyTrendSpan;
 
 	public JournalController(
 		JournalEntryService journalEntryService,
 		@Value("${moodlog.journal.max-content-length:2000}") int journalMaxContentLength,
 		@Value("${moodlog.journal.recent-list-limit:10}") int recentEntriesLimit,
-		@Value("${moodlog.journal.history-page-size:20}") int historyPageSize,
-		@Value("${moodlog.journal.weekly-trend-span:8}") int weeklyTrendSpan
+		@Value("${moodlog.journal.history-page-size:20}") int historyPageSize
 	) {
 		this.journalEntryService = journalEntryService;
 		this.journalMaxContentLength = journalMaxContentLength;
 		this.recentEntriesLimit = recentEntriesLimit;
 		this.historyPageSize = historyPageSize;
-		this.weeklyTrendSpan = weeklyTrendSpan;
 	}
 
 	@GetMapping("/journal")
@@ -85,10 +82,10 @@ public class JournalController {
 		Model model
 	) {
 		final String userEmail = authentication.getName();
-		Page<JournalHistoryItem> historyPage = journalEntryService.getHistoryEntries(userEmail, page);
+		final Page<JournalHistoryItem> historyPage = journalEntryService.getHistoryEntries(userEmail, page);
 
-		if (historyPage.isEmpty() && historyPage.getTotalPages() > 0 && page >= historyPage.getTotalPages()) {
-			historyPage = journalEntryService.getHistoryEntries(userEmail, historyPage.getTotalPages() - 1);
+		if (historyPage.isEmpty() && historyPage.getTotalPages() > 0) {
+			return "redirect:/journal/history?page=" + (historyPage.getTotalPages() - 1);
 		}
 
 		populateHistoryModel(userEmail, historyPage, model);
@@ -102,7 +99,6 @@ public class JournalController {
 
 		model.addAttribute("trendView", journalEntryService.getTrendView(userEmail));
 		model.addAttribute("userEmail", userEmail);
-		model.addAttribute("weeklyTrendSpan", weeklyTrendSpan);
 
 		return "journal-trends";
 	}
