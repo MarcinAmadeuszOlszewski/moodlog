@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -44,6 +45,6 @@ class UserAccountServiceTests {
 			() -> userAccountService.registerUser("ela@example.com", "sekret", "Europe/Warsaw")
 		);
 
-		org.junit.jupiter.api.Assertions.assertNotNull(exception);
+		assertNotNull(exception);
 	}
 }

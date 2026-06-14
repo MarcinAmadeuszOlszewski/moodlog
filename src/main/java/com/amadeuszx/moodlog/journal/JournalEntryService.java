@@ -1,6 +1,7 @@
 package com.amadeuszx.moodlog.journal;
 
 import java.time.Clock;
+import java.time.DateTimeException;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -158,7 +159,7 @@ public class JournalEntryService {
 
 	public Page<JournalHistoryItem> getHistoryEntries(String currentUserEmail, int pageNumber) {
 		final UserAccount userAccount = resolveUserAccount(currentUserEmail);
-		final ZoneId userZone = ZoneId.of(userAccount.getTimezone());
+		final ZoneId userZone = safeUserZone(userAccount);
 		final int safePageNumber = Math.max(0, pageNumber);
 		final PageRequest pageRequest = PageRequest.of(safePageNumber, historyPageSize);
 
@@ -168,7 +169,7 @@ public class JournalEntryService {
 
 	public JournalTrendView getTrendView(String currentUserEmail) {
 		final UserAccount userAccount = resolveUserAccount(currentUserEmail);
-		final ZoneId userZone = ZoneId.of(userAccount.getTimezone());
+		final ZoneId userZone = safeUserZone(userAccount);
 		final Instant now = Instant.now(clock);
 		final LocalDate currentDate = now.atZone(userZone).toLocalDate();
 		final LocalDate currentWeekStart = currentDate.with(TemporalAdjusters.previousOrSame(REPORTING_WEEK_START));
@@ -469,6 +470,16 @@ public class JournalEntryService {
 		return weekStartDate.format(DAILY_CHART_LABEL_FORMATTER)
 			+ "-"
 			+ weekEndDate.format(DAILY_CHART_LABEL_FORMATTER);
+	}
+
+	private ZoneId safeUserZone(UserAccount userAccount) {
+		try {
+			return ZoneId.of(userAccount.getTimezone());
+		}
+		catch (DateTimeException exception) {
+			logger.warn("journal.timezone.invalid timezone={}", userAccount.getTimezone());
+			return ZoneId.of("Europe/Warsaw");
+		}
 	}
 
 	private void logClassificationFailure(String safeUserIdentifier, MoodClassificationFailedException exception) {

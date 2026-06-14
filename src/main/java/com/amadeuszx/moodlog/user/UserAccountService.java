@@ -29,6 +29,7 @@ import org.springframework.util.StringUtils;
 public class UserAccountService implements UserDetailsService {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserAccountService.class);
+	static final String DEFAULT_TIMEZONE = "Europe/Warsaw";
 
 	private final UserAccountRepository userAccountRepository;
 	private final PasswordEncoder passwordEncoder;
@@ -158,7 +159,7 @@ public class UserAccountService implements UserDetailsService {
 
 	private static String resolveTimezone(String timezone, String normalizedEmail) {
 		if (!StringUtils.hasText(timezone)) {
-			return "Europe/Warsaw";
+			return DEFAULT_TIMEZONE;
 		}
 
 		try {
@@ -169,9 +170,9 @@ public class UserAccountService implements UserDetailsService {
 			logger.warn(
 				"auth.registration.timezone.invalid identifier={} timezone={}",
 				safeEmailIdentifier(normalizedEmail),
-				timezone
+				timezone.substring(0, Math.min(timezone.length(), 64))
 			);
-			throw new IllegalArgumentException("Invalid timezone: " + timezone);
+			return DEFAULT_TIMEZONE;
 		}
 	}
 }

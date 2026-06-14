@@ -126,6 +126,23 @@ class AuthenticationFlowTests {
 	}
 
 	@Test
+	@DisplayName("falls back to Europe/Warsaw when an invalid timezone is supplied at registration")
+	void registrationFallsBackToWarsawWhenInvalidTimezoneSupplied() throws Exception {
+		mockMvc.perform(post("/register")
+				.with(csrf())
+				.param("email", "ela@example.com")
+				.param("password", "sekret")
+				.param("timezone", "Not/A/Valid/Zone"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/journal"));
+
+		val savedAccount = userAccountRepository.findByEmail("ela@example.com");
+
+		assertTrue(savedAccount.isPresent());
+		assertEquals("Europe/Warsaw", savedAccount.get().getTimezone());
+	}
+
+	@Test
 	@DisplayName("rotates the anonymous session id during registration")
 	void registrationRotatesAnonymousSessionId() throws Exception {
 		val anonymousSession = new MockHttpSession();

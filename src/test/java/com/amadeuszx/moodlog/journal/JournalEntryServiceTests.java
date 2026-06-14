@@ -290,7 +290,7 @@ class JournalEntryServiceTests {
 
 	@Test
 	@DisplayName("buckets the same UTC instant into different days for Warsaw and New York users")
-	void bucketsSameUtcInstantIntoDifferentDaysForDifferentTimezones() {
+	void bucketsSameUtcInstantIntoDifferentDaysForWarsawAndNewYork() {
 		val warsawUser = createUserAccount("warsaw@example.com", "Europe/Warsaw");
 		val newYorkUser = createUserAccount("newyork@example.com", "America/New_York");
 		// 2026-05-31T22:30Z = Warsaw 2026-06-01T00:30 CEST (June 1 = current week)

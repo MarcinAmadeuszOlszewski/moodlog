@@ -7,9 +7,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "user_accounts")
+@AllArgsConstructor
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserAccount {
 
 	@Id
@@ -32,45 +39,4 @@ public class UserAccount {
 
 	@Column(nullable = false, length = 50)
 	private String timezone;
-
-	protected UserAccount() {
-	}
-
-	public UserAccount(UUID id, String email, String passwordHash, boolean active, Instant createdAt, Instant updatedAt, String timezone) {
-		this.id = id;
-		this.email = email;
-		this.passwordHash = passwordHash;
-		this.active = active;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
-		this.timezone = timezone;
-	}
-
-	public UUID getId() {
-		return id;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public String getPasswordHash() {
-		return passwordHash;
-	}
-
-	public boolean isActive() {
-		return active;
-	}
-
-	public Instant getCreatedAt() {
-		return createdAt;
-	}
-
-	public Instant getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public String getTimezone() {
-		return timezone;
-	}
 }
