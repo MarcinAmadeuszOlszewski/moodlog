@@ -288,7 +288,32 @@ class JournalEntryServiceTests {
 		assertEquals(65, trendView.completedWeeklyTrend().points().getLast().averageMoodScore());
 	}
 
+	@Test
+	@DisplayName("buckets the same UTC instant into different days for Warsaw and New York users")
+	void bucketsSameUtcInstantIntoDifferentDaysForDifferentTimezones() {
+		val warsawUser = createUserAccount("warsaw@example.com", "Europe/Warsaw");
+		val newYorkUser = createUserAccount("newyork@example.com", "America/New_York");
+		// 2026-05-31T22:30Z = Warsaw 2026-06-01T00:30 CEST (June 1 = current week)
+		//                   = New York 2026-05-31T18:30 EDT (May 31 = completed 7-day series)
+		val entryInstant = Instant.parse("2026-05-31T22:30:00Z");
+		val warsawEntry = createJournalEntry(warsawUser, "Wpis wieczorny w Warszawie.", MoodTag.CALM, 70, entryInstant);
+		val newYorkEntry = createJournalEntry(newYorkUser, "Evening entry in New York.", MoodTag.CALM, 70, entryInstant);
+		journalEntryRepository.saveAllAndFlush(List.of(warsawEntry, newYorkEntry));
+
+		val warsawTrend = journalEntryService.getTrendView(warsawUser.getEmail());
+		val newYorkTrend = journalEntryService.getTrendView(newYorkUser.getEmail());
+
+		assertEquals(1, warsawTrend.currentWeekSummary().entriesCount());
+		assertNull(warsawTrend.completedSevenDayTrend().points().getLast().averageMoodScore());
+		assertEquals(0, newYorkTrend.currentWeekSummary().entriesCount());
+		assertEquals(70, newYorkTrend.completedSevenDayTrend().points().getLast().averageMoodScore());
+	}
+
 	private UserAccount createUserAccount(String email) {
+		return createUserAccount(email, "Europe/Warsaw");
+	}
+
+	private UserAccount createUserAccount(String email, String timezone) {
 		val createdAt = Instant.now();
 		val userAccount = new UserAccount(
 			UUID.randomUUID(),
@@ -296,7 +321,8 @@ class JournalEntryServiceTests {
 			"$2a$10$storedHash",
 			true,
 			createdAt,
-			createdAt
+			createdAt,
+			timezone
 		);
 
 		return userAccountRepository.saveAndFlush(userAccount);

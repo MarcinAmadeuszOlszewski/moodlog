@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import com.openai.errors.OpenAIIoException;
 import com.amadeuszx.moodlog.journal.JournalEntry;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.converter.BeanOutputConverter;
@@ -15,6 +16,7 @@ import org.springframework.ai.openai.OpenAiChatModel.ResponseFormat;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.util.StringUtils;
 
+@Slf4j
 public class OpenAiMoodClassifier implements MoodClassifier {
 
 	private static final String PROVIDER_NAME = "openai";
@@ -22,10 +24,15 @@ public class OpenAiMoodClassifier implements MoodClassifier {
 
 	private final OpenAiChatModel openAiChatModel;
 	private final String defaultModel;
+	private final String responseFormatType;
 
-	public OpenAiMoodClassifier(OpenAiChatModel openAiChatModel, String defaultModel) {
+	public OpenAiMoodClassifier(OpenAiChatModel openAiChatModel, String defaultModel, String responseFormatType) {
+		if (!"none".equals(responseFormatType) && !"json_object".equals(responseFormatType) && !"json_schema".equals(responseFormatType)) {
+			throw new IllegalArgumentException("Unrecognised responseFormatType: " + responseFormatType);
+		}
 		this.openAiChatModel = openAiChatModel;
 		this.defaultModel = defaultModel;
+		this.responseFormatType = responseFormatType;
 	}
 
 	@Override
@@ -35,17 +42,19 @@ public class OpenAiMoodClassifier implements MoodClassifier {
 			: entryText;
 
 		final BeanOutputConverter<OpenAiMoodResponse> outputConverter = new BeanOutputConverter<>(OpenAiMoodResponse.class);
-		final OpenAiChatOptions chatOptions = OpenAiChatOptions.builder()
-			.model(defaultModel)
-			.responseFormat(ResponseFormat.builder()
-				.type(ResponseFormat.Type.JSON_SCHEMA)
-				.jsonSchema(outputConverter.getJsonSchema())
-				.build())
-			.build();
-		final Prompt prompt = new Prompt(buildPrompt(sanitizedText), chatOptions);
+		final OpenAiChatOptions.Builder optionsBuilder = OpenAiChatOptions.builder().model(defaultModel);
+		if ("json_object".equals(responseFormatType)) {
+			optionsBuilder.responseFormat(ResponseFormat.builder().type(ResponseFormat.Type.JSON_OBJECT).build());
+		} else if ("json_schema".equals(responseFormatType)) {
+			optionsBuilder.responseFormat(ResponseFormat.builder().type(ResponseFormat.Type.JSON_SCHEMA).jsonSchema(outputConverter.getJsonSchema()).build());
+		}
+		final OpenAiChatOptions chatOptions = optionsBuilder.build();
+        final String contents = buildPrompt(sanitizedText);
+        log.info(contents);
+        final Prompt prompt = new Prompt(contents, chatOptions);
 		final ChatResponse response = callProvider(prompt);
 		final String responseText = extractResponseText(response);
-
+        log.info(responseText);
 		try {
 			final OpenAiMoodResponse openAiMoodResponse = outputConverter.convert(responseText);
 

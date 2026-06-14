@@ -69,3 +69,4 @@ data/
 
 # GitHub metadata
 .github/
+.claude/

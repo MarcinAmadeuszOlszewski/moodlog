@@ -30,16 +30,20 @@ public class UserAccount {
 	@Column(name = "updated_at", nullable = false)
 	private Instant updatedAt;
 
+	@Column(nullable = false, length = 50)
+	private String timezone;
+
 	protected UserAccount() {
 	}
 
-	public UserAccount(UUID id, String email, String passwordHash, boolean active, Instant createdAt, Instant updatedAt) {
+	public UserAccount(UUID id, String email, String passwordHash, boolean active, Instant createdAt, Instant updatedAt, String timezone) {
 		this.id = id;
 		this.email = email;
 		this.passwordHash = passwordHash;
 		this.active = active;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
+		this.timezone = timezone;
 	}
 
 	public UUID getId() {
@@ -64,5 +68,9 @@ public class UserAccount {
 
 	public Instant getUpdatedAt() {
 		return updatedAt;
+	}
+
+	public String getTimezone() {
+		return timezone;
 	}
 }

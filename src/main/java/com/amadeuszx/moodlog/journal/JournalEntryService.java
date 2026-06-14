@@ -48,7 +48,6 @@ public class JournalEntryService {
 	private final Clock clock;
 	private final int recentListLimit;
 	private final int historyPageSize;
-	private final ZoneId reportingZoneId;
 	private final int weeklyTrendSpan;
 
 	public JournalEntryService(
@@ -58,7 +57,6 @@ public class JournalEntryService {
 		Clock clock,
 		@Value("${moodlog.journal.recent-list-limit:10}") int recentListLimit,
 		@Value("${moodlog.journal.history-page-size:20}") int historyPageSize,
-		@Value("${moodlog.journal.reporting-zone-id:Europe/Warsaw}") String reportingZoneId,
 		@Value("${moodlog.journal.weekly-trend-span:8}") int weeklyTrendSpan
 	) {
 		this.journalEntryRepository = journalEntryRepository;
@@ -67,7 +65,6 @@ public class JournalEntryService {
 		this.clock = clock;
 		this.recentListLimit = Math.max(1, recentListLimit);
 		this.historyPageSize = Math.max(1, historyPageSize);
-		this.reportingZoneId = ZoneId.of(reportingZoneId);
 		this.weeklyTrendSpan = Math.max(1, weeklyTrendSpan);
 	}
 
@@ -161,17 +158,19 @@ public class JournalEntryService {
 
 	public Page<JournalHistoryItem> getHistoryEntries(String currentUserEmail, int pageNumber) {
 		final UserAccount userAccount = resolveUserAccount(currentUserEmail);
+		final ZoneId userZone = ZoneId.of(userAccount.getTimezone());
 		final int safePageNumber = Math.max(0, pageNumber);
 		final PageRequest pageRequest = PageRequest.of(safePageNumber, historyPageSize);
 
 		return journalEntryRepository.findAllByUserAccountIdOrderByCreatedAtDesc(userAccount.getId(), pageRequest)
-			.map(this::toHistoryItem);
+			.map(entry -> toHistoryItem(entry, userZone));
 	}
 
 	public JournalTrendView getTrendView(String currentUserEmail) {
 		final UserAccount userAccount = resolveUserAccount(currentUserEmail);
+		final ZoneId userZone = ZoneId.of(userAccount.getTimezone());
 		final Instant now = Instant.now(clock);
-		final LocalDate currentDate = now.atZone(reportingZoneId).toLocalDate();
+		final LocalDate currentDate = now.atZone(userZone).toLocalDate();
 		final LocalDate currentWeekStart = currentDate.with(TemporalAdjusters.previousOrSame(REPORTING_WEEK_START));
 		final LocalDate completedSevenDayStart = currentDate.minusDays(7);
 		final LocalDate completedThirtyDayStart = currentDate.minusDays(30);
@@ -181,16 +180,16 @@ public class JournalEntryService {
 			firstCompletedWeekStart,
 			currentWeekStart
 		);
-		final Instant windowStartInclusive = firstReportingDate.atStartOfDay(reportingZoneId).toInstant();
-		final Instant windowEndExclusive = now.plusNanos(1);
+		final Instant windowStartInclusive = firstReportingDate.atStartOfDay(userZone).toInstant();
+		final Instant windowEndInstant = now.plusNanos(1); // +1ns: makes the < predicate inclusive of entries at the current instant
 		final List<ReportedJournalEntry> reportedEntries = journalEntryRepository
 			.findTrendEntriesByUserAccountIdAndCreatedAtGreaterThanEqualAndCreatedAtLessThanOrderByCreatedAtAsc(
 				userAccount.getId(),
 				windowStartInclusive,
-				windowEndExclusive
+				windowEndInstant
 			)
 			.stream()
-			.map(this::toReportedEntry)
+			.map(entry -> toReportedEntry(entry, userZone))
 			.filter(Objects::nonNull)
 			.toList();
 		final JournalTrendView.CurrentWeekSummary currentWeekSummary = buildCurrentWeekSummary(
@@ -253,13 +252,13 @@ public class JournalEntryService {
 			.orElseThrow(() -> new IllegalStateException("Authenticated user account was not found."));
 	}
 
-	private JournalHistoryItem toHistoryItem(JournalEntry journalEntry) {
+	private JournalHistoryItem toHistoryItem(JournalEntry journalEntry, ZoneId userZone) {
 		final EffectiveMood effectiveMood = resolveEffectiveMood(journalEntry);
-		final LocalDate displayDate = journalEntry.getCreatedAt().atZone(reportingZoneId).toLocalDate();
+		final LocalDate displayDate = journalEntry.getCreatedAt().atZone(userZone).toLocalDate();
 
 		return new JournalHistoryItem(
 			displayDate,
-			journalEntry.getCreatedAt().atZone(reportingZoneId).toLocalTime().truncatedTo(ChronoUnit.MINUTES),
+			journalEntry.getCreatedAt().atZone(userZone).toLocalTime().truncatedTo(ChronoUnit.MINUTES),
 			buildExcerpt(journalEntry.getContent()),
 			polishMoodLabel(effectiveMood.moodTag()),
 			effectiveMood.moodScore()
@@ -404,12 +403,12 @@ public class JournalEntryService {
 		return (int) Math.round(averageMoodScore);
 	}
 
-	private ReportedJournalEntry toReportedEntry(JournalEntryRepository.JournalTrendEntryProjection journalTrendEntry) {
+	private ReportedJournalEntry toReportedEntry(JournalEntryRepository.JournalTrendEntryProjection journalTrendEntry, ZoneId userZone) {
 		final EffectiveMood effectiveMood = resolveEffectiveMood(journalTrendEntry);
 		if (effectiveMood.moodScore() == null) {
 			return null;
 		}
-		final LocalDate reportingDate = journalTrendEntry.getCreatedAt().atZone(reportingZoneId).toLocalDate();
+		final LocalDate reportingDate = journalTrendEntry.getCreatedAt().atZone(userZone).toLocalDate();
 
 		return new ReportedJournalEntry(
 			reportingDate,

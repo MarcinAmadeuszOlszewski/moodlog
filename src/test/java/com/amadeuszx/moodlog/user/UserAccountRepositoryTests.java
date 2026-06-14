@@ -36,7 +36,8 @@ class UserAccountRepositoryTests {
 			"$2a$10$storedHash",
 			true,
 			createdAt,
-			createdAt
+			createdAt,
+			"Europe/Warsaw"
 		);
 
 		userAccountRepository.saveAndFlush(userAccount);
@@ -59,7 +60,8 @@ class UserAccountRepositoryTests {
 			"$2a$10$firstHash",
 			true,
 			createdAt,
-			createdAt
+			createdAt,
+			"Europe/Warsaw"
 		);
 		val duplicateAccount = new UserAccount(
 			UUID.randomUUID(),
@@ -67,7 +69,8 @@ class UserAccountRepositoryTests {
 			"$2a$10$secondHash",
 			true,
 			createdAt,
-			createdAt
+			createdAt,
+			"Europe/Warsaw"
 		);
 
 		userAccountRepository.saveAndFlush(firstAccount);

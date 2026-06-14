@@ -138,7 +138,8 @@ class JournalTrendsFlowTests {
 			"{noop}password",
 			true,
 			Instant.now(),
-			Instant.now()
+			Instant.now(),
+			"Europe/Warsaw"
 		));
 	}
 

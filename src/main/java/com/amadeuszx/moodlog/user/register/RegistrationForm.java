@@ -12,6 +12,8 @@ public class RegistrationForm {
 	@NotBlank(message = "Podaj hasło.")
 	private String password;
 
+	private String timezone;
+
 	public String getEmail() {
 		return email;
 	}
@@ -26,5 +28,13 @@ public class RegistrationForm {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getTimezone() {
+		return timezone;
+	}
+
+	public void setTimezone(String timezone) {
+		this.timezone = timezone;
 	}
 }

@@ -41,7 +41,7 @@ class UserAccountServiceTests {
 
 		val exception = assertThrows(
 			DuplicateUserAccountException.class,
-			() -> userAccountService.registerUser("ela@example.com", "sekret")
+			() -> userAccountService.registerUser("ela@example.com", "sekret", "Europe/Warsaw")
 		);
 
 		org.junit.jupiter.api.Assertions.assertNotNull(exception);

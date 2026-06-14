@@ -93,6 +93,39 @@ class AuthenticationFlowTests {
 	}
 
 	@Test
+	@DisplayName("stores the browser-detected timezone when provided at registration")
+	void registrationStoresBrowserTimezone() throws Exception {
+		mockMvc.perform(post("/register")
+				.with(csrf())
+				.param("email", "ela@example.com")
+				.param("password", "sekret")
+				.param("timezone", "America/New_York"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/journal"));
+
+		val savedAccount = userAccountRepository.findByEmail("ela@example.com");
+
+		assertTrue(savedAccount.isPresent());
+		assertEquals("America/New_York", savedAccount.get().getTimezone());
+	}
+
+	@Test
+	@DisplayName("falls back to Europe/Warsaw when no timezone is supplied at registration")
+	void registrationFallsBackToWarsawWhenNoTimezoneSupplied() throws Exception {
+		mockMvc.perform(post("/register")
+				.with(csrf())
+				.param("email", "ela@example.com")
+				.param("password", "sekret"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/journal"));
+
+		val savedAccount = userAccountRepository.findByEmail("ela@example.com");
+
+		assertTrue(savedAccount.isPresent());
+		assertEquals("Europe/Warsaw", savedAccount.get().getTimezone());
+	}
+
+	@Test
 	@DisplayName("rotates the anonymous session id during registration")
 	void registrationRotatesAnonymousSessionId() throws Exception {
 		val anonymousSession = new MockHttpSession();
@@ -114,7 +147,7 @@ class AuthenticationFlowTests {
 	@Test
 	@DisplayName("rejects duplicate registrations on the public signup form")
 	void duplicateEmailRegistrationShowsValidationMessage() throws Exception {
-		userAccountService.registerUser("Ela@Example.com", "sekret");
+		userAccountService.registerUser("Ela@Example.com", "sekret", "Europe/Warsaw");
 
 		mockMvc.perform(post("/register")
 				.with(csrf())
@@ -144,7 +177,7 @@ class AuthenticationFlowTests {
 	@Test
 	@DisplayName("redirects failed logins back to the login page with a generic error")
 	void failedLoginRedirectsWithGenericError() throws Exception {
-		userAccountService.registerUser("ela@example.com", "sekret");
+		userAccountService.registerUser("ela@example.com", "sekret", "Europe/Warsaw");
 
 		mockMvc.perform(post("/login")
 				.with(csrf())
@@ -176,7 +209,7 @@ class AuthenticationFlowTests {
 	@Test
 	@DisplayName("logs in an existing user and sends them to the private journal")
 	void existingUserCanLogIn() throws Exception {
-		userAccountService.registerUser("ela@example.com", "sekret");
+		userAccountService.registerUser("ela@example.com", "sekret", "Europe/Warsaw");
 
 		mockMvc.perform(post("/login")
 				.with(csrf())
@@ -189,7 +222,7 @@ class AuthenticationFlowTests {
 	@Test
 	@DisplayName("returns an anonymous journal request to the journal shell after login")
 	void anonymousJournalRequestReturnsToJournalAfterLogin() throws Exception {
-		userAccountService.registerUser("ela@example.com", "sekret");
+		userAccountService.registerUser("ela@example.com", "sekret", "Europe/Warsaw");
 
 		val anonymousJournalResult = mockMvc.perform(get("/journal"))
 			.andExpect(status().is3xxRedirection())
@@ -224,7 +257,7 @@ class AuthenticationFlowTests {
 	@Test
 	@DisplayName("keeps the journal redirect target when the browser requests the favicon before login")
 	void faviconRequestDoesNotOverrideJournalSavedRequest() throws Exception {
-		userAccountService.registerUser("ela@example.com", "sekret");
+		userAccountService.registerUser("ela@example.com", "sekret", "Europe/Warsaw");
 
 		val anonymousJournalResult = mockMvc.perform(get("/journal"))
 			.andExpect(status().is3xxRedirection())
@@ -254,7 +287,7 @@ class AuthenticationFlowTests {
 	@Test
 	@DisplayName("returns an anonymous journal history request to the history page after login")
 	void anonymousHistoryRequestReturnsToHistoryAfterLogin() throws Exception {
-		userAccountService.registerUser("ela@example.com", "sekret");
+		userAccountService.registerUser("ela@example.com", "sekret", "Europe/Warsaw");
 
 		val anonymousHistoryResult = mockMvc.perform(get("/journal/history"))
 			.andExpect(status().is3xxRedirection())
@@ -288,7 +321,7 @@ class AuthenticationFlowTests {
 	@Test
 	@DisplayName("returns an anonymous journal trends request to the trends page after login")
 	void anonymousTrendsRequestReturnsToTrendsAfterLogin() throws Exception {
-		userAccountService.registerUser("ela@example.com", "sekret");
+		userAccountService.registerUser("ela@example.com", "sekret", "Europe/Warsaw");
 
 		val anonymousTrendsResult = mockMvc.perform(get("/journal/trends"))
 			.andExpect(status().is3xxRedirection())
@@ -376,7 +409,7 @@ class AuthenticationFlowTests {
 	@Test
 	@DisplayName("logs login failures without exposing the password")
 	void failedLoginWritesSafeAuthLog(CapturedOutput output) throws Exception {
-		userAccountService.registerUser("ela@example.com", "sekret");
+		userAccountService.registerUser("ela@example.com", "sekret", "Europe/Warsaw");
 
 		mockMvc.perform(post("/login")
 				.with(csrf())

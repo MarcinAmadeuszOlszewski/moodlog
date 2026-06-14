@@ -83,7 +83,8 @@ public class AuthController {
 		try {
 			final UserAccount userAccount = userAccountService.registerUser(
 				registrationForm.getEmail(),
-				registrationForm.getPassword()
+				registrationForm.getPassword(),
+				registrationForm.getTimezone()
 			);
 
 			authenticate(userAccount.getEmail(), registrationForm.getPassword(), request, response);

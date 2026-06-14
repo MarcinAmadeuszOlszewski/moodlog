@@ -3,7 +3,9 @@ package com.amadeuszx.moodlog.user;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.DateTimeException;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.HexFormat;
 import java.util.Locale;
 import java.util.Optional;
@@ -42,7 +44,7 @@ public class UserAccountService implements UserDetailsService {
 		this.passwordMinimumLength = passwordMinimumLength;
 	}
 
-	public UserAccount registerUser(String email, String rawPassword) {
+	public UserAccount registerUser(String email, String rawPassword, String timezone) {
 		final String normalizedEmail = normalizeEmailAddress(email);
 
 		if (userAccountRepository.existsByEmail(normalizedEmail)) {
@@ -52,6 +54,8 @@ public class UserAccountService implements UserDetailsService {
 
 		ensurePasswordMeetsPolicy(rawPassword, normalizedEmail);
 
+		final String effectiveTimezone = resolveTimezone(timezone, normalizedEmail);
+
 		final Instant now = Instant.now();
 		final UserAccount userAccount = new UserAccount(
 			UUID.randomUUID(),
@@ -59,7 +63,8 @@ public class UserAccountService implements UserDetailsService {
 			passwordEncoder.encode(rawPassword),
 			true,
 			now,
-			now
+			now,
+			effectiveTimezone
 		);
 
 		try {
@@ -149,5 +154,24 @@ public class UserAccountService implements UserDetailsService {
 		}
 
 		return email.trim().toLowerCase(Locale.ROOT);
+	}
+
+	private static String resolveTimezone(String timezone, String normalizedEmail) {
+		if (!StringUtils.hasText(timezone)) {
+			return "Europe/Warsaw";
+		}
+
+		try {
+			ZoneId.of(timezone);
+			return timezone;
+		}
+		catch (DateTimeException exception) {
+			logger.warn(
+				"auth.registration.timezone.invalid identifier={} timezone={}",
+				safeEmailIdentifier(normalizedEmail),
+				timezone
+			);
+			throw new IllegalArgumentException("Invalid timezone: " + timezone);
+		}
 	}
 }

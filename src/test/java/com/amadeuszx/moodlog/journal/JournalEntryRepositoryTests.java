@@ -262,7 +262,8 @@ class JournalEntryRepositoryTests {
 			"$2a$10$storedHash",
 			true,
 			createdAt,
-			createdAt
+			createdAt,
+			"Europe/Warsaw"
 		);
 
 		return userAccountRepository.saveAndFlush(userAccount);

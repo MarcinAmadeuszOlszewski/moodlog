@@ -17,6 +17,7 @@ public class MoodClassifierConfiguration {
 		@Value("${moodlog.ai.provider:stub}") String provider,
 		@Value("${moodlog.ai.default-model:gpt-4o-mini}") String defaultModel,
 		@Value("${spring.ai.openai.api-key:disabled}") String openAiApiKey,
+		@Value("${moodlog.ai.response-format-type:none}") String responseFormatType,
 		ObjectProvider<OpenAiChatModel> openAiChatModelProvider
 	) {
 		final String normalizedProvider = provider.trim().toLowerCase(Locale.ROOT);
@@ -37,7 +38,7 @@ public class MoodClassifierConfiguration {
 				);
 			}
 
-			return new OpenAiMoodClassifier(openAiChatModel, defaultModel);
+			return new OpenAiMoodClassifier(openAiChatModel, defaultModel, responseFormatType);
 		}
 
 		return new StubMoodClassifier();
