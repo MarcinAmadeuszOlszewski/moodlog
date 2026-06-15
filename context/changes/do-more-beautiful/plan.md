@@ -304,17 +304,17 @@ Result: each template's `<head>` has the `th:block` + `<title>`. For templates w
 
 #### Automated
 
-- [x] 3.1 `./mvnw test` passes
-- [x] 3.2 All 8 templates contain th:replace for common-head fragment
-- [x] 3.3 static/css/styles.css exists and is non-empty
-- [x] 3.4 templates/fragments/head.html exists
+- [x] 3.1 `./mvnw test` passes — 66e35e9
+- [x] 3.2 All 8 templates contain th:replace for common-head fragment — 66e35e9
+- [x] 3.3 static/css/styles.css exists and is non-empty — 66e35e9
+- [x] 3.4 templates/fragments/head.html exists — 66e35e9
 
 #### Manual
 
-- [x] 3.5 Every page loads with CSS applied
-- [x] 3.6 Grayscale palette consistent across all pages
-- [x] 3.7 Forms styled on login, register, journal, journal-edit
-- [x] 3.8 Journal entry list styled on /journal and /journal/history
-- [x] 3.9 Chart on /journal/trends still renders
-- [x] 3.10 No horizontal scroll at standard desktop width
-- [x] 3.11 Favicon loads on all pages
+- [x] 3.5 Every page loads with CSS applied — 66e35e9
+- [x] 3.6 Grayscale palette consistent across all pages — 66e35e9
+- [x] 3.7 Forms styled on login, register, journal, journal-edit — 66e35e9
+- [x] 3.8 Journal entry list styled on /journal and /journal/history — 66e35e9
+- [x] 3.9 Chart on /journal/trends still renders — 66e35e9
+- [x] 3.10 No horizontal scroll at standard desktop width — 66e35e9
+- [x] 3.11 Favicon loads on all pages — 66e35e9

@@ -1,7 +1,7 @@
 ---
 change_id: do-more-beautiful
 title: Add README, improve home page content, and apply grayscale mood-themed CSS
-status: implementing
+status: implemented
 created: 2026-06-15
 updated: 2026-06-15
 archived_at: null
