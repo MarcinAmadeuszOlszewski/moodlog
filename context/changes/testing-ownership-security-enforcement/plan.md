@@ -230,10 +230,10 @@ Fill in §6.2, §6.4, and §6.6 in `context/foundation/test-plan.md`. These sect
 
 #### Automated
 
-- [x] 3.1 `.\mvnw.cmd test` still passes
-- [x] 3.2 §6.2, §6.4, §6.6 in `test-plan.md` contain no "TBD" placeholders
+- [x] 3.1 `.\mvnw.cmd test` still passes — d0351b5
+- [x] 3.2 §6.2, §6.4, §6.6 in `test-plan.md` contain no "TBD" placeholders — d0351b5
 
 #### Manual
 
-- [x] 3.3 §6.4 names `findByIdAndUserAccountId` and explains the `findById` IDOR trap
-- [x] 3.4 §6.6 Phase 3 entry names both new test classes and the stub activation step
+- [x] 3.3 §6.4 names `findByIdAndUserAccountId` and explains the `findById` IDOR trap — d0351b5
+- [x] 3.4 §6.6 Phase 3 entry names both new test classes and the stub activation step — d0351b5

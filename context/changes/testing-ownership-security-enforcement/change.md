@@ -1,7 +1,7 @@
 ---
 change_id: testing-ownership-security-enforcement
 title: Phase 3 test rollout — ownership and security enforcement
-status: implementing
+status: implemented
 created: 2026-06-15
 updated: 2026-06-15
 archived_at: null
