@@ -1,7 +1,7 @@
 ---
 change_id: lmstudio-classifier-no-response
 title: Fix OpenAiMoodClassifier not getting a response from LMStudio
-status: implemented
+status: impl_reviewed
 created: 2026-06-12
 updated: 2026-06-15
 archived_at: null

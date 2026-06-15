@@ -49,12 +49,12 @@ public class OpenAiMoodClassifier implements MoodClassifier {
 			optionsBuilder.responseFormat(ResponseFormat.builder().type(ResponseFormat.Type.JSON_SCHEMA).jsonSchema(outputConverter.getJsonSchema()).build());
 		}
 		final OpenAiChatOptions chatOptions = optionsBuilder.build();
-        final String contents = buildPrompt(sanitizedText);
-        log.info(contents);
-        final Prompt prompt = new Prompt(contents, chatOptions);
+		final String contents = buildPrompt(sanitizedText);
+		log.info("Sending classification request, entryLength={}, model={}", sanitizedText != null ? sanitizedText.length() : 0, defaultModel);
+		final Prompt prompt = new Prompt(contents, chatOptions);
 		final ChatResponse response = callProvider(prompt);
 		final String responseText = extractResponseText(response);
-        log.info(responseText);
+		log.info("Received classification response, responseLength={}", responseText.length());
 		try {
 			final OpenAiMoodResponse openAiMoodResponse = outputConverter.convert(responseText);
 
