@@ -52,7 +52,7 @@ class FlywayMigrationPostgresTests {
 	private JournalEntryRepository journalEntryRepository;
 
 	@BeforeEach
-	void cleanUp() {
+	void setUp() {
 		journalEntryRepository.deleteAll();
 		userAccountRepository.deleteAll();
 	}
@@ -67,7 +67,7 @@ class FlywayMigrationPostgresTests {
 	}
 
 	@Test
-	@DisplayName("user_accounts schema is queryable and enforces email uniqueness after migration")
+	@DisplayName("user_accounts schema is queryable after migration")
 	void userAccountSchemaIsQueryable() {
 		val createdAt = Instant.now();
 		val account = new UserAccount(
@@ -82,6 +82,22 @@ class FlywayMigrationPostgresTests {
 		userAccountRepository.saveAndFlush(account);
 
 		assertTrue(userAccountRepository.findByEmail("test@example.com").isPresent());
+	}
+
+	@Test
+	@DisplayName("user_accounts email uniqueness constraint is enforced after migration")
+	void userAccountEmailUniquenessConstraintIsEnforced() {
+		val createdAt = Instant.now();
+		val account = new UserAccount(
+			UUID.randomUUID(),
+			"test@example.com",
+			"$2a$10$storedHash",
+			true,
+			createdAt,
+			createdAt,
+			"Europe/Warsaw"
+		);
+		userAccountRepository.saveAndFlush(account);
 
 		val duplicateAccount = new UserAccount(
 			UUID.randomUUID(),

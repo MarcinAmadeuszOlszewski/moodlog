@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan-spring --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-15 (Phases 1, 2, and 3 complete; Phase 4 next)
+> Last updated: 2026-06-15 (Phases 1–4 complete)
 
 ---
 
