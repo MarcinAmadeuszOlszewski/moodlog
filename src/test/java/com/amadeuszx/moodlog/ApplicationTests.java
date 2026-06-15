@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -63,7 +64,8 @@ class ApplicationTests {
 			.andExpect(content().string(containsString("prywatnego dziennika")))
 			.andExpect(content().string(containsString("Zaloguj się")))
 			.andExpect(content().string(containsString("załóż konto")))
-			.andExpect(content().string(containsString("/favicon.svg")));
+			.andExpect(content().string(containsString("/favicon.svg")))
+			.andExpect(header().string("Content-Security-Policy", containsString("default-src 'self'")));
 	}
 
 	@Test
@@ -97,7 +99,8 @@ class ApplicationTests {
 	void journalPageRequiresAuthentication() throws Exception {
 		mockMvc.perform(get("/journal"))
 			.andExpect(status().is3xxRedirection())
-			.andExpect(redirectedUrl("/login"));
+			.andExpect(redirectedUrl("/login"))
+			.andExpect(header().string("Content-Security-Policy", containsString("default-src 'self'")));
 	}
 
 	@Test

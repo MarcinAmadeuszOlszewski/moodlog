@@ -325,28 +325,28 @@ Import `org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 
 #### Automated
 
-- [x] 3.1 `.\mvnw.cmd test` passes
-- [x] 3.2 `journal-trends.html` contains no `th:inline="javascript"` and no `style="height: 280px"`
-- [x] 3.3 `journal-trends.html` contains `<script type="application/json" id="trends-data"`
-- [x] 3.4 `styles.css` contains `.chart-canvas-wrapper`
+- [x] 3.1 `.\mvnw.cmd test` passes — 4ba13f7
+- [x] 3.2 `journal-trends.html` contains no `th:inline="javascript"` and no `style="height: 280px"` — 4ba13f7
+- [x] 3.3 `journal-trends.html` contains `<script type="application/json" id="trends-data"` — 4ba13f7
+- [x] 3.4 `styles.css` contains `.chart-canvas-wrapper` — 4ba13f7
 
 #### Manual
 
-- [x] 3.5 All three charts render correctly on `/journal/trends`
-- [x] 3.6 No JS console errors on `/journal/trends`
-- [x] 3.7 `#trends-data` element contains valid JSON in DevTools
-- [x] 3.8 Canvas wrappers are 280px tall (DevTools computed styles)
+- [x] 3.5 All three charts render correctly on `/journal/trends` — 4ba13f7
+- [x] 3.6 No JS console errors on `/journal/trends` — 4ba13f7
+- [x] 3.7 `#trends-data` element contains valid JSON in DevTools — 4ba13f7
+- [x] 3.8 Canvas wrappers are 280px tall (DevTools computed styles) — 4ba13f7
 
 ### Phase 4: Add Content-Security-Policy Header
 
 #### Automated
 
-- [ ] 4.1 `.\mvnw.cmd test` passes with CSP header assertions
-- [ ] 4.2 `SecurityConfiguration` contains `contentSecurityPolicy` configuration
-- [ ] 4.3 CSP header assertion present in `ApplicationTests`
+- [x] 4.1 `.\mvnw.cmd test` passes with CSP header assertions
+- [x] 4.2 `SecurityConfiguration` contains `contentSecurityPolicy` configuration
+- [x] 4.3 CSP header assertion present in `ApplicationTests`
 
 #### Manual
 
-- [ ] 4.4 `Content-Security-Policy: default-src 'self'` visible in response headers on all pages
-- [ ] 4.5 Zero CSP violation errors in browser console across all pages
-- [ ] 4.6 Chart on `/journal/trends` still renders under CSP
+- [x] 4.4 `Content-Security-Policy: default-src 'self'` visible in response headers on all pages
+- [x] 4.5 Zero CSP violation errors in browser console across all pages
+- [x] 4.6 Chart on `/journal/trends` still renders under CSP

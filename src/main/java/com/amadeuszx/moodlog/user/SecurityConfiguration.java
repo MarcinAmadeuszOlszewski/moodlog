@@ -66,6 +66,11 @@ public class SecurityConfiguration {
 				.invalidateHttpSession(true)
 				.logoutSuccessUrl("/login?logout")
 			)
+			.headers(headers -> headers
+				.contentSecurityPolicy(csp -> csp
+					.policyDirectives("default-src 'self'")
+				)
+			)
 			.build();
 	}
 
