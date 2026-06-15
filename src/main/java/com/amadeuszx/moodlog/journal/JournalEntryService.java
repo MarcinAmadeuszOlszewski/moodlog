@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -142,6 +143,83 @@ public class JournalEntryService {
 		);
 
 		return savedJournalEntry;
+	}
+
+	@Transactional
+	public void deleteEntry(String userEmail, UUID entryId) {
+		final UserAccount userAccount = resolveUserAccount(userEmail);
+		final JournalEntry entry = journalEntryRepository
+			.findByIdAndUserAccountId(entryId, userAccount.getId())
+			.orElseThrow(() -> new JournalEntryNotFoundException("Journal entry not found."));
+
+		journalEntryRepository.delete(entry);
+	}
+
+	@Transactional
+	public void applyMoodOverride(String userEmail, UUID entryId, MoodTag moodTag) {
+		final UserAccount userAccount = resolveUserAccount(userEmail);
+		final JournalEntry entry = journalEntryRepository
+			.findByIdAndUserAccountId(entryId, userAccount.getId())
+			.orElseThrow(() -> new JournalEntryNotFoundException("Journal entry not found."));
+
+		entry.applyMoodOverride(moodTag, Instant.now(clock));
+		journalEntryRepository.save(entry);
+
+		logger.info(
+			"journal.mood.override identifier={}",
+			UserAccountService.safeEmailIdentifier(userAccount.getEmail())
+		);
+	}
+
+	@Transactional
+	public JournalEntry updateEntryContent(String userEmail, UUID entryId, String newContent) {
+		final UserAccount userAccount = resolveUserAccount(userEmail);
+		final JournalEntry entry = journalEntryRepository
+			.findByIdAndUserAccountId(entryId, userAccount.getId())
+			.orElseThrow(() -> new JournalEntryNotFoundException("Journal entry not found."));
+		final String safeUserIdentifier = UserAccountService.safeEmailIdentifier(userAccount.getEmail());
+
+		try {
+			final MoodClassification classification = classifyContent(newContent, safeUserIdentifier);
+			entry.updateContent(
+				newContent,
+				classification.moodTag(),
+				classification.moodScore(),
+				classification.provider(),
+				classification.model(),
+				classification.classifiedAt(),
+				Instant.now(clock)
+			);
+		}
+		catch (MoodClassificationFailedException exception) {
+			entry.updateContent(
+				newContent,
+				MoodTag.UNKNOWN,
+				null,
+				exception.getProvider(),
+				exception.getModel(),
+				Instant.now(clock),
+				Instant.now(clock)
+			);
+		}
+
+		return journalEntryRepository.save(entry);
+	}
+
+	public JournalEntryEditView getEntryForEdit(String userEmail, UUID entryId) {
+		final UserAccount userAccount = resolveUserAccount(userEmail);
+		final JournalEntry entry = journalEntryRepository
+			.findByIdAndUserAccountId(entryId, userAccount.getId())
+			.orElseThrow(() -> new JournalEntryNotFoundException("Journal entry not found."));
+
+		return new JournalEntryEditView(entry.getId(), entry.getContent());
+	}
+
+	public List<MoodTagOption> selectableMoodOptions() {
+		return Arrays.stream(MoodTag.values())
+			.filter(tag -> tag != MoodTag.UNKNOWN)
+			.map(tag -> new MoodTagOption(tag, polishMoodLabel(tag)))
+			.toList();
 	}
 
 	public List<JournalEntry> getRecentEntries(String currentUserEmail) {
@@ -420,16 +498,22 @@ public class JournalEntryService {
 	}
 
 	private EffectiveMood resolveEffectiveMood(JournalEntry journalEntry) {
-		if (journalEntry.getOverrideMoodTag() != null && journalEntry.getOverrideMoodScore() != null) {
-			return new EffectiveMood(journalEntry.getOverrideMoodTag(), journalEntry.getOverrideMoodScore());
+		if (journalEntry.getOverrideMoodTag() != null) {
+			final Integer score = journalEntry.getOverrideMoodScore() != null
+				? journalEntry.getOverrideMoodScore()
+				: journalEntry.getSystemMoodScore();
+			return new EffectiveMood(journalEntry.getOverrideMoodTag(), score);
 		}
 
 		return new EffectiveMood(journalEntry.getSystemMoodTag(), journalEntry.getSystemMoodScore());
 	}
 
 	private EffectiveMood resolveEffectiveMood(JournalEntryRepository.JournalTrendEntryProjection journalTrendEntry) {
-		if (journalTrendEntry.getOverrideMoodTag() != null && journalTrendEntry.getOverrideMoodScore() != null) {
-			return new EffectiveMood(journalTrendEntry.getOverrideMoodTag(), journalTrendEntry.getOverrideMoodScore());
+		if (journalTrendEntry.getOverrideMoodTag() != null) {
+			final Integer score = journalTrendEntry.getOverrideMoodScore() != null
+				? journalTrendEntry.getOverrideMoodScore()
+				: journalTrendEntry.getSystemMoodScore();
+			return new EffectiveMood(journalTrendEntry.getOverrideMoodTag(), score);
 		}
 
 		return new EffectiveMood(journalTrendEntry.getSystemMoodTag(), journalTrendEntry.getSystemMoodScore());

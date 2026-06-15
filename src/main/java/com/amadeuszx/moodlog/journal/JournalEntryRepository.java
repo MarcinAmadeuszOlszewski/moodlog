@@ -2,6 +2,7 @@ package com.amadeuszx.moodlog.journal;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.amadeuszx.moodlog.classification.MoodTag;
@@ -23,6 +24,8 @@ public interface JournalEntryRepository extends JpaRepository<JournalEntry, UUID
 
 		Integer getOverrideMoodScore();
 	}
+
+	Optional<JournalEntry> findByIdAndUserAccountId(UUID id, UUID userAccountId);
 
 	List<JournalEntry> findTop10ByUserAccountIdOrderByCreatedAtDesc(UUID userAccountId);
 

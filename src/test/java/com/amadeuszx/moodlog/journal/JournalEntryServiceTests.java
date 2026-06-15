@@ -26,6 +26,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -304,6 +305,135 @@ class JournalEntryServiceTests {
 		assertNull(warsawTrend.completedSevenDayTrend().points().getLast().averageMoodScore());
 		assertEquals(0, newYorkTrend.currentWeekSummary().entriesCount());
 		assertEquals(70, newYorkTrend.completedSevenDayTrend().points().getLast().averageMoodScore());
+	}
+
+	@Test
+	@DisplayName("deleteEntry removes the entry when called by the owner")
+	void deleteEntryRemovesEntryWhenCalledByOwner() {
+		val owner = createUserAccount("ela@example.com");
+		val entry = createJournalEntry(owner, "Spokojny dzień.", MoodTag.CALM, 70, Instant.parse("2026-05-31T08:00:00Z"));
+		journalEntryRepository.saveAndFlush(entry);
+
+		journalEntryService.deleteEntry(owner.getEmail(), entry.getId());
+
+		assertEquals(0L, journalEntryRepository.count());
+	}
+
+	@Test
+	@DisplayName("deleteEntry throws JournalEntryNotFoundException when called by a non-owner")
+	void deleteEntryThrowsNotFoundExceptionWhenCalledByNonOwner() {
+		val owner = createUserAccount("ela@example.com");
+		val other = createUserAccount("ola@example.com");
+		val entry = createJournalEntry(owner, "Spokojny dzień.", MoodTag.CALM, 70, Instant.parse("2026-05-31T08:00:00Z"));
+		journalEntryRepository.saveAndFlush(entry);
+
+		assertThrows(JournalEntryNotFoundException.class, () ->
+			journalEntryService.deleteEntry(other.getEmail(), entry.getId())
+		);
+		assertEquals(1L, journalEntryRepository.count());
+	}
+
+	@Test
+	@DisplayName("applyMoodOverride sets overrideMoodTag and subsequent history returns corrected label")
+	void applyMoodOverrideSetsOverrideMoodTagAndHistoryReturnsCorrectLabel() {
+		val owner = createUserAccount("ela@example.com");
+		val entry = createJournalEntry(owner, "Trudny poranek.", MoodTag.SADNESS, 28, Instant.parse("2026-05-31T08:00:00Z"));
+		journalEntryRepository.saveAndFlush(entry);
+
+		journalEntryService.applyMoodOverride(owner.getEmail(), entry.getId(), MoodTag.JOY);
+
+		val historyPage = journalEntryService.getHistoryEntries(owner.getEmail(), 0);
+		val historyItem = historyPage.getContent().getFirst();
+		assertEquals("Radość", historyItem.moodLabel());
+		assertEquals(28, historyItem.moodScore());
+	}
+
+	@Test
+	@DisplayName("applyMoodOverride throws JournalEntryNotFoundException for non-owner")
+	void applyMoodOverrideThrowsNotFoundExceptionForNonOwner() {
+		val owner = createUserAccount("ela@example.com");
+		val other = createUserAccount("ola@example.com");
+		val entry = createJournalEntry(owner, "Trudny poranek.", MoodTag.SADNESS, 28, Instant.parse("2026-05-31T08:00:00Z"));
+		journalEntryRepository.saveAndFlush(entry);
+
+		assertThrows(JournalEntryNotFoundException.class, () ->
+			journalEntryService.applyMoodOverride(other.getEmail(), entry.getId(), MoodTag.JOY)
+		);
+	}
+
+	@Test
+	@DisplayName("resolveEffectiveMood returns corrected tag with system score when only overrideMoodTag is set")
+	void resolveEffectiveMoodReturnsCorrectedTagWithSystemScoreForTagOnlyOverride() {
+		val owner = createUserAccount("ela@example.com");
+		val entry = createJournalEntry(owner, "Wieczorny spacer poprawił humor.", MoodTag.SADNESS, 28, MoodTag.JOY, null,
+			Instant.parse("2026-05-31T18:00:00Z"));
+		journalEntryRepository.saveAndFlush(entry);
+
+		val historyPage = journalEntryService.getHistoryEntries(owner.getEmail(), 0);
+		val historyItem = historyPage.getContent().getFirst();
+		assertEquals("Radość", historyItem.moodLabel());
+		assertEquals(28, historyItem.moodScore());
+	}
+
+	@Test
+	@DisplayName("updateEntryContent reclassifies and clears any existing override; updatedAt advances")
+	void updateEntryContentReclassifiesAndClearsOverride() {
+		val owner = createUserAccount("ela@example.com");
+		val entry = createJournalEntry(owner, "Stara treść.", MoodTag.CALM, 74, MoodTag.JOY, null,
+			Instant.parse("2026-05-30T08:00:00Z"));
+		journalEntryRepository.saveAndFlush(entry);
+		val classifiedAt = Instant.parse("2026-06-01T10:00:00Z");
+		val newClassification = new MoodClassification(MoodTag.SADNESS, 40, "stub", "stub-v1", classifiedAt);
+		given(moodClassifier.classify("Nowa treść.")).willReturn(newClassification);
+
+		val updated = journalEntryService.updateEntryContent(owner.getEmail(), entry.getId(), "Nowa treść.");
+
+		assertEquals(MoodTag.SADNESS, updated.getSystemMoodTag());
+		assertEquals(40, updated.getSystemMoodScore());
+		assertNull(updated.getOverrideMoodTag());
+		assertNull(updated.getOverrideMoodScore());
+		assertEquals(Instant.parse("2026-06-01T10:00:00Z"), updated.getUpdatedAt());
+	}
+
+	@Test
+	@DisplayName("updateEntryContent falls back to UNKNOWN with null score when classifier throws; entry is still saved")
+	void updateEntryContentFallsBackToUnknownWhenClassifierThrows() {
+		val owner = createUserAccount("ela@example.com");
+		val entry = createJournalEntry(owner, "Stara treść.", MoodTag.CALM, 74, Instant.parse("2026-05-31T08:00:00Z"));
+		journalEntryRepository.saveAndFlush(entry);
+		given(moodClassifier.classify("Chaos w głowie."))
+			.willThrow(new MoodClassificationFailedException("Nie udało się sklasyfikować wpisu."));
+
+		val updated = journalEntryService.updateEntryContent(owner.getEmail(), entry.getId(), "Chaos w głowie.");
+
+		assertNotNull(updated);
+		assertEquals(MoodTag.UNKNOWN, updated.getSystemMoodTag());
+		assertNull(updated.getSystemMoodScore());
+		assertEquals(1L, journalEntryRepository.count());
+	}
+
+	@Test
+	@DisplayName("updateEntryContent throws JournalEntryNotFoundException for non-owner")
+	void updateEntryContentThrowsNotFoundExceptionForNonOwner() {
+		val owner = createUserAccount("ela@example.com");
+		val other = createUserAccount("ola@example.com");
+		val entry = createJournalEntry(owner, "Stara treść.", MoodTag.CALM, 74, Instant.parse("2026-05-31T08:00:00Z"));
+		journalEntryRepository.saveAndFlush(entry);
+
+		assertThrows(JournalEntryNotFoundException.class, () ->
+			journalEntryService.updateEntryContent(other.getEmail(), entry.getId(), "Nowa treść.")
+		);
+	}
+
+	@Test
+	@DisplayName("selectableMoodOptions returns 7 options excluding UNKNOWN with Polish labels")
+	void selectableMoodOptionsReturnsSevenOptionsExcludingUnknown() {
+		val options = journalEntryService.selectableMoodOptions();
+
+		assertEquals(7, options.size());
+		assertTrue(options.stream().noneMatch(o -> o.tag() == MoodTag.UNKNOWN));
+		assertTrue(options.stream().anyMatch(o -> o.tag() == MoodTag.JOY && "Radość".equals(o.polishLabel())));
+		assertTrue(options.stream().anyMatch(o -> o.tag() == MoodTag.CALM && "Spokój".equals(o.polishLabel())));
 	}
 
 	private UserAccount createUserAccount(String email) {

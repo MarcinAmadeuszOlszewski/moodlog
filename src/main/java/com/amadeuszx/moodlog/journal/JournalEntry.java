@@ -92,4 +92,30 @@ public class JournalEntry {
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 	}
+
+	public void applyMoodOverride(MoodTag overrideMoodTag, Instant updatedAt) {
+		this.overrideMoodTag = overrideMoodTag;
+		this.overrideMoodScore = null;
+		this.updatedAt = updatedAt;
+	}
+
+	public void updateContent(
+		String content,
+		MoodTag systemMoodTag,
+		Integer systemMoodScore,
+		String classifierProvider,
+		String classifierModel,
+		Instant classifiedAt,
+		Instant updatedAt
+	) {
+		this.content = content;
+		this.systemMoodTag = systemMoodTag;
+		this.systemMoodScore = systemMoodScore;
+		this.classifierProvider = classifierProvider;
+		this.classifierModel = classifierModel;
+		this.classifiedAt = classifiedAt;
+		this.overrideMoodTag = null;
+		this.overrideMoodScore = null;
+		this.updatedAt = updatedAt;
+	}
 }
