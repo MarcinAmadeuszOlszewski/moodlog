@@ -427,12 +427,12 @@ Add `UUID id` and the effective `MoodTag` to `JournalHistoryItem`, update `toHis
 
 #### Automated
 
-- [x] 3.1 `.\mvnw.cmd test` passes including all new E2E flow tests
-- [x] 3.2 `JournalHistoryItem` has `UUID id` as first component plus `effectiveMoodTag`, and `toHistoryItem` compiles and populates both
+- [x] 3.1 `.\mvnw.cmd test` passes including all new E2E flow tests — b4889a1
+- [x] 3.2 `JournalHistoryItem` has `UUID id` as first component plus `effectiveMoodTag`, and `toHistoryItem` compiles and populates both — b4889a1
 
 #### Manual
 
-- [x] 3.3 Delete button appears in history; JS confirm fires; entry disappears after delete
-- [x] 3.4 "Edytuj" link navigates to edit form; submitting updates excerpt and mood in history
-- [x] 3.5 Mood-correction dropdown shows Polish labels with no "UNKNOWN" option; selecting corrects the label
-- [x] 3.6 Cross-user delete of another user's entry returns 404
+- [x] 3.3 Delete button appears in history; JS confirm fires; entry disappears after delete — b4889a1
+- [x] 3.4 "Edytuj" link navigates to edit form; submitting updates excerpt and mood in history — b4889a1
+- [x] 3.5 Mood-correction dropdown shows Polish labels with no "UNKNOWN" option; selecting corrects the label — b4889a1
+- [x] 3.6 Cross-user delete of another user's entry returns 404 — b4889a1
