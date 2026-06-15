@@ -43,7 +43,6 @@ public class SecurityConfiguration {
 					"/error",
 					"/favicon.ico",
 					"/favicon.svg",
-					"/v1/random",
 					"/css/**",
 					"/js/**",
 					"/images/**"

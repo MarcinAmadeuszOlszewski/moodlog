@@ -16,7 +16,6 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.matchesPattern;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -56,25 +55,15 @@ class ApplicationTests {
 	}
 
 	@Test
-	@DisplayName("keeps the public random endpoint accessible")
-	void randomEndpointReturnsRandomNumber() throws Exception {
-		mockMvc.perform(get("/v1/random"))
-			.andExpect(status().isOk())
-			.andExpect(content().string(matchesPattern("\\d+")));
-	}
-
-	@Test
-	@DisplayName("keeps the landing page public and wired to the random endpoint")
-	void indexPageContainsWelcomeMessageAndUsesRandomEndpoint() throws Exception {
+	@DisplayName("serves the landing page publicly with app description and no random endpoint")
+	void indexPageContainsAppDescriptionAndNoRandomEndpoint() throws Exception {
 		mockMvc.perform(get("/"))
 			.andExpect(status().isOk())
 			.andExpect(view().name("index"))
-			.andExpect(content().string(containsString("Witaj! Jesteś dziś")))
-			.andExpect(content().string(containsString("\\/v1\\/random")))
-			.andExpect(content().string(containsString("/favicon.svg")))
+			.andExpect(content().string(containsString("prywatnego dziennika")))
 			.andExpect(content().string(containsString("Zaloguj się")))
 			.andExpect(content().string(containsString("załóż konto")))
-			.andExpect(content().string(containsString("gościem!")));
+			.andExpect(content().string(containsString("/favicon.svg")));
 	}
 
 	@Test

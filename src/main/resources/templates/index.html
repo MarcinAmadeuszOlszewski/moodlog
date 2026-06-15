@@ -8,8 +8,14 @@
 </head>
 <body>
 <main>
+    <h1>MoodLog</h1>
     <p>
-        Witaj! Jesteś dziś <span id="guest-number" th:text="'...'">...</span> gościem! Bravo!
+        MoodLog to prywatny dziennik z automatyczną analizą nastroju.
+        Zapisujesz wpis w dowolnej formie, a aplikacja przypisuje mu dominujący nastrój.
+    </p>
+    <p>
+        Jak to działa: napisz, co czujesz → AI przypisze nastrój → przeglądaj trendy w czasie.
+        Wszystkie wpisy są prywatne i widoczne tylko dla Ciebie.
     </p>
     <p>
         <a th:href="@{/login}">Zaloguj się</a>
@@ -18,24 +24,5 @@
         aby przejść do prywatnego dziennika.
     </p>
 </main>
-
-<script th:inline="javascript">
-    const randomEndpoint = /*[[ @{/v1/random} ]]*/ "/v1/random";
-    const guestNumberElement = document.getElementById("guest-number");
-
-    fetch(randomEndpoint)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Failed to load random number");
-            }
-            return response.json();
-        })
-        .then((guestNumber) => {
-            guestNumberElement.textContent = guestNumber;
-        })
-        .catch(() => {
-            guestNumberElement.textContent = "?";
-        });
-</script>
 </body>
 </html>

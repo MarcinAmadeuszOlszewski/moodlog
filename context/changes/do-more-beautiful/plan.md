@@ -277,28 +277,28 @@ Result: each template's `<head>` has the `th:block` + `<title>`. For templates w
 
 #### Automated
 
-- [x] 1.1 README.md exists at project root
-- [x] 1.2 `./mvnw test` passes
+- [x] 1.1 README.md exists at project root — eead80a
+- [x] 1.2 `./mvnw test` passes — eead80a
 
 #### Manual
 
-- [x] 1.3 README renders correctly on GitHub
-- [x] 1.4 Run command starts the app successfully
-- [x] 1.5 All env var names match application.properties
+- [x] 1.3 README renders correctly on GitHub — eead80a
+- [x] 1.4 Run command starts the app successfully — eead80a
+- [x] 1.5 All env var names match application.properties — eead80a
 
 ### Phase 2: Home Page Cleanup
 
 #### Automated
 
-- [ ] 2.1 `./mvnw test` passes (no compile errors from deleted classes)
-- [ ] 2.2 No remaining references to RandomNumberController, RandomNumberService, or /v1/random
+- [x] 2.1 `./mvnw test` passes (no compile errors from deleted classes)
+- [x] 2.2 No remaining references to RandomNumberController, RandomNumberService, or /v1/random
 
 #### Manual
 
-- [ ] 2.3 Home page shows app description, no guest text
-- [ ] 2.4 No network request to /v1/random in browser devtools
-- [ ] 2.5 /v1/random returns 404
-- [ ] 2.6 Login and register links still work
+- [x] 2.3 Home page shows app description, no guest text
+- [x] 2.4 No network request to /v1/random in browser devtools
+- [x] 2.5 /v1/random returns 404
+- [x] 2.6 Login and register links still work
 
 ### Phase 3: Shared Head Fragment + Full Grayscale CSS
 
