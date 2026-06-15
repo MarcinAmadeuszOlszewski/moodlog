@@ -206,25 +206,25 @@ Fill in §6.2, §6.4, and §6.6 in `context/foundation/test-plan.md`. These sect
 
 #### Automated
 
-- [x] 1.1 `.\mvnw.cmd test` passes with 5 new tests green in `SecurityRouteProtectionTests`
-- [x] 1.2 No regressions in `AuthenticationFlowTests`, `JournalFlowTests`, or `JournalTrendsFlowTests`
+- [x] 1.1 `.\mvnw.cmd test` passes with 5 new tests green in `SecurityRouteProtectionTests` — fcff6c0
+- [x] 1.2 No regressions in `AuthenticationFlowTests`, `JournalFlowTests`, or `JournalTrendsFlowTests` — fcff6c0
 
 #### Manual
 
-- [x] 1.3 All 5 test methods have `@DisplayName` values that read as plain-English security assertions
-- [x] 1.4 Test class is in `com.amadeuszx.moodlog.security` package
+- [x] 1.3 All 5 test methods have `@DisplayName` values that read as plain-English security assertions — fcff6c0
+- [x] 1.4 Test class is in `com.amadeuszx.moodlog.security` package — fcff6c0
 
 ### Phase 2: Ownership Contract Stubs
 
 #### Automated
 
-- [ ] 2.1 `.\mvnw.cmd test` passes; 4 stub tests appear as skipped/disabled (not failed)
-- [ ] 2.2 No compile errors in `JournalEntryOwnershipTests`
+- [x] 2.1 `.\mvnw.cmd test` passes; 4 stub tests appear as skipped/disabled (not failed)
+- [x] 2.2 No compile errors in `JournalEntryOwnershipTests`
 
 #### Manual
 
-- [ ] 2.3 Each `@Disabled` annotation carries the exact message `"Activate when S-04 edit/delete endpoints ship"`
-- [ ] 2.4 Cross-user tests assert `isNotFound()` (not `isForbidden()`)
+- [x] 2.3 Each `@Disabled` annotation carries the exact message `"Activate when S-04 edit/delete endpoints ship"`
+- [x] 2.4 Cross-user tests assert `isNotFound()` (not `isForbidden()`)
 
 ### Phase 3: Cookbook Documentation
 
