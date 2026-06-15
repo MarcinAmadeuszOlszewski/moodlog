@@ -237,19 +237,19 @@ No schema changes. Testcontainers starts a fresh ephemeral PostgreSQL 16 instanc
 
 #### Automated
 
-- [x] 1.1 `.\mvnw.cmd test` passes — all three FlywayMigrationPostgresTests methods green
-- [x] 1.2 Pre-existing H2-backed tests unchanged — no regressions in full suite
-- [x] 1.3 Hibernate `validate` succeeds against PostgreSQL (context loads without exception)
+- [x] 1.1 `.\mvnw.cmd test` passes — all three FlywayMigrationPostgresTests methods green — e317e2a
+- [x] 1.2 Pre-existing H2-backed tests unchanged — no regressions in full suite — e317e2a
+- [x] 1.3 Hibernate `validate` succeeds against PostgreSQL (context loads without exception) — e317e2a
 
 #### Manual
 
-- [x] 1.4 Test output confirms PostgreSQL 16 container started (not H2)
-- [x] 1.5 No regression in other test classes when the test suite runs in full
+- [x] 1.4 Test output confirms PostgreSQL 16 container started (not H2) — e317e2a
+- [x] 1.5 No regression in other test classes when the test suite runs in full — e317e2a
 
 ### Phase 2: test-plan.md documentation updates
 
 #### Manual
 
-- [ ] 2.1 §2 Risk #6 Risk Map row references V1–V4, not V1 and V2
-- [ ] 2.2 §2 Risk Response Guidance Risk #6 row updated consistently
-- [ ] 2.3 §6.5 cookbook entry filled — complete and actionable, no longer reads TBD
+- [x] 2.1 §2 Risk #6 Risk Map row references V1–V4, not V1 and V2
+- [x] 2.2 §2 Risk Response Guidance Risk #6 row updated consistently
+- [x] 2.3 §6.5 cookbook entry filled — complete and actionable, no longer reads TBD

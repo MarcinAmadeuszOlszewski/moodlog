@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan-spring --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-14 (Phases 1 and 2 complete; Phase 3 next)
+> Last updated: 2026-06-15 (Phases 1, 2, and 3 complete; Phase 4 next)
 
 ---
 
@@ -48,7 +48,7 @@ research's job, see §1 principle #3).
 | 3 | Mood trends time-zone regression → entry near Warsaw midnight placed in the wrong calendar day or week; user sees incorrect mood trend | High | High | Interview Q3 (user changes this without confidence); hot-spot `src/main/resources/templates` — 7 commits/30d |
 | 4 | S-04 (edit/delete/mood-override) ships without per-resource ownership check → authenticated user A mutates user B's entry | High | Medium | Interview Q4; PRD FR-004/FR-006; security lens (IDOR on owned-resource operations) |
 | 5 | Security config change accidentally removes route protection → anonymous GET on /journal, /journal/history, or /journal/trends succeeds | High | Medium | Hot-spot `src/main/java/com/amadeuszx/moodlog` — SecurityConfiguration.java 6 commits/30d |
-| 6 | Flyway migration SQL compatible with H2 but invalid against PostgreSQL in prod → app fails to start; schema state unknown | High | Medium | Tech-stack: H2 in-memory for all tests, PostgreSQL in production; infrastructure.md; pom.xml |
+| 6 | Flyway V1–V4 migration SQL compatible with H2 but invalid against PostgreSQL in prod → app fails to start; schema state unknown | High | Medium | Tech-stack: H2 in-memory for all tests, PostgreSQL in production; infrastructure.md; pom.xml |
 
 ### Risk Response Guidance
 
@@ -59,7 +59,7 @@ research's job, see §1 principle #3).
 | #3 | An entry created at 22:05 UTC (00:05 Europe/Warsaw) is attributed to the *next* Warsaw calendar day; 7-day and 30-day windows align to completed Warsaw days, not UTC days | "fixed-clock tests using UTC noon timestamps cover all boundary cases" | JournalEntryService getTrendView; how Europe/Warsaw day boundaries are computed for each Instant; which existing Clock injection points enable precise boundary testing | Unit test (service) with Instant values carefully placed around the Warsaw midnight boundary | Using only UTC-noon timestamps that never probe the boundary; asserting entry counts without asserting which specific day a boundary entry belongs to |
 | #4 | PUT/PATCH/DELETE on an entry ID belonging to user B returns 403 or 404 when user A is authenticated and makes the request | "isAuthenticated() implies authorized to mutate this specific resource"; "repository scoping on reads implies the same protection on writes" | JournalController edit/delete/override endpoints (once built); where ownership is checked relative to retrieval; whether the error response is 403 (forbidden) or 404 (not found) | MockMvc test with `.with(user(...))` on a cross-user mutation attempt | Testing only same-user happy path; not testing what happens when the entryId belongs to a different authenticated user |
 | #5 | Anonymous GET /journal, /journal/history, and /journal/trends each redirect to /login; any new route addition does not bypass the deny-all fallback | "testing /journal covers /journal/history and /journal/trends"; "a route not in the public list is implicitly denied" | SecurityConfiguration route list; how the deny-all fallback is configured; which routes are explicitly public vs. protected | MockMvc anonymous GET on each distinct protected route pattern | Testing only one representative protected path; assuming sibling routes share the same protection without asserting it |
-| #6 | Flyway V1 and V2 migrations apply cleanly against a real PostgreSQL instance; schema is queryable after all migrations run; no H2-specific SQL present | "H2 tests pass means PostgreSQL migrations work"; "SERIAL vs IDENTITY and VARCHAR(n) are fully compatible between H2 and PostgreSQL" | Migration SQL contents; which PostgreSQL-specific or H2-specific constructs are present; Testcontainers availability and setup for Spring Boot 4.x | `@SpringBootTest` with a Testcontainers PostgreSQL profile | Skipping because H2 tests pass; not asserting post-migration schema shape |
+| #6 | Flyway V1–V4 migrations apply cleanly against a real PostgreSQL instance; schema is queryable after all migrations run; no H2-specific SQL present | "H2 tests pass means PostgreSQL migrations work"; "SERIAL vs IDENTITY and VARCHAR(n) are fully compatible between H2 and PostgreSQL" | Migration SQL contents; which PostgreSQL-specific or H2-specific constructs are present; Testcontainers availability and setup for Spring Boot 4.x | `@SpringBootTest` with a Testcontainers PostgreSQL profile | Skipping because H2 tests pass; not asserting post-migration schema shape |
 
 ---
 
@@ -73,8 +73,8 @@ orchestrator updates Status as artifacts appear on disk.
 |---|---|---|---|---|---|---|
 | 1 | AI boundary hardening | Prove entry durability on AI failure and verify classifier response contract | #1, #2 | unit + integration | complete | testing-ai-boundary-hardening |
 | 2 | Trends time-zone accuracy | Prove mood trend calculations are correct across Europe/Warsaw midnight boundaries | #3 | integration (service + MockMvc) | complete | trends-time-zone-accuracy |
-| 3 | Ownership + security enforcement | Ensure S-04 edit/delete/override verifies per-resource ownership; prevent security config regressions | #4, #5 | integration (MockMvc + spring-security-test) | change opened | testing-ownership-security-enforcement |
-| 4 | Migration safety gate | Verify Flyway migrations apply cleanly against real PostgreSQL via Testcontainers | #6 | integration (Testcontainers) | not started | — |
+| 3 | Ownership + security enforcement | Ensure S-04 edit/delete/override verifies per-resource ownership; prevent security config regressions | #4, #5 | integration (MockMvc + spring-security-test) | complete | testing-ownership-security-enforcement |
+| 4 | Migration safety gate | Verify Flyway migrations apply cleanly against real PostgreSQL via Testcontainers | #6 | integration (Testcontainers) | complete | testing-migration-safety-gate |
 
 ---
 
@@ -182,7 +182,72 @@ When the entry does not belong to the authenticated user, `findByIdAndUserAccoun
 
 ### 6.5 Adding a Testcontainers PostgreSQL migration test
 
-TBD — see §3 Phase 4 for the Flyway + Testcontainers + Spring Boot 4.x setup pattern.
+Use this pattern when you need to verify Flyway migration correctness against real PostgreSQL (not H2). The gate is a standalone `@SpringBootTest` that starts a `postgres:16` container once per test class and redirects the datasource via `@DynamicPropertySource`.
+
+**Dependency note (Spring Boot 4.x + Testcontainers 2.x):** Add three test-scoped entries to `pom.xml`. Spring Boot 4.x manages the Testcontainers BOM, so no `<version>` is needed. Note that Testcontainers 2.x renamed artifacts — use the `testcontainers-*` prefix:
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-testcontainers</artifactId>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.testcontainers</groupId>
+    <artifactId>testcontainers-postgresql</artifactId>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.testcontainers</groupId>
+    <artifactId>testcontainers-junit-jupiter</artifactId>
+    <scope>test</scope>
+</dependency>
+```
+
+**Class-level setup pattern:**
+
+```java
+@SpringBootTest
+@Testcontainers
+class FlywayMigrationPostgresTests {
+
+    @Container
+    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16");
+
+    @DynamicPropertySource
+    static void configurePostgresProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+    }
+}
+```
+
+Key rules:
+- `@Testcontainers` (JUnit 5 extension) is required on the class — without it, `@Container` fields are not processed and the container never starts.
+- The `@Container` field must be `static` so the container is shared across all test methods in the class (started once per class, not per test).
+- `@DynamicPropertySource` overrides file-based properties at the highest Spring Environment precedence — it redirects the datasource without touching `src/test/resources/application.properties`. All other properties (AI disabled, Hibernate `validate`, journal limits) carry through unchanged.
+- `@BeforeEach` cleanup: call `journalEntryRepository.deleteAll()` then `userAccountRepository.deleteAll()` (FK order) — same pattern as all other `@SpringBootTest` tests in this codebase.
+
+**Migration count assertion:**
+
+```java
+@Autowired
+private Flyway flyway;
+
+@Test
+@DisplayName("all Flyway migrations apply cleanly against PostgreSQL")
+void allMigrationsApplyCleanlyToPostgres() {
+    val applied = Arrays.stream(flyway.info().all())
+        .filter(info -> info.getState() == MigrationState.SUCCESS)
+        .count();
+    assertEquals(4L, applied);  // update this to 5L, 6L, etc. when new migrations ship
+}
+```
+
+Assert the **exact** count, not a floor (`>= N`). Flyway silently skips migrations whose SQL files are missing from the classpath if their checksum is already in `flyway_schema_history`. A context-load-only test passes in that scenario; the exact-count assertion catches a missing file. Update the expected count whenever a new migration is added.
+
+**Live example:** `src/test/java/com/amadeuszx/moodlog/migration/FlywayMigrationPostgresTests.java`
 
 ### 6.6 Per-rollout-phase notes
 
