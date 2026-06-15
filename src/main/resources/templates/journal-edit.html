@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Edytuj wpis | MoodLog</title>
+	<link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+</head>
+<body>
+	<main>
+		<h1>Edytuj wpis</h1>
+		<p>Zalogowano jako: <strong th:text="${userEmail}">user@example.com</strong>.</p>
+		<nav>
+			<p>
+				<a th:href="@{/journal}">Dziennik</a>
+				•
+				<a th:href="@{/journal/history}">Historia wpisów</a>
+				•
+				<a th:href="@{/journal/trends}">Trendy nastroju</a>
+			</p>
+		</nav>
+
+		<form method="post" th:action="@{/journal/{id}(id=${entryId})}" th:object="${journalEntryForm}">
+			<input type="hidden" name="_method" value="PUT">
+			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+			<div>
+				<label for="content">Treść wpisu</label>
+				<textarea id="content" th:field="*{content}" rows="8" th:attr="maxlength=${journalMaxContentLength}" required></textarea>
+				<p th:text="${'Maksymalnie ' + journalMaxContentLength + ' znaków.'}">Maksymalnie 2000 znaków.</p>
+				<p th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></p>
+			</div>
+
+			<button type="submit">Zapisz</button>
+			<a th:href="@{/journal/history}">Anuluj</a>
+		</form>
+
+		<form method="post" th:action="@{/logout}">
+			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+			<button type="submit">Wyloguj się</button>
+		</form>
+
+		<p><a th:href="@{/}">Wróć na stronę główną</a></p>
+	</main>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title th:text="${status + ' | MoodLog'}">Błąd | MoodLog</title>
+	<link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+</head>
+<body>
+	<main>
+		<h1 th:text="${status}">Błąd</h1>
+		<p th:text="${error}">Nie znaleziono strony.</p>
+		<p><a th:href="@{/journal}">Wróć do dziennika</a></p>
+		<p><a th:href="@{/}">Wróć na stronę główną</a></p>
+	</main>
+</body>
+</html>

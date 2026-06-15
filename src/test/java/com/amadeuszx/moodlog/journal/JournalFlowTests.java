@@ -34,8 +34,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -373,6 +376,127 @@ class JournalFlowTests {
 		assertTrue(responseContent.contains("Eli archiwum [01]"));
 		assertFalse(responseContent.contains("Eli archiwum [02]"));
 		assertTrue(responseContent.contains("Strona 2 z 2"));
+	}
+
+	@Test
+	@DisplayName("delete flow removes entry and it disappears from history")
+	void deleteFlowRemovesEntryAndItDisappearsFromHistory() throws Exception {
+		val owner = createUserAccount("ela@example.com");
+		val entry = createJournalEntry(owner, "Wpis do usunięcia.", MoodTag.CALM, 70, Instant.parse("2026-05-31T08:00:00Z"));
+		journalEntryRepository.saveAndFlush(entry);
+
+		mockMvc.perform(delete("/journal/{id}", entry.getId())
+				.with(user(owner.getEmail()).roles("USER"))
+				.with(csrf()))
+			.andExpect(status().is3xxRedirection());
+
+		val historyContent = mockMvc.perform(get("/journal/history")
+				.with(user(owner.getEmail()).roles("USER")))
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+
+		assertFalse(historyContent.contains("Wpis do usunięcia."));
+	}
+
+	@Test
+	@DisplayName("mood correction flow updates history label to the selected tag")
+	void moodCorrectionFlowUpdatesHistoryLabel() throws Exception {
+		val owner = createUserAccount("ela@example.com");
+		val entry = createJournalEntry(owner, "Spokojny wieczór.", MoodTag.CALM, 70, Instant.parse("2026-05-31T08:00:00Z"));
+		journalEntryRepository.saveAndFlush(entry);
+
+		mockMvc.perform(patch("/journal/{id}/mood", entry.getId())
+				.param("moodTag", "SADNESS")
+				.with(user(owner.getEmail()).roles("USER"))
+				.with(csrf()))
+			.andExpect(status().is3xxRedirection());
+
+		val historyContent = mockMvc.perform(get("/journal/history")
+				.with(user(owner.getEmail()).roles("USER")))
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+
+		assertTrue(historyContent.contains("Smutek"));
+		assertFalse(historyContent.contains("Spokój — "));
+	}
+
+	@Test
+	@DisplayName("content edit flow reclassifies entry and shows updated excerpt in history")
+	void contentEditFlowReclassifiesAndUpdatesHistory() throws Exception {
+		val owner = createUserAccount("ela@example.com");
+		val entry = createJournalEntry(owner, "Stara treść wpisu.", MoodTag.CALM, 70, Instant.parse("2026-05-31T08:00:00Z"));
+		journalEntryRepository.saveAndFlush(entry);
+		val newClassification = new MoodClassification(MoodTag.JOY, 85, "stub", "stub-v1", Instant.parse("2026-06-01T10:00:00Z"));
+		given(moodClassifier.classify("Nowa treść wpisu.")).willReturn(newClassification);
+
+		val editContent = mockMvc.perform(get("/journal/{id}/edit", entry.getId())
+				.with(user(owner.getEmail()).roles("USER")))
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+
+		assertTrue(editContent.contains("Stara treść wpisu."));
+
+		mockMvc.perform(put("/journal/{id}", entry.getId())
+				.param("content", "Nowa treść wpisu.")
+				.with(user(owner.getEmail()).roles("USER"))
+				.with(csrf()))
+			.andExpect(status().is3xxRedirection());
+
+		val historyContent = mockMvc.perform(get("/journal/history")
+				.with(user(owner.getEmail()).roles("USER")))
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+
+		assertTrue(historyContent.contains("Nowa treść wpisu."));
+	}
+
+	@Test
+	@DisplayName("edit form re-renders with validation errors when content is blank")
+	void editFormValidationReRendersWithErrors() throws Exception {
+		val owner = createUserAccount("ela@example.com");
+		val entry = createJournalEntry(owner, "Stara treść.", MoodTag.CALM, 70, Instant.parse("2026-05-31T08:00:00Z"));
+		journalEntryRepository.saveAndFlush(entry);
+
+		mockMvc.perform(put("/journal/{id}", entry.getId())
+				.param("content", "   ")
+				.with(user(owner.getEmail()).roles("USER"))
+				.with(csrf()))
+			.andExpect(status().isOk())
+			.andExpect(view().name("journal-edit"));
+
+		val persisted = journalEntryRepository.findById(entry.getId()).orElseThrow();
+		assertEquals("Stara treść.", persisted.getContent());
+	}
+
+	@Test
+	@DisplayName("multi-user delete isolation returns 404 when user A tries to delete user B's entry")
+	void multiUserDeleteIsolationReturns404() throws Exception {
+		val userA = createUserAccount("a@example.com");
+		val userB = createUserAccount("b@example.com");
+		val entryB = createJournalEntry(userB, "Wpis użytkownika B.", MoodTag.CALM, 70, Instant.parse("2026-05-31T08:00:00Z"));
+		journalEntryRepository.saveAndFlush(entryB);
+
+		mockMvc.perform(delete("/journal/{id}", entryB.getId())
+				.with(user(userA.getEmail()).roles("USER"))
+				.with(csrf()))
+			.andExpect(status().isNotFound());
+
+		val historyContent = mockMvc.perform(get("/journal/history")
+				.with(user(userB.getEmail()).roles("USER")))
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+
+		assertTrue(historyContent.contains("Wpis użytkownika B."));
 	}
 
 	private UserAccount createUserAccount(String email) {

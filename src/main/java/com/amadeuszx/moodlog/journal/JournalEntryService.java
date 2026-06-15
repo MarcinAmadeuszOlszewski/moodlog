@@ -336,9 +336,11 @@ public class JournalEntryService {
 		final LocalDate displayDate = journalEntry.getCreatedAt().atZone(userZone).toLocalDate();
 
 		return new JournalHistoryItem(
+			journalEntry.getId(),
 			displayDate,
 			journalEntry.getCreatedAt().atZone(userZone).toLocalTime().truncatedTo(ChronoUnit.MINUTES),
 			buildExcerpt(journalEntry.getContent()),
+			effectiveMood.moodTag(),
 			polishMoodLabel(effectiveMood.moodTag()),
 			effectiveMood.moodScore()
 		);

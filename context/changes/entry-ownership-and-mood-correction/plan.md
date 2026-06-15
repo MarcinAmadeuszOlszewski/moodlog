@@ -413,26 +413,26 @@ Add `UUID id` and the effective `MoodTag` to `JournalHistoryItem`, update `toHis
 
 #### Automated
 
-- [x] 2.1 `.\mvnw.cmd test` passes with all four previously disabled ownership tests now active
-- [x] 2.2 Two new PUT ownership tests pass
-- [x] 2.3 Four new route protection tests pass
+- [x] 2.1 `.\mvnw.cmd test` passes with all four previously disabled ownership tests now active — 9b201d4
+- [x] 2.2 Two new PUT ownership tests pass — 9b201d4
+- [x] 2.3 Four new route protection tests pass — 9b201d4
 
 #### Manual
 
-- [x] 2.4 `DELETE /journal/{real-id}` as owner returns 302 to `/journal/history`
-- [x] 2.5 `DELETE /journal/{real-id}` as non-owner returns 404
-- [x] 2.6 `GET /journal/{real-id}/edit` renders without error for the owner
+- [x] 2.4 `DELETE /journal/{real-id}` as owner returns 302 to `/journal/history` — 9b201d4
+- [x] 2.5 `DELETE /journal/{real-id}` as non-owner returns 404 — 9b201d4
+- [x] 2.6 `GET /journal/{real-id}/edit` renders without error for the owner — 9b201d4
 
 ### Phase 3: Presentation Layer
 
 #### Automated
 
-- [ ] 3.1 `.\mvnw.cmd test` passes including all new E2E flow tests
-- [ ] 3.2 `JournalHistoryItem` has `UUID id` as first component plus `effectiveMoodTag`, and `toHistoryItem` compiles and populates both
+- [x] 3.1 `.\mvnw.cmd test` passes including all new E2E flow tests
+- [x] 3.2 `JournalHistoryItem` has `UUID id` as first component plus `effectiveMoodTag`, and `toHistoryItem` compiles and populates both
 
 #### Manual
 
-- [ ] 3.3 Delete button appears in history; JS confirm fires; entry disappears after delete
-- [ ] 3.4 "Edytuj" link navigates to edit form; submitting updates excerpt and mood in history
-- [ ] 3.5 Mood-correction dropdown shows Polish labels with no "UNKNOWN" option; selecting corrects the label
-- [ ] 3.6 Cross-user delete of another user's entry returns 404
+- [x] 3.3 Delete button appears in history; JS confirm fires; entry disappears after delete
+- [x] 3.4 "Edytuj" link navigates to edit form; submitting updates excerpt and mood in history
+- [x] 3.5 Mood-correction dropdown shows Polish labels with no "UNKNOWN" option; selecting corrects the label
+- [x] 3.6 Cross-user delete of another user's entry returns 404

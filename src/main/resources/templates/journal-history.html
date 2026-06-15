@@ -35,6 +35,23 @@
 					<p th:text="${#temporals.format(entry.displayDate, 'dd.MM.yyyy') + ' • ' + #temporals.format(entry.displayTime, 'HH:mm')}">31.05.2026 • 23:35</p>
 					<p th:text="${entry.excerpt}">Treść wpisu</p>
 					<p th:text="${entry.moodScore != null ? entry.moodLabel + ' — ' + entry.moodScore + '/100' : entry.moodLabel}">Spokój — 73/100</p>
+					<a th:href="@{/journal/{id}/edit(id=${entry.id()})}">Edytuj</a>
+					<form method="post" th:action="@{/journal/{id}(id=${entry.id()})}" onsubmit="return confirm('Na pewno usunąć ten wpis?')">
+						<input type="hidden" name="_method" value="DELETE">
+						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+						<button type="submit">Usuń</button>
+					</form>
+					<form method="post" th:action="@{/journal/{id}/mood(id=${entry.id()})}">
+						<input type="hidden" name="_method" value="PATCH">
+						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+						<select name="moodTag">
+							<option th:each="option : ${selectableMoodOptions}"
+									th:value="${option.tag()}"
+									th:text="${option.polishLabel()}"
+									th:selected="${option.tag() == entry.effectiveMoodTag()}"></option>
+						</select>
+						<button type="submit">Popraw nastrój</button>
+					</form>
 				</li>
 			</ol>
 
