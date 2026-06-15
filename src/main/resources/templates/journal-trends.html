@@ -5,6 +5,35 @@
 	<title>Trendy nastroju | MoodLog</title>
 	<script th:src="@{/js/chart.umd.min.js}" defer></script>
 	<script th:src="@{/js/journal-trends.js}" defer></script>
+	<script type="application/json" id="trends-data" th:inline="javascript">
+{
+	"summary": {
+		"entriesCount": [[${trendView.currentWeekSummary.entriesCount}]],
+		"daysWithEntries": [[${trendView.currentWeekSummary.daysWithEntries}]],
+		"dominantMoodLabel": [[${trendView.currentWeekSummary.dominantMoodLabel}]],
+		"averageMoodScore": [[${trendView.currentWeekSummary.averageMoodScore}]],
+		"empty": [[${trendView.currentWeekSummary.empty}]]
+	},
+	"sevenDay": {
+		"labels": [[${trendView.completedSevenDayTrend.chartLabels}]],
+		"values": [[${trendView.completedSevenDayTrend.chartValues}]],
+		"empty": [[${trendView.completedSevenDayTrend.empty}]],
+		"sparse": [[${trendView.completedSevenDayTrend.sparse}]]
+	},
+	"thirtyDay": {
+		"labels": [[${trendView.completedThirtyDayTrend.chartLabels}]],
+		"values": [[${trendView.completedThirtyDayTrend.chartValues}]],
+		"empty": [[${trendView.completedThirtyDayTrend.empty}]],
+		"sparse": [[${trendView.completedThirtyDayTrend.sparse}]]
+	},
+	"weekly": {
+		"labels": [[${trendView.completedWeeklyTrend.chartLabels}]],
+		"values": [[${trendView.completedWeeklyTrend.chartValues}]],
+		"empty": [[${trendView.completedWeeklyTrend.empty}]],
+		"sparse": [[${trendView.completedWeeklyTrend.sparse}]]
+	}
+}
+	</script>
 </head>
 <body>
 	<main>
@@ -50,7 +79,7 @@
 			<p th:if="${trendView.completedSevenDayTrend.sparse and !trendView.completedSevenDayTrend.empty}">
 				Brak wpisów w niektórych dniach — wykres zostawia luki zamiast zgadywać wartości.
 			</p>
-			<div style="height: 280px;">
+			<div class="chart-canvas-wrapper">
 				<canvas id="seven-day-trend-chart"></canvas>
 			</div>
 		</section>
@@ -61,7 +90,7 @@
 			<p th:if="${trendView.completedThirtyDayTrend.sparse and !trendView.completedThirtyDayTrend.empty}">
 				Brak wpisów w niektórych dniach — wykres zostawia luki zamiast zgadywać wartości.
 			</p>
-			<div style="height: 280px;">
+			<div class="chart-canvas-wrapper">
 				<canvas id="thirty-day-trend-chart"></canvas>
 			</div>
 		</section>
@@ -72,40 +101,10 @@
 			<p th:if="${trendView.completedWeeklyTrend.sparse and !trendView.completedWeeklyTrend.empty}">
 				Brak wpisów w niektórych tygodniach — wykres nie dopowiada brakujących danych.
 			</p>
-			<div style="height: 280px;">
+			<div class="chart-canvas-wrapper">
 				<canvas id="weekly-trend-chart"></canvas>
 			</div>
 		</section>
-
-		<script th:inline="javascript">
-			window.journalTrendsData = {
-				summary: {
-					entriesCount: [[${trendView.currentWeekSummary.entriesCount}]],
-					daysWithEntries: [[${trendView.currentWeekSummary.daysWithEntries}]],
-					dominantMoodLabel: [[${trendView.currentWeekSummary.dominantMoodLabel}]],
-					averageMoodScore: [[${trendView.currentWeekSummary.averageMoodScore}]],
-					empty: [[${trendView.currentWeekSummary.empty}]]
-				},
-				sevenDay: {
-					labels: [[${trendView.completedSevenDayTrend.chartLabels}]],
-					values: [[${trendView.completedSevenDayTrend.chartValues}]],
-					empty: [[${trendView.completedSevenDayTrend.empty}]],
-					sparse: [[${trendView.completedSevenDayTrend.sparse}]]
-				},
-				thirtyDay: {
-					labels: [[${trendView.completedThirtyDayTrend.chartLabels}]],
-					values: [[${trendView.completedThirtyDayTrend.chartValues}]],
-					empty: [[${trendView.completedThirtyDayTrend.empty}]],
-					sparse: [[${trendView.completedThirtyDayTrend.sparse}]]
-				},
-				weekly: {
-					labels: [[${trendView.completedWeeklyTrend.chartLabels}]],
-					values: [[${trendView.completedWeeklyTrend.chartValues}]],
-					empty: [[${trendView.completedWeeklyTrend.empty}]],
-					sparse: [[${trendView.completedWeeklyTrend.sparse}]]
-				}
-			};
-		</script>
 
 		<form method="post" th:action="@{/logout}">
 			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">

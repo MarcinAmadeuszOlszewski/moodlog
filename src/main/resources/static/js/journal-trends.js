@@ -1,23 +1,26 @@
 document.addEventListener("DOMContentLoaded", function () {
-	if (!window.Chart || !window.journalTrendsData) {
+	const dataEl = document.getElementById('trends-data');
+	if (!window.Chart || !dataEl) {
 		return;
 	}
+
+	const journalTrendsData = JSON.parse(dataEl.textContent);
 
 	const chartDefinitions = [
 		{
 			canvasId: "seven-day-trend-chart",
 			label: "Średni wynik nastroju",
-			series: window.journalTrendsData.sevenDay
+			series: journalTrendsData.sevenDay
 		},
 		{
 			canvasId: "thirty-day-trend-chart",
 			label: "Średni wynik nastroju",
-			series: window.journalTrendsData.thirtyDay
+			series: journalTrendsData.thirtyDay
 		},
 		{
 			canvasId: "weekly-trend-chart",
 			label: "Średni wynik nastroju",
-			series: window.journalTrendsData.weekly
+			series: journalTrendsData.weekly
 		}
 	];
 

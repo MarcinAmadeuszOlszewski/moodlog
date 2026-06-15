@@ -294,6 +294,12 @@ ul li button, ol li button {
     margin-top: 0.5rem;
 }
 
+/* Trends — chart canvas wrappers */
+
+.chart-canvas-wrapper {
+    height: 280px;
+}
+
 /* Trends — stat cards */
 
 section > div > article {

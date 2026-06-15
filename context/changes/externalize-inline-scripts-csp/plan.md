@@ -310,32 +310,32 @@ Import `org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 
 #### Automated
 
-- [x] 2.1 `.\mvnw.cmd test` passes
-- [x] 2.2 `src/main/resources/static/js/site.js` exists and is non-empty
-- [x] 2.3 `journal-history.html` contains no `onsubmit` attribute
-- [x] 2.4 `fragments/head.html` contains `site.js` script reference
+- [x] 2.1 `.\mvnw.cmd test` passes — f0e5607
+- [x] 2.2 `src/main/resources/static/js/site.js` exists and is non-empty — f0e5607
+- [x] 2.3 `journal-history.html` contains no `onsubmit` attribute — f0e5607
+- [x] 2.4 `fragments/head.html` contains `site.js` script reference — f0e5607
 
 #### Manual
 
-- [x] 2.5 Delete confirmation dialog appears in Polish on `/journal/history`
-- [x] 2.6 Cancelling dialog does not delete the entry
-- [x] 2.7 Other pages load without JS errors
+- [x] 2.5 Delete confirmation dialog appears in Polish on `/journal/history` — f0e5607
+- [x] 2.6 Cancelling dialog does not delete the entry — f0e5607
+- [x] 2.7 Other pages load without JS errors — f0e5607
 
 ### Phase 3: Externalize Trends Inline Data (JSON Data Island)
 
 #### Automated
 
-- [ ] 3.1 `.\mvnw.cmd test` passes
-- [ ] 3.2 `journal-trends.html` contains no `th:inline="javascript"` and no `style="height: 280px"`
-- [ ] 3.3 `journal-trends.html` contains `<script type="application/json" id="trends-data"`
-- [ ] 3.4 `styles.css` contains `.chart-canvas-wrapper`
+- [x] 3.1 `.\mvnw.cmd test` passes
+- [x] 3.2 `journal-trends.html` contains no `th:inline="javascript"` and no `style="height: 280px"`
+- [x] 3.3 `journal-trends.html` contains `<script type="application/json" id="trends-data"`
+- [x] 3.4 `styles.css` contains `.chart-canvas-wrapper`
 
 #### Manual
 
-- [ ] 3.5 All three charts render correctly on `/journal/trends`
-- [ ] 3.6 No JS console errors on `/journal/trends`
-- [ ] 3.7 `#trends-data` element contains valid JSON in DevTools
-- [ ] 3.8 Canvas wrappers are 280px tall (DevTools computed styles)
+- [x] 3.5 All three charts render correctly on `/journal/trends`
+- [x] 3.6 No JS console errors on `/journal/trends`
+- [x] 3.7 `#trends-data` element contains valid JSON in DevTools
+- [x] 3.8 Canvas wrappers are 280px tall (DevTools computed styles)
 
 ### Phase 4: Add Content-Security-Policy Header
 
