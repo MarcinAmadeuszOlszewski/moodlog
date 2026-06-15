@@ -296,7 +296,6 @@ ul li button, ol li button {
 
 /* Trends — stat cards */
 
-div[th\:if] article,
 section > div > article {
     display: inline-block;
     background-color: var(--color-surface);

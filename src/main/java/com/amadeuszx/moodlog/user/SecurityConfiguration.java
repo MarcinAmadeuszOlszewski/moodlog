@@ -44,8 +44,7 @@ public class SecurityConfiguration {
 					"/favicon.ico",
 					"/favicon.svg",
 					"/css/**",
-					"/js/**",
-					"/images/**"
+					"/js/**"
 				)
 				.permitAll()
 				.anyRequest()
