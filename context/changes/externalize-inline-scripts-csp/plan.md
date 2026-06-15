@@ -341,12 +341,12 @@ Import `org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 
 #### Automated
 
-- [x] 4.1 `.\mvnw.cmd test` passes with CSP header assertions
-- [x] 4.2 `SecurityConfiguration` contains `contentSecurityPolicy` configuration
-- [x] 4.3 CSP header assertion present in `ApplicationTests`
+- [x] 4.1 `.\mvnw.cmd test` passes with CSP header assertions — f3dec57
+- [x] 4.2 `SecurityConfiguration` contains `contentSecurityPolicy` configuration — f3dec57
+- [x] 4.3 CSP header assertion present in `ApplicationTests` — f3dec57
 
 #### Manual
 
-- [x] 4.4 `Content-Security-Policy: default-src 'self'` visible in response headers on all pages
-- [x] 4.5 Zero CSP violation errors in browser console across all pages
-- [x] 4.6 Chart on `/journal/trends` still renders under CSP
+- [x] 4.4 `Content-Security-Policy: default-src 'self'` visible in response headers on all pages — f3dec57
+- [x] 4.5 Zero CSP violation errors in browser console across all pages — f3dec57
+- [x] 4.6 Chart on `/journal/trends` still renders under CSP — f3dec57
