@@ -1,10 +1,10 @@
 ---
 change_id: entry-ownership-and-mood-correction
 title: Entry editing, deletion, and mood correction
-status: impl_reviewed
+status: archived
 created: 2026-06-15
 updated: 2026-06-15
-archived_at: null
+archived_at: 2026-06-15T12:34:49Z
 ---
 
 ## Notes

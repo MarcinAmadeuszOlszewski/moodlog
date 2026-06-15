@@ -3,7 +3,7 @@ project: "MoodLog"
 version: 1
 status: draft
 created: 2026-05-29
-updated: 2026-06-14
+updated: 2026-06-15
 prd_version: 1
 main_goal: low-complexity
 top_blocker: none
@@ -32,7 +32,7 @@ MoodLog is for adults who journal and want a low-friction way to turn free-text 
 | S-01 | private-journal-access | register, sign in, sign out, and reach a private journal shell | — | FR-001 | done |
 | S-02 | first-mood-classified-entry | save a free-text entry and see an automatic mood result in the private journal | S-01 | US-01, FR-002, FR-003, FR-005 | done |
 | S-03 | history-and-mood-trends | review private entry history plus 7-day, 30-day, and weekly mood trends | S-02 | US-01, FR-003, FR-007 | done |
-| S-04 | entry-ownership-and-mood-correction | edit or delete owned entries and correct an assigned mood tag | S-03 | FR-004, FR-006 | proposed |
+| S-04 | entry-ownership-and-mood-correction | edit or delete owned entries and correct an assigned mood tag | S-03 | FR-004, FR-006 | done |
 
 ## Baseline
 
@@ -98,7 +98,7 @@ No explicit foundations on first generation. With a present backend, a partial U
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Sequenced last because correction and deletion depend on existing entries, history context, and visible mood output; the main risk is mixing trust/ownership controls into the first-value flow too early.
-- **Status:** proposed
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -130,3 +130,4 @@ No explicit foundations on first generation. With a present backend, a partial U
 - **S-01: User can register, sign in, sign out, and reach a private journal shell.** — Archived 2026-06-14 → `context/archive/2026-05-29-private-journal-access/`. Lesson: —.
 - **S-02: User can save a free-text entry and see an automatic mood result in the private journal.** — Archived 2026-06-14 → `context/archive/2026-05-30-first-mood-classified-entry/`. Lesson: —.
 - **S-03: User can review private entry history plus 7-day, 30-day, and weekly mood trends.** — Archived 2026-06-14 → `context/archive/2026-06-01-history-and-mood-trends/`. Lesson: —.
+- **S-04: User can edit or delete owned entries and correct an assigned mood tag.** — Archived 2026-06-15 → `context/archive/2026-06-15-entry-ownership-and-mood-correction/`. Lesson: —.
