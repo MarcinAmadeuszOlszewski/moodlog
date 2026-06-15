@@ -1,7 +1,7 @@
 ---
 change_id: testing-migration-safety-gate
 title: Phase 4 test rollout — Flyway migration safety gate (Testcontainers + PostgreSQL)
-status: implementing
+status: implemented
 created: 2026-06-15
 updated: 2026-06-15
 archived_at: null

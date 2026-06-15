@@ -250,6 +250,6 @@ No schema changes. Testcontainers starts a fresh ephemeral PostgreSQL 16 instanc
 
 #### Manual
 
-- [x] 2.1 §2 Risk #6 Risk Map row references V1–V4, not V1 and V2
-- [x] 2.2 §2 Risk Response Guidance Risk #6 row updated consistently
-- [x] 2.3 §6.5 cookbook entry filled — complete and actionable, no longer reads TBD
+- [x] 2.1 §2 Risk #6 Risk Map row references V1–V4, not V1 and V2 — 9c58536
+- [x] 2.2 §2 Risk Response Guidance Risk #6 row updated consistently — 9c58536
+- [x] 2.3 §6.5 cookbook entry filled — complete and actionable, no longer reads TBD — 9c58536
