@@ -290,31 +290,31 @@ Result: each template's `<head>` has the `th:block` + `<title>`. For templates w
 
 #### Automated
 
-- [x] 2.1 `./mvnw test` passes (no compile errors from deleted classes)
-- [x] 2.2 No remaining references to RandomNumberController, RandomNumberService, or /v1/random
+- [x] 2.1 `./mvnw test` passes (no compile errors from deleted classes) — 011c614
+- [x] 2.2 No remaining references to RandomNumberController, RandomNumberService, or /v1/random — 011c614
 
 #### Manual
 
-- [x] 2.3 Home page shows app description, no guest text
-- [x] 2.4 No network request to /v1/random in browser devtools
-- [x] 2.5 /v1/random returns 404
-- [x] 2.6 Login and register links still work
+- [x] 2.3 Home page shows app description, no guest text — 011c614
+- [x] 2.4 No network request to /v1/random in browser devtools — 011c614
+- [x] 2.5 /v1/random returns 404 — 011c614
+- [x] 2.6 Login and register links still work — 011c614
 
 ### Phase 3: Shared Head Fragment + Full Grayscale CSS
 
 #### Automated
 
-- [ ] 3.1 `./mvnw test` passes
-- [ ] 3.2 All 8 templates contain th:replace for common-head fragment
-- [ ] 3.3 static/css/styles.css exists and is non-empty
-- [ ] 3.4 templates/fragments/head.html exists
+- [x] 3.1 `./mvnw test` passes
+- [x] 3.2 All 8 templates contain th:replace for common-head fragment
+- [x] 3.3 static/css/styles.css exists and is non-empty
+- [x] 3.4 templates/fragments/head.html exists
 
 #### Manual
 
-- [ ] 3.5 Every page loads with CSS applied
-- [ ] 3.6 Grayscale palette consistent across all pages
-- [ ] 3.7 Forms styled on login, register, journal, journal-edit
-- [ ] 3.8 Journal entry list styled on /journal and /journal/history
-- [ ] 3.9 Chart on /journal/trends still renders
-- [ ] 3.10 No horizontal scroll at standard desktop width
-- [ ] 3.11 Favicon loads on all pages
+- [x] 3.5 Every page loads with CSS applied
+- [x] 3.6 Grayscale palette consistent across all pages
+- [x] 3.7 Forms styled on login, register, journal, journal-edit
+- [x] 3.8 Journal entry list styled on /journal and /journal/history
+- [x] 3.9 Chart on /journal/trends still renders
+- [x] 3.10 No horizontal scroll at standard desktop width
+- [x] 3.11 Favicon loads on all pages
