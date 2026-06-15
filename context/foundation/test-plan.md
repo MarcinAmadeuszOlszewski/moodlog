@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan-spring --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-12 (Phase 1 researched)
+> Last updated: 2026-06-14 (Phases 1 and 2 complete; Phase 3 next)
 
 ---
 
@@ -71,9 +71,9 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
-| 1 | AI boundary hardening | Prove entry durability on AI failure and verify classifier response contract | #1, #2 | unit + integration | planned | testing-ai-boundary-hardening |
-| 2 | Trends time-zone accuracy | Prove mood trend calculations are correct across Europe/Warsaw midnight boundaries | #3 | integration (service + MockMvc) | not started | — |
-| 3 | Ownership + security enforcement | Ensure S-04 edit/delete/override verifies per-resource ownership; prevent security config regressions | #4, #5 | integration (MockMvc + spring-security-test) | not started | — |
+| 1 | AI boundary hardening | Prove entry durability on AI failure and verify classifier response contract | #1, #2 | unit + integration | complete | testing-ai-boundary-hardening |
+| 2 | Trends time-zone accuracy | Prove mood trend calculations are correct across Europe/Warsaw midnight boundaries | #3 | integration (service + MockMvc) | complete | trends-time-zone-accuracy |
+| 3 | Ownership + security enforcement | Ensure S-04 edit/delete/override verifies per-resource ownership; prevent security config regressions | #4, #5 | integration (MockMvc + spring-security-test) | change opened | testing-ownership-security-enforcement |
 | 4 | Migration safety gate | Verify Flyway migrations apply cleanly against real PostgreSQL via Testcontainers | #6 | integration (Testcontainers) | not started | — |
 
 ---
