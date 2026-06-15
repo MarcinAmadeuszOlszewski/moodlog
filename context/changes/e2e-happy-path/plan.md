@@ -270,23 +270,23 @@ No schema migrations. No data migrations. No changes to production code.
 
 #### Automated
 
-- [x] 1.1 `.\mvnw.cmd test` passes with E2E excluded and no compilation errors
-- [x] 1.2 `.\mvnw.cmd test -Dgroups=e2e` exits with "No tests found" (before Phase 2)
-- [x] 1.3 `.\mvnw.cmd package -DskipTests` produces JAR without Playwright in production classpath
+- [x] 1.1 `.\mvnw.cmd test` passes with E2E excluded and no compilation errors — 74659ad
+- [x] 1.2 `.\mvnw.cmd test -Dgroups=e2e` exits with "No tests found" (before Phase 2) — 74659ad
+- [x] 1.3 `.\mvnw.cmd package -DskipTests` produces JAR without Playwright in production classpath — 74659ad
 
 #### Manual
 
-- [x] 1.4 Playwright Chromium browser binaries installed successfully on dev machine
+- [x] 1.4 Playwright Chromium browser binaries installed successfully on dev machine — 74659ad
 
 ### Phase 2: E2E Test Class
 
 #### Automated
 
-- [ ] 2.1 `.\mvnw.cmd test -Dgroups=e2e` passes with all 5 test methods green
-- [ ] 2.2 `.\mvnw.cmd test` (no flags) passes with E2E excluded and no regression on existing suite
+- [x] 2.1 `.\mvnw.cmd test -Dgroups=e2e` passes with all 5 test methods green
+- [x] 2.2 `.\mvnw.cmd test` (no flags) passes with E2E excluded and no regression on existing suite
 
 #### Manual
 
-- [ ] 2.3 Headed browser run visually confirms all 5 scenarios execute correctly
-- [ ] 2.4 Scenario 2 entry is visible in Scenario 3 history list (shared state verified)
-- [ ] 2.5 Scenario 5 logout fully clears session (post-logout navigation to `/journal` redirects to `/login`)
+- [x] 2.3 Headed browser run visually confirms all 5 scenarios execute correctly
+- [x] 2.4 Scenario 2 entry is visible in Scenario 3 history list (shared state verified)
+- [x] 2.5 Scenario 5 logout fully clears session (post-logout navigation to `/journal` redirects to `/login`)
