@@ -28,8 +28,7 @@ import com.amadeuszx.moodlog.journal.trend.JournalTrendView;
 import com.amadeuszx.moodlog.classification.MoodTag;
 import com.amadeuszx.moodlog.user.UserAccount;
 import com.amadeuszx.moodlog.user.UserAccountService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,9 +36,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 public class JournalEntryService {
-
-	private static final Logger logger = LoggerFactory.getLogger(JournalEntryService.class);
 	private static final int ENTRY_EXCERPT_LENGTH = 120;
 	private static final DayOfWeek REPORTING_WEEK_START = DayOfWeek.MONDAY;
 	private static final DateTimeFormatter DAILY_CHART_LABEL_FORMATTER = DateTimeFormatter.ofPattern("dd.MM");
@@ -99,7 +97,7 @@ public class JournalEntryService {
 
 		final JournalEntry savedJournalEntry = journalEntryRepository.save(journalEntry);
 
-		logger.info(
+		log.info(
 			"journal.classification.success identifier={} provider={} model={}",
 			safeUserIdentifier,
 			moodClassification.provider(),
@@ -135,7 +133,7 @@ public class JournalEntryService {
 
 		final JournalEntry savedJournalEntry = journalEntryRepository.save(journalEntry);
 
-		logger.warn(
+		log.warn(
 			"journal.entry.saved.with.unknown.mood identifier={} provider={} model={}",
 			safeUserIdentifier,
 			provider,
@@ -165,7 +163,7 @@ public class JournalEntryService {
 		entry.applyMoodOverride(moodTag, Instant.now(clock));
 		journalEntryRepository.save(entry);
 
-		logger.info(
+		log.info(
 			"journal.mood.override identifier={}",
 			UserAccountService.safeEmailIdentifier(userAccount.getEmail())
 		);
@@ -192,20 +190,22 @@ public class JournalEntryService {
 			);
 		}
 		catch (MoodClassificationFailedException exception) {
+			final Instant now = Instant.now(clock);
 			entry.updateContent(
 				newContent,
 				MoodTag.UNKNOWN,
 				null,
 				exception.getProvider(),
 				exception.getModel(),
-				Instant.now(clock),
-				Instant.now(clock)
+				now,
+				now
 			);
 		}
 
 		return journalEntryRepository.save(entry);
 	}
 
+	@Transactional(readOnly = true)
 	public JournalEntryEditView getEntryForEdit(String userEmail, UUID entryId) {
 		final UserAccount userAccount = resolveUserAccount(userEmail);
 		final JournalEntry entry = journalEntryRepository
@@ -563,13 +563,13 @@ public class JournalEntryService {
 			return ZoneId.of(userAccount.getTimezone());
 		}
 		catch (DateTimeException exception) {
-			logger.warn("journal.timezone.invalid timezone={}", userAccount.getTimezone());
+			log.warn("journal.timezone.invalid timezone={}", userAccount.getTimezone());
 			return ZoneId.of("Europe/Warsaw");
 		}
 	}
 
 	private void logClassificationFailure(String safeUserIdentifier, MoodClassificationFailedException exception) {
-		logger.warn(
+		log.warn(
 			"journal.classification.failure identifier={} provider={} model={} reason={}",
 			safeUserIdentifier,
 			exception.getProvider(),
