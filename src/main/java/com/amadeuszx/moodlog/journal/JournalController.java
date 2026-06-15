@@ -1,8 +1,10 @@
 package com.amadeuszx.moodlog.journal;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.amadeuszx.moodlog.classification.MoodClassificationFailedException;
+import com.amadeuszx.moodlog.classification.MoodTag;
 import com.amadeuszx.moodlog.journal.history.JournalEntryListItem;
 import com.amadeuszx.moodlog.journal.history.JournalHistoryItem;
 import jakarta.validation.Valid;
@@ -12,9 +14,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -88,9 +94,47 @@ public class JournalController {
 			return "redirect:/journal/history?page=" + (historyPage.getTotalPages() - 1);
 		}
 
+		model.addAttribute("selectableMoodOptions", journalEntryService.selectableMoodOptions());
 		populateHistoryModel(userEmail, historyPage, model);
 
 		return "journal-history";
+	}
+
+	@DeleteMapping("/journal/{id}")
+	public String deleteEntry(@PathVariable UUID id, Authentication auth) {
+		journalEntryService.deleteEntry(auth.getName(), id);
+		return "redirect:/journal/history";
+	}
+
+	@PatchMapping("/journal/{id}/mood")
+	public String correctMood(@PathVariable UUID id, @RequestParam MoodTag moodTag, Authentication auth) {
+		journalEntryService.applyMoodOverride(auth.getName(), id, moodTag);
+		return "redirect:/journal/history";
+	}
+
+	@GetMapping("/journal/{id}/edit")
+	public String showEditForm(@PathVariable UUID id, Authentication auth, Model model) {
+		final JournalEntryEditView editView = journalEntryService.getEntryForEdit(auth.getName(), id);
+		final JournalEntryForm form = new JournalEntryForm();
+		form.setContent(editView.content());
+		populateEditModel(auth.getName(), id, form, model);
+		return "journal-edit";
+	}
+
+	@PutMapping("/journal/{id}")
+	public String updateEntry(
+		@PathVariable UUID id,
+		@Valid @ModelAttribute("journalEntryForm") JournalEntryForm form,
+		BindingResult binding,
+		Authentication auth,
+		Model model
+	) {
+		if (binding.hasErrors()) {
+			populateEditModel(auth.getName(), id, form, model);
+			return "journal-edit";
+		}
+		journalEntryService.updateEntryContent(auth.getName(), id, form.getContent());
+		return "redirect:/journal/history";
 	}
 
 	@GetMapping("/journal/trends")
@@ -109,6 +153,13 @@ public class JournalController {
 		model.addAttribute("journalMaxContentLength", journalMaxContentLength);
 		model.addAttribute("recentEntriesLimit", recentEntriesLimit);
 		model.addAttribute("recentEntries", recentEntries);
+		model.addAttribute("userEmail", userEmail);
+	}
+
+	private void populateEditModel(String userEmail, UUID entryId, JournalEntryForm form, Model model) {
+		model.addAttribute("entryId", entryId);
+		model.addAttribute("journalEntryForm", form);
+		model.addAttribute("journalMaxContentLength", journalMaxContentLength);
 		model.addAttribute("userEmail", userEmail);
 	}
 

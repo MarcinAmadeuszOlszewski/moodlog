@@ -8,7 +8,6 @@ import com.amadeuszx.moodlog.user.UserAccount;
 import com.amadeuszx.moodlog.user.UserAccountRepository;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -88,7 +88,6 @@ class JournalEntryOwnershipTests {
 	}
 
 	@Test
-	@Disabled("Activate when S-04 edit/delete endpoints ship")
 	@DisplayName("DELETE /journal/{id} returns 404 when id belongs to a different authenticated user")
 	void deleteJournalEntryReturns404WhenIdBelongsToADifferentAuthenticatedUser() throws Exception {
 		mockMvc.perform(delete("/journal/{id}", entryId)
@@ -98,17 +97,16 @@ class JournalEntryOwnershipTests {
 	}
 
 	@Test
-	@Disabled("Activate when S-04 edit/delete endpoints ship")
 	@DisplayName("PATCH /journal/{id}/mood returns 404 when id belongs to a different authenticated user")
 	void patchJournalEntryMoodReturns404WhenIdBelongsToADifferentAuthenticatedUser() throws Exception {
 		mockMvc.perform(patch("/journal/{id}/mood", entryId)
+				.param("moodTag", "CALM")
 				.with(user(USER_A_EMAIL).roles("USER"))
 				.with(csrf()))
 			.andExpect(status().isNotFound());
 	}
 
 	@Test
-	@Disabled("Activate when S-04 edit/delete endpoints ship")
 	@DisplayName("DELETE /journal/{id} succeeds when called by the entry owner")
 	void deleteJournalEntrySucceedsWhenCalledByTheEntryOwner() throws Exception {
 		mockMvc.perform(delete("/journal/{id}", entryId)
@@ -118,10 +116,30 @@ class JournalEntryOwnershipTests {
 	}
 
 	@Test
-	@Disabled("Activate when S-04 edit/delete endpoints ship")
 	@DisplayName("PATCH /journal/{id}/mood succeeds when called by the entry owner")
 	void patchJournalEntryMoodSucceedsWhenCalledByTheEntryOwner() throws Exception {
 		mockMvc.perform(patch("/journal/{id}/mood", entryId)
+				.param("moodTag", "CALM")
+				.with(user(USER_B_EMAIL).roles("USER"))
+				.with(csrf()))
+			.andExpect(status().is3xxRedirection());
+	}
+
+	@Test
+	@DisplayName("PUT /journal/{id} returns 404 when id belongs to a different authenticated user")
+	void putJournalEntryReturns404WhenIdBelongsToADifferentAuthenticatedUser() throws Exception {
+		mockMvc.perform(put("/journal/{id}", entryId)
+				.param("content", "Nowa treść")
+				.with(user(USER_A_EMAIL).roles("USER"))
+				.with(csrf()))
+			.andExpect(status().isNotFound());
+	}
+
+	@Test
+	@DisplayName("PUT /journal/{id} succeeds when called by the entry owner")
+	void putJournalEntrySucceedsWhenCalledByTheEntryOwner() throws Exception {
+		mockMvc.perform(put("/journal/{id}", entryId)
+				.param("content", "Nowa treść")
 				.with(user(USER_B_EMAIL).roles("USER"))
 				.with(csrf()))
 			.andExpect(status().is3xxRedirection());

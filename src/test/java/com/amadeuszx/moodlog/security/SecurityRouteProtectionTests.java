@@ -11,8 +11,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -67,6 +70,38 @@ class SecurityRouteProtectionTests {
 	@DisplayName("Anonymous GET on unmapped /journal path redirects to /login (deny-all catch-all)")
 	void anonymousUnmappedJournalPathRedirectsToLogin() throws Exception {
 		mockMvc.perform(get("/journal/nonexistent-route"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/login"));
+	}
+
+	@Test
+	@DisplayName("Anonymous GET /journal/{id}/edit redirects to /login")
+	void anonymousJournalEditGetRedirectsToLogin() throws Exception {
+		mockMvc.perform(get("/journal/00000000-0000-0000-0000-000000000000/edit"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/login"));
+	}
+
+	@Test
+	@DisplayName("Anonymous DELETE /journal/{id} redirects to /login (CSRF supplied)")
+	void anonymousJournalDeleteRedirectsToLogin() throws Exception {
+		mockMvc.perform(delete("/journal/00000000-0000-0000-0000-000000000000").with(csrf()))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/login"));
+	}
+
+	@Test
+	@DisplayName("Anonymous PATCH /journal/{id}/mood redirects to /login (CSRF supplied)")
+	void anonymousJournalPatchMoodRedirectsToLogin() throws Exception {
+		mockMvc.perform(patch("/journal/00000000-0000-0000-0000-000000000000/mood").with(csrf()))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/login"));
+	}
+
+	@Test
+	@DisplayName("Anonymous PUT /journal/{id} redirects to /login (CSRF supplied)")
+	void anonymousJournalPutRedirectsToLogin() throws Exception {
+		mockMvc.perform(put("/journal/00000000-0000-0000-0000-000000000000").with(csrf()))
 			.andExpect(status().is3xxRedirection())
 			.andExpect(redirectedUrl("/login"));
 	}

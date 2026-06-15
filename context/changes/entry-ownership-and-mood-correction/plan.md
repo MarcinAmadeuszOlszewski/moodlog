@@ -400,28 +400,28 @@ Add `UUID id` and the effective `MoodTag` to `JournalHistoryItem`, update `toHis
 
 #### Automated
 
-- [x] 1.1 `.\mvnw.cmd test` passes (all existing + new service tests green)
-- [x] 1.2 `JournalEntryNotFoundException` carries `@ResponseStatus(NOT_FOUND)`
-- [x] 1.3 `findByIdAndUserAccountId` exists in `JournalEntryRepository`
-- [x] 1.4 `selectableMoodOptions()` returns 7 options (all `MoodTag` values minus `UNKNOWN`)
+- [x] 1.1 `.\mvnw.cmd test` passes (all existing + new service tests green) — 777c657
+- [x] 1.2 `JournalEntryNotFoundException` carries `@ResponseStatus(NOT_FOUND)` — 777c657
+- [x] 1.3 `findByIdAndUserAccountId` exists in `JournalEntryRepository` — 777c657
+- [x] 1.4 `selectableMoodOptions()` returns 7 options (all `MoodTag` values minus `UNKNOWN`) — 777c657
 
 #### Manual
 
-- [x] 1.5 App starts on local profile; existing journal flows work unchanged
+- [x] 1.5 App starts on local profile; existing journal flows work unchanged — 777c657
 
 ### Phase 2: Web Layer
 
 #### Automated
 
-- [ ] 2.1 `.\mvnw.cmd test` passes with all four previously disabled ownership tests now active
-- [ ] 2.2 Two new PUT ownership tests pass
-- [ ] 2.3 Four new route protection tests pass
+- [x] 2.1 `.\mvnw.cmd test` passes with all four previously disabled ownership tests now active
+- [x] 2.2 Two new PUT ownership tests pass
+- [x] 2.3 Four new route protection tests pass
 
 #### Manual
 
-- [ ] 2.4 `DELETE /journal/{real-id}` as owner returns 302 to `/journal/history`
-- [ ] 2.5 `DELETE /journal/{real-id}` as non-owner returns 404
-- [ ] 2.6 `GET /journal/{real-id}/edit` renders without error for the owner
+- [x] 2.4 `DELETE /journal/{real-id}` as owner returns 302 to `/journal/history`
+- [x] 2.5 `DELETE /journal/{real-id}` as non-owner returns 404
+- [x] 2.6 `GET /journal/{real-id}/edit` renders without error for the owner
 
 ### Phase 3: Presentation Layer
 
