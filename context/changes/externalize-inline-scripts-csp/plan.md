@@ -297,29 +297,29 @@ Import `org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 
 #### Automated
 
-- [x] 1.1 `.\mvnw.cmd test` passes
-- [x] 1.2 `src/main/resources/static/js/register.js` exists and is non-empty
-- [x] 1.3 `register.html` contains no inline `<script>` block with timezone logic
+- [x] 1.1 `.\mvnw.cmd test` passes — f5a4091
+- [x] 1.2 `src/main/resources/static/js/register.js` exists and is non-empty — f5a4091
+- [x] 1.3 `register.html` contains no inline `<script>` block with timezone logic — f5a4091
 
 #### Manual
 
-- [x] 1.4 Timezone field populated correctly at `/register`
-- [x] 1.5 Journal entry dates display in correct local timezone after registration
+- [x] 1.4 Timezone field populated correctly at `/register` — f5a4091
+- [x] 1.5 Journal entry dates display in correct local timezone after registration — f5a4091
 
 ### Phase 2: Externalize Delete Confirmation via site.js
 
 #### Automated
 
-- [ ] 2.1 `.\mvnw.cmd test` passes
-- [ ] 2.2 `src/main/resources/static/js/site.js` exists and is non-empty
-- [ ] 2.3 `journal-history.html` contains no `onsubmit` attribute
-- [ ] 2.4 `fragments/head.html` contains `site.js` script reference
+- [x] 2.1 `.\mvnw.cmd test` passes
+- [x] 2.2 `src/main/resources/static/js/site.js` exists and is non-empty
+- [x] 2.3 `journal-history.html` contains no `onsubmit` attribute
+- [x] 2.4 `fragments/head.html` contains `site.js` script reference
 
 #### Manual
 
-- [ ] 2.5 Delete confirmation dialog appears in Polish on `/journal/history`
-- [ ] 2.6 Cancelling dialog does not delete the entry
-- [ ] 2.7 Other pages load without JS errors
+- [x] 2.5 Delete confirmation dialog appears in Polish on `/journal/history`
+- [x] 2.6 Cancelling dialog does not delete the entry
+- [x] 2.7 Other pages load without JS errors
 
 ### Phase 3: Externalize Trends Inline Data (JSON Data Island)
 

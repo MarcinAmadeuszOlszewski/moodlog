@@ -34,7 +34,7 @@
 					<p th:text="${entry.excerpt}">Treść wpisu</p>
 					<p th:text="${entry.moodScore != null ? entry.moodLabel + ' — ' + entry.moodScore + '/100' : entry.moodLabel}">Spokój — 73/100</p>
 					<a th:href="@{/journal/{id}/edit(id=${entry.id()})}">Edytuj</a>
-					<form method="post" th:action="@{/journal/{id}(id=${entry.id()})}" onsubmit="return confirm('Na pewno usunąć ten wpis?')">
+					<form method="post" th:action="@{/journal/{id}(id=${entry.id()})}" data-confirm="Na pewno usunąć ten wpis?">
 						<input type="hidden" name="_method" value="DELETE">
 						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 						<button type="submit">Usuń</button>
