@@ -1,7 +1,7 @@
 ---
 change_id: e2e-happy-path
 title: Scope and implement E2E happy-path Playwright tests
-status: implementing
+status: implemented
 created: 2026-06-15
 updated: 2026-06-15
 archived_at: null

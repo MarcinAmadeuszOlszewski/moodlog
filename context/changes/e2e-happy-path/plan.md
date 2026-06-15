@@ -282,11 +282,11 @@ No schema migrations. No data migrations. No changes to production code.
 
 #### Automated
 
-- [x] 2.1 `.\mvnw.cmd test -Dgroups=e2e` passes with all 5 test methods green
-- [x] 2.2 `.\mvnw.cmd test` (no flags) passes with E2E excluded and no regression on existing suite
+- [x] 2.1 `.\mvnw.cmd test -Dgroups=e2e` passes with all 5 test methods green — 7ae6675
+- [x] 2.2 `.\mvnw.cmd test` (no flags) passes with E2E excluded and no regression on existing suite — 7ae6675
 
 #### Manual
 
-- [x] 2.3 Headed browser run visually confirms all 5 scenarios execute correctly
-- [x] 2.4 Scenario 2 entry is visible in Scenario 3 history list (shared state verified)
-- [x] 2.5 Scenario 5 logout fully clears session (post-logout navigation to `/journal` redirects to `/login`)
+- [x] 2.3 Headed browser run visually confirms all 5 scenarios execute correctly — 7ae6675
+- [x] 2.4 Scenario 2 entry is visible in Scenario 3 history list (shared state verified) — 7ae6675
+- [x] 2.5 Scenario 5 logout fully clears session (post-logout navigation to `/journal` redirects to `/login`) — 7ae6675
