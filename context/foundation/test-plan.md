@@ -130,7 +130,36 @@ TBD — see §3 Phase 1 for the classifier response contract and entry durabilit
 
 ### 6.2 Adding a Spring integration test (MockMvc + security)
 
-TBD — see §3 Phase 1 (AI boundary) and Phase 3 (ownership enforcement) for MockMvc + `spring-security-test` patterns.
+Use `@SpringBootTest` with `MockMvcBuilders.webAppContextSetup(...)` and `springSecurity()` for all tests that exercise routing, authentication, or security filters.
+
+**Setup pattern** (copy from `SecurityRouteProtectionTests` or `AuthenticationFlowTests`):
+
+```java
+@SpringBootTest
+class MyTests {
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+            .apply(springSecurity())
+            .build();
+    }
+}
+```
+
+**Request post-processors:**
+
+- Authenticated request: `.with(user("user@example.com").roles("USER"))` — injects a Spring Security `UserDetails` into the filter chain without a real login.
+- CSRF-required request (POST/DELETE/PATCH): add `.with(csrf())` — supplies a valid CSRF token so the CSRF filter passes through to the authentication filter. Without it, a state-mutating anonymous request returns 403 (CSRF rejection) before the auth check runs.
+
+**Live examples:**
+- Anonymous route protection: `src/test/java/com/amadeuszx/moodlog/security/SecurityRouteProtectionTests.java`
+- Full login-flow coverage: `src/test/java/com/amadeuszx/moodlog/user/AuthenticationFlowTests.java`
 
 ### 6.3 Adding a trend boundary test
 
@@ -138,7 +167,18 @@ TBD — see §3 Phase 2 for the Europe/Warsaw midnight boundary pattern and `Fix
 
 ### 6.4 Adding an ownership verification test for a write endpoint
 
-TBD — see §3 Phase 3 for the cross-user mutation attempt pattern and IDOR ownership check structure.
+**The IDOR trap:** `JpaRepository.findById(UUID id)` is unscoped. It returns any entry regardless of `userAccountId`. A write endpoint that uses `findById` before mutating lets authenticated user A supply user B's entry UUID and silently succeed.
+
+**The correct pattern:** All write endpoints must use a scoped query that includes the authenticated user's ID as a predicate:
+
+```java
+// Add to JournalEntryRepository:
+Optional<JournalEntry> findByIdAndUserAccountId(UUID entryId, UUID userAccountId);
+```
+
+When the entry does not belong to the authenticated user, `findByIdAndUserAccountId` returns `Optional.empty()`. The controller maps this to 404 (not 403) — revealing that a resource exists at all is itself an information leak, so 404 is the correct response regardless of whether the entry exists under a different owner.
+
+**Verification:** `JournalEntryOwnershipTests` (`src/test/java/com/amadeuszx/moodlog/journal/JournalEntryOwnershipTests.java`) contains four `@Disabled` stubs documenting this contract. When S-04 ships write endpoints, remove `@Disabled("Activate when S-04 edit/delete endpoints ship")` from all four methods and confirm the tests pass. The stubs assert the correct 404-for-cross-user and 3xx-for-owner contract — do not weaken them to 403 or 200.
 
 ### 6.5 Adding a Testcontainers PostgreSQL migration test
 
@@ -146,7 +186,13 @@ TBD — see §3 Phase 4 for the Flyway + Testcontainers + Spring Boot 4.x setup 
 
 ### 6.6 Per-rollout-phase notes
 
-(Filled in as phases ship.)
+#### Phase 3
+
+Phase 3 delivered two new test artifacts:
+
+- **`SecurityRouteProtectionTests`** (`src/test/java/com/amadeuszx/moodlog/security/SecurityRouteProtectionTests.java`) — 5 anonymous-request tests forming a standalone security regression fence. Asserts that all three journal GET routes and `POST /journal` redirect anonymous requests to `/login`, and that an unmapped path under `/journal` is still blocked by the `anyRequest().authenticated()` deny-all fallback.
+
+- **`JournalEntryOwnershipTests`** (`src/test/java/com/amadeuszx/moodlog/journal/JournalEntryOwnershipTests.java`) — 4 `@Disabled` ownership contract stubs for S-04 (edit/delete/mood-override endpoints). These tests compile and appear as skipped until S-04 ships. To activate: remove `@Disabled("Activate when S-04 edit/delete endpoints ship")` from all four methods and add `findByIdAndUserAccountId` to `JournalEntryRepository` (see §6.4).
 
 ---
 

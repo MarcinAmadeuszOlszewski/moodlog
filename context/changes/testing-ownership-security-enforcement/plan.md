@@ -218,22 +218,22 @@ Fill in §6.2, §6.4, and §6.6 in `context/foundation/test-plan.md`. These sect
 
 #### Automated
 
-- [x] 2.1 `.\mvnw.cmd test` passes; 4 stub tests appear as skipped/disabled (not failed)
-- [x] 2.2 No compile errors in `JournalEntryOwnershipTests`
+- [x] 2.1 `.\mvnw.cmd test` passes; 4 stub tests appear as skipped/disabled (not failed) — a271788
+- [x] 2.2 No compile errors in `JournalEntryOwnershipTests` — a271788
 
 #### Manual
 
-- [x] 2.3 Each `@Disabled` annotation carries the exact message `"Activate when S-04 edit/delete endpoints ship"`
-- [x] 2.4 Cross-user tests assert `isNotFound()` (not `isForbidden()`)
+- [x] 2.3 Each `@Disabled` annotation carries the exact message `"Activate when S-04 edit/delete endpoints ship"` — a271788
+- [x] 2.4 Cross-user tests assert `isNotFound()` (not `isForbidden()`) — a271788
 
 ### Phase 3: Cookbook Documentation
 
 #### Automated
 
-- [ ] 3.1 `.\mvnw.cmd test` still passes
-- [ ] 3.2 §6.2, §6.4, §6.6 in `test-plan.md` contain no "TBD" placeholders
+- [x] 3.1 `.\mvnw.cmd test` still passes
+- [x] 3.2 §6.2, §6.4, §6.6 in `test-plan.md` contain no "TBD" placeholders
 
 #### Manual
 
-- [ ] 3.3 §6.4 names `findByIdAndUserAccountId` and explains the `findById` IDOR trap
-- [ ] 3.4 §6.6 Phase 3 entry names both new test classes and the stub activation step
+- [x] 3.3 §6.4 names `findByIdAndUserAccountId` and explains the `findById` IDOR trap
+- [x] 3.4 §6.6 Phase 3 entry names both new test classes and the stub activation step
