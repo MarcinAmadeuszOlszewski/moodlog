@@ -3,6 +3,7 @@ package com.amadeuszx.moodlog.user;
 import java.time.Instant;
 import java.util.UUID;
 
+import com.amadeuszx.moodlog.journal.JournalEntryRepository;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,8 +22,12 @@ class UserAccountRepositoryTests {
 	@Autowired
 	private UserAccountRepository userAccountRepository;
 
+	@Autowired
+	private JournalEntryRepository journalEntryRepository;
+
 	@BeforeEach
 	void setUp() {
+		journalEntryRepository.deleteAll();
 		userAccountRepository.deleteAll();
 	}
 

@@ -1,5 +1,6 @@
 package com.amadeuszx.moodlog.user;
 
+import com.amadeuszx.moodlog.journal.JournalEntryRepository;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -43,10 +44,14 @@ class AuthenticationFlowTests {
 	@Autowired
 	private UserAccountService userAccountService;
 
+	@Autowired
+	private JournalEntryRepository journalEntryRepository;
+
 	private MockMvc mockMvc;
 
 	@BeforeEach
 	void setUp() {
+		journalEntryRepository.deleteAll();
 		userAccountRepository.deleteAll();
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
 			.apply(springSecurity())
