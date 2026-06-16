@@ -1,10 +1,10 @@
 ---
 change_id: externalize-inline-scripts-csp
 title: Externalize inline JavaScript and add Content-Security-Policy header
-status: impl_reviewed
+status: archived
 created: 2026-06-15
-updated: 2026-06-15
-archived_at: null
+updated: 2026-06-16
+archived_at: 2026-06-16T07:26:36Z
 ---
 
 ## Notes
