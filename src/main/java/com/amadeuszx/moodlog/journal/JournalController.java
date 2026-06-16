@@ -7,7 +7,11 @@ import com.amadeuszx.moodlog.classification.MoodClassificationFailedException;
 import com.amadeuszx.moodlog.classification.MoodTag;
 import com.amadeuszx.moodlog.journal.history.JournalEntryListItem;
 import com.amadeuszx.moodlog.journal.history.JournalHistoryItem;
+import com.amadeuszx.moodlog.journal.trend.JournalTrendView;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
@@ -24,20 +28,24 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
+@Slf4j
 public class JournalController {
 
 	private final JournalEntryService journalEntryService;
+	private final ObjectMapper objectMapper;
 	private final int journalMaxContentLength;
 	private final int recentEntriesLimit;
 	private final int historyPageSize;
 
 	public JournalController(
 		JournalEntryService journalEntryService,
+		ObjectMapper objectMapper,
 		@Value("${moodlog.journal.max-content-length:2000}") int journalMaxContentLength,
 		@Value("${moodlog.journal.recent-list-limit:10}") int recentEntriesLimit,
 		@Value("${moodlog.journal.history-page-size:20}") int historyPageSize
 	) {
 		this.journalEntryService = journalEntryService;
+		this.objectMapper = objectMapper;
 		this.journalMaxContentLength = journalMaxContentLength;
 		this.recentEntriesLimit = recentEntriesLimit;
 		this.historyPageSize = historyPageSize;
@@ -140,8 +148,17 @@ public class JournalController {
 	@GetMapping("/journal/trends")
 	public String trendsPage(Authentication authentication, Model model) {
 		final String userEmail = authentication.getName();
+		final JournalTrendView trendView = journalEntryService.getTrendView(userEmail);
+		String trendViewJson;
+		try {
+			trendViewJson = objectMapper.writeValueAsString(trendView);
+		} catch (JacksonException e) {
+			log.warn("Failed to serialize trendView to JSON", e);
+			trendViewJson = "{}";
+		}
 
-		model.addAttribute("trendView", journalEntryService.getTrendView(userEmail));
+		model.addAttribute("trendView", trendView);
+		model.addAttribute("trendViewJson", trendViewJson);
 		model.addAttribute("userEmail", userEmail);
 
 		return "journal-trends";

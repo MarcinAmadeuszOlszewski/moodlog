@@ -30,3 +30,23 @@ public class UserAccount {
 ```
 
 **Applies to**: All `@Entity` classes under `com.amadeuszx.moodlog`
+
+## Prefer DOMContentLoaded over IIFE for externalized browser scripts
+
+**Context**: `src/main/resources/static/js/register.js` — plan said IIFE for timezone detection; implementation used DOMContentLoaded
+
+**Problem**: A plan specified an IIFE to run timezone detection immediately. When the script was later moved outside the form and loaded with `defer`, the IIFE approach would have required careful DOM-ordering awareness. DOMContentLoaded is safer because it guarantees the DOM is ready regardless of where the script tag is placed.
+
+**Rule**: When extracting inline browser scripts to external files, wrap the logic in a `DOMContentLoaded` listener rather than an IIFE. This decouples the script from its position in the HTML and makes it safe to load with `defer`.
+
+**Applies to**: All externalized browser scripts under `src/main/resources/static/js/`
+
+## Use const/let over var in browser JS files
+
+**Context**: `src/main/resources/static/js/register.js:2` — uses `var` while `journal-trends.js` and `site.js` use `const`/function-scoped declarations
+
+**Problem**: Mixing `var` and `const` across JS files creates inconsistency. `var` has function scope and hoisting which can cause subtle bugs; `const`/`let` have block scope and clearer intent.
+
+**Rule**: Use `const` by default, `let` only if the variable is reassigned later in the same scope. Never use `var` in new JS files under this project.
+
+**Applies to**: All files under `src/main/resources/static/js/`

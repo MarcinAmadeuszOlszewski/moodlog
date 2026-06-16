@@ -108,7 +108,8 @@ class ApplicationTests {
 	void journalHistoryPageRequiresAuthentication() throws Exception {
 		mockMvc.perform(get("/journal/history"))
 			.andExpect(status().is3xxRedirection())
-			.andExpect(redirectedUrl("/login"));
+			.andExpect(redirectedUrl("/login"))
+			.andExpect(header().string("Content-Security-Policy", containsString("default-src 'self'")));
 	}
 
 	@Test
@@ -116,7 +117,8 @@ class ApplicationTests {
 	void journalTrendsPageRequiresAuthentication() throws Exception {
 		mockMvc.perform(get("/journal/trends"))
 			.andExpect(status().is3xxRedirection())
-			.andExpect(redirectedUrl("/login"));
+			.andExpect(redirectedUrl("/login"))
+			.andExpect(header().string("Content-Security-Policy", containsString("default-src 'self'")));
 	}
 
 }

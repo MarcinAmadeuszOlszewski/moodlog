@@ -64,10 +64,10 @@ class JournalTrendsFlowTests {
 			.getContentAsString();
 		val normalizedContent = normalize(responseContent);
 
-		assertTrue(normalizedContent.contains("\"sevenDay\":{"));
-		assertTrue(normalizedContent.contains("\"labels\":[\"25.05\",\"26.05\",\"27.05\",\"28.05\",\"29.05\",\"30.05\",\"31.05\"]"));
-		assertTrue(normalizedContent.contains("\"values\":[null,null,null,null,null,null,null]"));
-		assertTrue(normalizedContent.contains("\"labels\":[\"06.04-12.04\",\"13.04-19.04\",\"20.04-26.04\",\"27.04-03.05\",\"04.05-10.05\",\"11.05-17.05\",\"18.05-24.05\",\"25.05-31.05\"]"));
+		assertTrue(normalizedContent.contains("\"completedSevenDayTrend\":{"));
+		assertTrue(normalizedContent.contains("\"chartLabels\":[\"25.05\",\"26.05\",\"27.05\",\"28.05\",\"29.05\",\"30.05\",\"31.05\"]"));
+		assertTrue(normalizedContent.contains("\"chartValues\":[null,null,null,null,null,null,null]"));
+		assertTrue(normalizedContent.contains("\"chartLabels\":[\"06.04-12.04\",\"13.04-19.04\",\"20.04-26.04\",\"27.04-03.05\",\"04.05-10.05\",\"11.05-17.05\",\"18.05-24.05\",\"25.05-31.05\"]"));
 	}
 
 	@Test
@@ -117,8 +117,8 @@ class JournalTrendsFlowTests {
 			.getContentAsString();
 		val normalizedContent = normalize(responseContent);
 
-		assertTrue(normalizedContent.contains("\"values\":[null,null,65,null,null,null,80]"));
-		assertTrue(normalizedContent.contains("\"values\":[null,null,null,null,null,null,null,73]"));
+		assertTrue(normalizedContent.contains("\"chartValues\":[null,null,65,null,null,null,80]"));
+		assertTrue(normalizedContent.contains("\"chartValues\":[null,null,null,null,null,null,null,73]"));
 		assertTrue(normalizedContent.contains("\"averageMoodScore\":90"));
 	}
 

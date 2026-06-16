@@ -7,7 +7,7 @@
 <body>
 	<main>
 		<h1>Historia wpisów</h1>
-		<p>Zalogowano jako: <strong th:text="${userEmail}">user@example.com</strong>.</p>
+		<p>Zalogowano jako: <strong th:text="${userEmail}">user@example.com</strong> <button form="logout-form" type="submit" class="btn-small">Wyloguj się</button></p>
 		<p th:text="${'To archiwum pokazuje wpisy od najnowszego do najstarszego, po ' + historyPageSize + ' pozycji na stronę.'}">
 			To archiwum pokazuje wpisy od najnowszego do najstarszego, po 20 pozycji na stronę.
 		</p>
@@ -63,9 +63,8 @@
 			</div>
 		</section>
 
-		<form method="post" th:action="@{/logout}">
+		<form id="logout-form" method="post" th:action="@{/logout}">
 			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-			<button type="submit">Wyloguj się</button>
 		</form>
 
 		<p><a th:href="@{/}">Wróć na stronę główną</a></p>

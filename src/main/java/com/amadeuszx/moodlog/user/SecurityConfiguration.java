@@ -68,7 +68,7 @@ public class SecurityConfiguration {
 			)
 			.headers(headers -> headers
 				.contentSecurityPolicy(csp -> csp
-					.policyDirectives("default-src 'self'")
+					.policyDirectives("default-src 'self'; img-src 'self' data:")
 				)
 			)
 			.build();

@@ -26,7 +26,6 @@
 			</div>
 
 			<input type="hidden" th:field="*{timezone}">
-			<script th:src="@{/js/register.js}"></script>
 
 			<button type="submit">Załóż konto</button>
 		</form>
@@ -34,5 +33,6 @@
 		<p>Masz już konto? <a th:href="@{/login}">Zaloguj się</a>.</p>
 		<p><a th:href="@{/}">Wróć na stronę główną</a></p>
 	</main>
+	<script th:src="@{/js/register.js}" defer></script>
 </body>
 </html>

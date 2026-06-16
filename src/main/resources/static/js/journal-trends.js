@@ -10,17 +10,17 @@ document.addEventListener("DOMContentLoaded", function () {
 		{
 			canvasId: "seven-day-trend-chart",
 			label: "Średni wynik nastroju",
-			series: journalTrendsData.sevenDay
+			series: journalTrendsData.completedSevenDayTrend
 		},
 		{
 			canvasId: "thirty-day-trend-chart",
 			label: "Średni wynik nastroju",
-			series: journalTrendsData.thirtyDay
+			series: journalTrendsData.completedThirtyDayTrend
 		},
 		{
 			canvasId: "weekly-trend-chart",
 			label: "Średni wynik nastroju",
-			series: journalTrendsData.weekly
+			series: journalTrendsData.completedWeeklyTrend
 		}
 	];
 
@@ -33,11 +33,11 @@ document.addEventListener("DOMContentLoaded", function () {
 		new window.Chart(canvas, {
 			type: "line",
 			data: {
-				labels: definition.series.labels,
+				labels: definition.series.chartLabels,
 				datasets: [
 					{
 						label: definition.label,
-						data: definition.series.values,
+						data: definition.series.chartValues,
 						borderColor: "#2563eb",
 						backgroundColor: "rgba(37, 99, 235, 0.16)",
 						fill: false,
