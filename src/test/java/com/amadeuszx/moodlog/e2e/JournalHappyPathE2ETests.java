@@ -9,6 +9,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
@@ -20,12 +21,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Tag("e2e")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Tag("e2e")
 class JournalHappyPathE2ETests {
 
     private static final String TEST_EMAIL = "e2e@example.com";
@@ -58,8 +58,15 @@ class JournalHappyPathE2ETests {
 
     @AfterAll
     void tearDown() {
-        browser.close();
-        playwright.close();
+        try {
+            if (browser != null) {
+                browser.close();
+            }
+        } finally {
+            if (playwright != null) {
+                playwright.close();
+            }
+        }
     }
 
     private String url(String path) {
@@ -68,6 +75,7 @@ class JournalHappyPathE2ETests {
 
     @Test
     @Order(1)
+    @DisplayName("registration redirects to the journal page")
     void registerLandsOnJournal() {
         page.navigate(url("/register"));
         page.fill("#email", TEST_EMAIL);
@@ -75,41 +83,45 @@ class JournalHappyPathE2ETests {
         page.click("button[type='submit']");
 
         assertThat(page).hasURL(url("/journal"));
-        assertTrue(page.content().contains("Twój prywatny dziennik"));
+        assertThat(page.locator("body")).containsText("Twój prywatny dziennik");
     }
 
     @Test
     @Order(2)
+    @DisplayName("created entry appears in the journal list")
     void createEntryAppearsInList() {
         page.navigate(url("/journal"));
         page.fill("#content", TEST_ENTRY);
         page.click("text=Zapisz wpis");
 
         assertThat(page).hasURL(url("/journal"));
-        assertTrue(page.content().contains(TEST_ENTRY));
+        assertThat(page.locator("body")).containsText(TEST_ENTRY);
     }
 
     @Test
     @Order(3)
+    @DisplayName("history page lists the previously created entry")
     void historyShowsCreatedEntry() {
         page.navigate(url("/journal/history"));
 
         assertThat(page).hasURL(url("/journal/history"));
-        assertTrue(page.content().contains(TEST_ENTRY));
+        assertThat(page.locator("body")).containsText(TEST_ENTRY);
     }
 
     @Test
     @Order(4)
+    @DisplayName("trends page renders the seven-day chart canvas")
     void trendsPageLoadsWithChartCanvas() {
         page.navigate(url("/journal/trends"));
 
         assertThat(page).hasURL(url("/journal/trends"));
-        assertTrue(page.content().contains("Trendy nastroju"));
+        assertThat(page.locator("body")).containsText("Trendy nastroju");
         assertThat(page.locator("#seven-day-trend-chart")).isVisible();
     }
 
     @Test
     @Order(5)
+    @DisplayName("logout clears session and re-login restores journal access")
     void logoutAndLoginAgain() {
         page.click("text=Wyloguj się");
 

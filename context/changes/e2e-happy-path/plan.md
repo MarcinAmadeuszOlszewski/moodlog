@@ -82,6 +82,8 @@ Fix the Playwright dependency scope and configure Surefire to exclude `@Tag("e2e
 </plugin>
 ```
 
+**Addendum (impl-review F2, 2026-06-16)**: Implemented as a Maven `<profile id="skip-e2e">` activated by `<activation><property><name>!groups</name></property></activation>` rather than a flat `<build><plugins>` entry. Functionally equivalent — `excludedGroups>e2e</excludedGroups` still applies by default, and the profile auto-deactivates when `-Dgroups` is passed (e.g. `-Dgroups=e2e`), which is cleaner than relying on Surefire's implicit override behavior. Verified: `.\mvnw.cmd test` → 105/0/0, E2E excluded.
+
 ### Success Criteria
 
 #### Automated Verification
@@ -198,6 +200,8 @@ class JournalHappyPathE2ETests {
 **Contract**: Method annotated `@Test @Order(5)`. Click the logout button on the current page (a form submit `POST /logout`). Assert URL contains `/login`. Navigate to `/login` (or assert already there), fill `input[name="email"]` with `"e2e@example.com"` and `input[name="password"]` with `"e2e-password"`. Click submit (text: `"Zaloguj się"`). Assert URL ends with `/journal`.
 
 **Note**: The username input name is `email` (not the Spring Security default `username`) — confirmed in `SecurityConfiguration.java:59`.
+
+**Addendum (impl-review F5, 2026-06-16)**: Actual implementation differs from the contract above in four selector/assertion details, all verified passing against the real DOM: logout is clicked via `text=Wyloguj się` (not a form-submit selector); the post-logout assertion is an exact `hasURL(url("/login?logout"))` match (not a `contains` check); login fields are filled via `#email`/`#password` ID selectors (not `input[name="email"]`/`input[name="password"]`); login submit is clicked via `button[type='submit']` (not by text "Zaloguj się"). These are the selectors that match the actual rendered templates.
 
 ### Success Criteria
 
