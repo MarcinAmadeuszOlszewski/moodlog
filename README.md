@@ -34,6 +34,36 @@ The app starts on `http://localhost:8080`. Register an account, write journal en
 
 > AI classification is disabled in the local profile (`moodlog.ai.enabled=false` in `application-local.properties`). Entries are saved with an unknown mood tag.
 
+### Running with AI classification enabled
+
+**Local LM Studio** (local inference at `http://localhost:1234`):
+
+```cmd
+set MOODLOG_AI_RESPONSE_FORMAT_TYPE=json_schema
+set MOODLOG_AI_DEFAULT_MODEL=qwen2.5-7b-instruct-1m
+set MOODLOG_AI_ENABLED=true
+set MOODLOG_AI_PROVIDER=openai
+set OPENAI_BASE_URL=http://localhost:1234/v1
+set OPENAI_API_KEY=not-needed
+set SPRING_AI_CHAT_MODEL=openai
+.\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=local
+```
+
+**naga.ac** (remote OpenAI-compatible API):
+
+```cmd
+set MOODLOG_AI_RESPONSE_FORMAT_TYPE=json_schema
+set MOODLOG_AI_DEFAULT_MODEL=llama-3.3-70b-instruct:free
+set MOODLOG_AI_ENABLED=true
+set MOODLOG_AI_PROVIDER=openai
+set OPENAI_BASE_URL=https://api.naga.ac/v1
+set OPENAI_API_KEY=ng-XXX
+set SPRING_AI_CHAT_MODEL=openai
+.\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=local
+```
+
+Replace `ng-XXX` with your actual naga.ac API key.
+
 ## Environment Variables (Production)
 
 | Variable | Description |
