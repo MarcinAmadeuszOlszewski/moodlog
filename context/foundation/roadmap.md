@@ -3,7 +3,7 @@ project: "MoodLog"
 version: 1
 status: draft
 created: 2026-05-29
-updated: 2026-06-15
+updated: 2026-06-16
 prd_version: 1
 main_goal: low-complexity
 top_blocker: none
