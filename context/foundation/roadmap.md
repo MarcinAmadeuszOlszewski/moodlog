@@ -131,3 +131,6 @@ No explicit foundations on first generation. With a present backend, a partial U
 - **S-02: User can save a free-text entry and see an automatic mood result in the private journal.** — Archived 2026-06-14 → `context/archive/2026-05-30-first-mood-classified-entry/`. Lesson: —.
 - **S-03: User can review private entry history plus 7-day, 30-day, and weekly mood trends.** — Archived 2026-06-14 → `context/archive/2026-06-01-history-and-mood-trends/`. Lesson: —.
 - **S-04: User can edit or delete owned entries and correct an assigned mood tag.** — Archived 2026-06-15 → `context/archive/2026-06-15-entry-ownership-and-mood-correction/`. Lesson: —.
+- **(post-MVP, no slice) do-more-beautiful: Add README, improve home page content, and apply grayscale mood-themed CSS.** — Archived 2026-06-16 → `context/archive/2026-06-15-do-more-beautiful/`. Lesson: —.
+- **(post-MVP, no slice) externalize-inline-scripts-csp: Externalize inline JavaScript and add Content-Security-Policy header.** — Archived 2026-06-16 → `context/archive/2026-06-15-externalize-inline-scripts-csp/`. Lesson: —.
+- **(post-MVP, no slice) e2e-happy-path: Scope and implement E2E happy-path Playwright tests.** — Archived 2026-06-16 → `context/archive/2026-06-15-e2e-happy-path/`. Lesson: —.
